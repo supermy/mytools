@@ -6,7 +6,7 @@ RUN echo 'deb http://downloads-distro.mongodb.org/repo/debian-sysvinit dist 10ge
 
 RUN apt-get update
 #RUN apt-get install -y mongodb-org
-RUN sudo apt-get install -y mongodb-org=2.6.1 mongodb-org-server=2.6.1 mongodb-org-shell=2.6.1 mongodb-org-mongos=2.6.1 mongodb-org-tools=2.6.1
+RUN  apt-get install -y mongodb-org=2.6.1 mongodb-org-server=2.6.1 mongodb-org-shell=2.6.1 mongodb-org-mongos=2.6.1 mongodb-org-tools=2.6.1
 
 
 # Create the MongoDB data directory
