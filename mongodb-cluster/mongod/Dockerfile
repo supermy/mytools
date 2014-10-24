@@ -1,26 +1,31 @@
-FROM    debian:wheezy
+FROM debian:latest
 
-# Add 10gen official apt source to the sources list
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
-RUN echo 'deb http://downloads-distro.mongodb.org/repo/debian-sysvinit dist 10gen' | tee /etc/apt/sources.list.d/mongodb.list
+# add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
+RUN groupadd -r mongodb && useradd -r -g mongodb mongodb
 
-RUN apt-get update
-RUN apt-get install dialog -y
-RUN apt-get install apt-utils -y
-RUN apt-get install adduser -y
-#RUN apt-get install -y mongodb-org
-RUN  apt-get install -y mongodb-org=2.6.1 mongodb-org-server=2.6.1 mongodb-org-shell=2.6.1 mongodb-org-mongos=2.6.1 mongodb-org-tools=2.6.1
+RUN apt-get update \
+	&& apt-get install -y curl \
+	&& rm -rf /var/lib/apt/lists/*
 
+RUN curl -o /usr/local/bin/gosu -SL 'https://github.com/tianon/gosu/releases/download/1.1/gosu' \
+	&& chmod +x /usr/local/bin/gosu
 
-# Create the MongoDB data directory
-RUN mkdir -p /data/db
+RUN gpg --keyserver pgp.mit.edu --recv-keys DFFA3DCF326E302C4787673A01C4E7FAAAB2461C
 
-# Define mountable directories.
-#VOLUME ["/data/db"]
+ENV MONGO_VERSION 2.6.5
 
-# Define working directory.
-#WORKDIR /data
+RUN curl -SL "https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-$MONGO_VERSION.tgz" -o mongo.tgz \
+	&& curl -SL "https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-$MONGO_VERSION.tgz.sig" -o mongo.tgz.sig \
+	&& gpg --verify mongo.tgz.sig \
+	&& tar -xvf mongo.tgz -C /usr/local --strip-components=1 \
+	&& rm mongo.tgz*
+
+VOLUME /data/db
+
+COPY docker-entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
 
 EXPOSE 27017
-EXPOSE 28017
-ENTRYPOINT ["/usr/bin/mongod"]
+EXPOSE 27018
+
+ENTRYPOINT ["mongod"]
