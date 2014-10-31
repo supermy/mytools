@@ -14,6 +14,7 @@ RUN gpg --keyserver pgp.mit.edu --recv-keys DFFA3DCF326E302C4787673A01C4E7FAAAB2
 
 ENV MONGO_VERSION 2.6.5
 
+#curl -SL https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-2.6.5.tgz -o mongo.tgz
 RUN curl -SL "https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-$MONGO_VERSION.tgz" -o mongo.tgz \
 	&& curl -SL "https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-$MONGO_VERSION.tgz.sig" -o mongo.tgz.sig \
 	&& gpg --verify mongo.tgz.sig \
@@ -22,8 +23,8 @@ RUN curl -SL "https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-$MONGO_VERSI
 
 VOLUME /data/db
 
-COPY docker-entrypoint.sh /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+#COPY ./docker-entrypoint.sh /entrypoint.sh
+#ENTRYPOINT ["/entrypoint.sh"]
 
 EXPOSE 27017
 EXPOSE 27018
