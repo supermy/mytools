@@ -6,3 +6,5 @@ RUN apt-get update \
 
 RUN curl -o /usr/local/bin/gosu -SL 'https://github.com/tianon/gosu/releases/download/1.1/gosu' \
 	&& chmod +x /usr/local/bin/gosu
+
+#docker build -t mydev/debian test
