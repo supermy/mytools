@@ -1,6 +1,6 @@
 FROM    debian:latest
 
-RUN apt-get update &&\
+RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get -y install locales && \
     sed -i.bak -e 's/# zh_CN.UTF-8 UTF-8/zh_CN.UTF-8 UTF-8/' /etc/locale.gen && \
@@ -12,7 +12,7 @@ RUN apt-get update &&\
     dpkg-reconfigure locales && \
 
 
-	&& apt-get install -y curl \
+	apt-get install -y curl \
 	&& rm -rf /var/lib/apt/lists/*
 
 RUN curl -o /usr/local/bin/gosu -SL 'https://github.com/tianon/gosu/releases/download/1.1/gosu' \
