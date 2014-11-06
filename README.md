@@ -104,6 +104,15 @@ mytools
 docker run -i -t --name mydebian debian:latest
 直接访问容器
 docker run -i -t CONTAINER_ID /bin/bash
+
+
+******************************************************************
+todo 
+    oracle-java7环境
+    全文检索：solr 环境 含中文分词
+    规则殷勤：drools 平台使用
+    工作流：activiti
+    云平台: 
     
 ******************************************************************
 #遇到的问题
@@ -143,7 +152,6 @@ php框架
 springmvc框架
 
 web框架：jquery-mobile，extjs
-
 
 docker build -t mydev/debian test
 
