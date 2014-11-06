@@ -2,7 +2,7 @@ FROM    debian:latest
 
 RUN    export DEBIAN_FRONTEND=noninteractive && \
         apt-get update && \
-        apt-get upgrade -y && \
+        apt-get upgrade -y
 RUN    echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee /etc/apt/sources.list.d/webupd8team-java.list && \
        echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list.d/webupd8team-java.list && \
        apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886
@@ -31,4 +31,4 @@ ENV LC_ALL     zh_CN.UTF-8
 ENV LANGUAGE   zh_CN
 
 #userage
-#docker build -t mydev/debian test
+#docker build -t mydev/debian mydebian
