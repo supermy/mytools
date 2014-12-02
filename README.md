@@ -156,7 +156,19 @@ qq交流群：178844602
         docker run -link zookeeper:ZK -i -p 8985:8983 -t makuk66/docker-solr \
         /bin/bash -c 'cd /opt/solr/example; java -DzkHost=$ZK_PORT_2181_TCP_ADDR:$ZK_PORT_2181_TCP_PORT -DnumShards=2 -jar start.jar'
         
-        
+ 
+应用场景：oracle java7 环境构建
+
+install boot2docker
+boot2docker up
+boot2docker ssh
+git clone https://github.com/supermy/mytools
+cd mytools
+docker build -t myjava7/debian myjava
+docker run -i -t myjava7/debian:latest
+>java -version
+
+
 ----------------------------------------------------------------------    
 集群todo
 
@@ -174,7 +186,8 @@ todo
     规则殷勤：drools 平台使用
     工作流：activiti
     云平台: 
-    o
+    
+    
 20141106
     mongodb-cluster ok
     mydebian ok
