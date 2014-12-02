@@ -1,6 +1,8 @@
 mytools
 =======
 
+qq交流群：178844602
+
 基于debian的images文件小；基于ubuntu的文件大。why
 
 应用场景：wordpress,mysql 
