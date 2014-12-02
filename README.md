@@ -200,10 +200,9 @@ boot2docker ssh -L 8000:localhost:8000
 docker run -i -t -p 8000:8000
 
 #Docker使用dnsmasq替代/etc/hosts解析
-http://knktc.com/2014/08/16/docker-use-dnsmasq-as-hosts/
 
  
-基于Docker，构造测试和生产环境。
+#基于Docker，构造测试和生产环境。
 base debian nginx(淘宝)+tomcat+memcache 集群 
 mongodb集群 
 mysql集群 
