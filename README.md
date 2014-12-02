@@ -1,9 +1,9 @@
 mytools
 =======
 
-基于debian的images文件小，但是速度慢；基于ubuntu的文件大但是速度快。why
+基于debian的images文件小；基于ubuntu的文件大。why
 
-应用场景：wordpress,mysql  性能不好
+应用场景：wordpress,mysql 
     下载安排
     docker pull mysql:latest
     docker pull wordpress:latest
@@ -21,7 +21,7 @@ mytools
     安装完成之后进入登陆见面
     http://127.0.0.1:8081/wp-login.php    
   
-应用场景：DB4Oracle  性能可以
+应用场景：DB4Oracle  性能可以  oracel-11g <<<***todo download***>>>
 
     docker pull wnameless/oracle-xe-11g:latest
     docker run -d -p 49160:22 -p 49161:1521 wnameless/oracle-xe-11g 
@@ -35,16 +35,28 @@ mytools
     boot2docker ssh -L 49166:localhost:49161   //49166是本机接收端口，49161是docker转出端口
     OracleSqlDeveloper 建立链接进行测试，成功。
     
+    docker pull filemon/oracle_11g:latest
+    docker run -d --name oracle -P filemon/oracle_11g
+    boot2docker ssh -L 1521:localhost:49159 
+    OracleSqlDeveloper
+    username-password:system/admin
+
+    
 应用场景：app-server tomcat 没有优化，没有集群
 
     docker pull tutum/tomcat
     启动服务
     docker run -d -p 8082:8080 -p 22 tutum/tomcat
     docker run -d -p 8080:8080 -e TOMCAT_PASS="mypass" tutum/tomcat  //制定口令
+    
     看tomcat日志
     docker logs e7de45dad550
     tomcat-server,admin:uo8FsDhjjuUk
     http://127.0.0.1:8082/manager/status
+    
+    boot2docker ssh -L 80:localhost:8080 
+    http://127.0.0.1/manager/status    admin/mypass
+
     
 应用场景：web-server nginx  可制定显示内容和优化配置文件  性能 ok
     docker pull nginx:latest //https://registry.hub.docker.com/_/nginx/
@@ -85,6 +97,8 @@ mytools
     docker run --name memcached -d -p 50006:11211 sylvainlasnier/memcached
     docker run --rm -ti -e MAX_MEM=1024,MAX_CONN=10000 sylvainlasnier/memcached
     
+    docker run -d -P  -ti -e MAX_MEM=1024,MAX_CONN=10000 sylvainlasnier/memcached
+    
     $nc 127.0.0.1 50006
     stats
     
@@ -96,6 +110,51 @@ mytools
         redis.conf /data/
         CMD [ "redis-server", "/data/redis.conf" ]
     docker run --volumes-from datacontainer --name myredis redis
+    
+应用场景：云计算平台，cloudera   hadoop+hbase+hive+zookeeper+mahout
+        https://github.com/cloudera/cdh-twitter-example
+        https://github.com/wikimedia/puppet-cdh
+        
+        https://github.com/stackdio-formulas/cdh5-formula
+        
+        mahout:
+           https://github.com/apache/mahout
+           https://github.com/bsspirit/maven_mahout_template
+           https://github.com/tdunning/MiA
+           
+        #初始化环境
+        docker pull oddpoet/hbase-cdh5:latest
+        docker run -d  -P  oddpoet/hbase-cdh5
+        #影射端口访问
+        boot2docker ssh -L 65010:127.0.0.1:49155
+        http://localhost:65010/ 
+        
+        docker run --name cdh -t -d -p 8020:8020 -p 50070:50070 -p 50010:50010 -p 50020:50020 -p 50075:50075 -p 8030:8030 -p 8031:8031 -p 8032:8032 -p 8033:8033 -p 8088:8088 -p 8040:8040 -p 8042:8042 -p 10020:10020 -p 19888:19888 chalimartines/cdh5-pseudo-distributed
+        docker run --name cdh -t -d -P chalimartines/cdh5-pseudo-distributed
+
+应用场景：全文检索 solr  未完成
+
+        docker pull makuk66/docker-solr
+        docker run -it -p 8983:8983 -t makuk66/docker-solr
+        docker run -it -p 8983:8983 -p 7574:7574 makuk66/docker-solr \
+            /bin/bash -c "/opt/solr/bin/solr -e cloud; echo hit return to quit; read"
+             
+            
+        # run ZooKeeper, and define a name so we can link to it
+        docker run -name zookeeper -p 2181:2181 -p 2888:2888 -p 3888:3888 jplock/zookeeper
+
+        # run the first Solr node, with bootstrap parameters, and pass a link parameter to docker
+        # so we can use the ZK_* environment variables in the container to locate the ZooKeeper container
+        docker run -link zookeeper:ZK -i -p 8983:8983 -t makuk66/docker-solr \
+          /bin/bash -c 'cd /opt/solr/example; java -Dbootstrap_confdir=./solr/collection1/conf -Dcollection.configName=myconf -DzkHost=$ZK_PORT_2181_TCP_ADDR:$ZK_PORT_2181_TCP_PORT -DnumShards=2 -jar start.jar'
+        
+        # in separate sessions, run two more zookeepers
+        docker run -link zookeeper:ZK -i -p 8984:8983 -t makuk66/docker-solr \
+        /bin/bash -c 'cd /opt/solr/example; java -DzkHost=$ZK_PORT_2181_TCP_ADDR:$ZK_PORT_2181_TCP_PORT -DnumShards=2 -jar start.jar'
+        docker run -link zookeeper:ZK -i -p 8985:8983 -t makuk66/docker-solr \
+        /bin/bash -c 'cd /opt/solr/example; java -DzkHost=$ZK_PORT_2181_TCP_ADDR:$ZK_PORT_2181_TCP_PORT -DnumShards=2 -jar start.jar'
+        
+        
 ----------------------------------------------------------------------    
 集群todo
 
@@ -113,6 +172,12 @@ todo
     规则殷勤：drools 平台使用
     工作流：activiti
     云平台: 
+    o
+20141106
+    mongodb-cluster ok
+    mydebian ok
+    myjava7 ok
+    mysolr todo
     
 ******************************************************************
 #遇到的问题

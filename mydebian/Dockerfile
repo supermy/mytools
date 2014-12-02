@@ -15,7 +15,8 @@ RUN    apt-get update && \
         export LANGUAGE=zh_CN && \
         export LANG=zh_CN.UTF-8 && \
         export LC_ALL=zh_CN.UTF-8 && \
-        dpkg-reconfigure locales
+        dpkg-reconfigure locales && \
+        locale
 
 
 RUN	   apt-get install -y curl
@@ -28,7 +29,7 @@ RUN curl -o /usr/local/bin/gosu -SL 'https://github.com/tianon/gosu/releases/dow
 
 ENV LANG       zh_CN.UTF-8
 ENV LC_ALL     zh_CN.UTF-8
-ENV LANGUAGE   zh_CN
+ENV LANGUAGE   zh_CN:zh
 
 #userage
 #docker build -t mydev/debian mydebian

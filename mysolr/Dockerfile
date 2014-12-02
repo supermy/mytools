@@ -1,4 +1,4 @@
-FROM    mydev/oracle-java7
+FROM    myjava7/debian
 
 ENV SOLR_VERSION 4.10.2
 ENV SOLR solr-$SOLR_VERSION
