@@ -131,6 +131,7 @@ qq交流群：178844602
         boot2docker ssh -L 65010:127.0.0.1:49155
         http://localhost:65010/ 
         
+        #hdfs://master:8020/
         docker run --name cdh -t -d -p 8020:8020 -p 50070:50070 -p 50010:50010 -p 50020:50020 -p 50075:50075 -p 8030:8030 -p 8031:8031 -p 8032:8032 -p 8033:8033 -p 8088:8088 -p 8040:8040 -p 8042:8042 -p 10020:10020 -p 19888:19888 chalimartines/cdh5-pseudo-distributed
         docker run --name cdh -t -d -P chalimartines/cdh5-pseudo-distributed
 
@@ -164,7 +165,7 @@ boot2docker up
 boot2docker ssh
 git clone https://github.com/supermy/mytools
 cd mytools
-docker build -t myjava7/debian myjava
+docker build -t myjava7/debian myjava7
 docker run -i -t myjava7/debian:latest
 >java -version
 
@@ -187,7 +188,13 @@ todo
     工作流：activiti
     云平台: 
     
-    
+20150120
+    Fig 主要用来跟 Docker 一起来构建基于 Docker 的复杂应用，Fig 通过一个配置文件来管理多个Docker容器，非常适合组合使用多个容器进行开发的场景。
+    安装配置fig:
+    1.brew install fig
+    2.$(boot2docker shellinit),或将脚本加入到.bash_profile中
+    3.建立测试目录env-docker,测试http://www.fig.sh/index.html
+
 20141106
     mongodb-cluster ok
     mydebian ok
