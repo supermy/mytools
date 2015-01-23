@@ -1,0 +1,82 @@
+#启动web,启动较慢，需要耐心等待一会儿
+##刷新：http://192.168.59.103/java/manager/status?org.apache.catalina.filters.CSRF_NONCE=66179530393A7744F81BD1EDAE5E6DF2
+##观察：Hostname的值与IP每次刷新都变动，说明集群成功。
+
+web:
+  image: mynginx_web
+  links:
+    - mytomcat1
+    - mytomcat2
+  ports:
+    - "80:80"
+  volumes_from:
+    - data
+
+#常用工具集合
+data:
+  image: busybox
+  command: /bin/true
+  volumes:
+      - /Users/moyong/docker-share/www/:/data/www/
+
+#启动tomcat
+mytomcat1:
+  image: mytomcat_app
+  environment:
+    TOMCAT_PASS: admin
+  links:
+    - dbinit
+    - db:mysql
+    - memcache1
+    - memcache2
+  ports:
+    - "8080:8080"
+
+#启动tomcat
+mytomcat2:
+  image: mytomcat_app
+  environment:
+    TOMCAT_PASS: admin
+  links:
+    - dbinit
+    - db:mysql
+    - memcache1
+    - memcache2
+  ports:
+    - "8080"
+
+memcache1:
+  image: sylvainlasnier/memcached
+  environment:
+    MAX_MEM: 1024
+    MAX_CONN: 10000
+  ports:
+    - "11211"
+
+memcache2:
+  image: sylvainlasnier/memcached
+  environment:
+    MAX_MEM: 1024
+    MAX_CONN: 10000
+  ports:
+    - "11211"
+
+
+db:
+  image: mysql
+  environment:
+    MYSQL_USER: java
+    MYSQL_PASSWORD: java
+    MYSQL_DATABASE: javatest
+    MYSQL_ROOT_PASSWORD: mysql
+  ports:
+    - "3306"
+
+dbinit:
+  image: mysql
+  entrypoint: /bin/bash
+  volumes:
+    - .:/host
+  command: -c "sleep 8; mysql -u java --password=java -h mysql javatest < /host/init.sql; exit 0"
+  links:
+    - db:mysql

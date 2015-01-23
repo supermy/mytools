@@ -2,7 +2,28 @@ FROM    debian:latest
 
 MAINTAINER jamesmo <springclick@gmail.com>
 
+RUN sed -i '1,3d'   /etc/apt/sources.list
+RUN echo '#hello'>> /etc/apt/sources.list
+
+RUN sed -i '1a \
+    deb http://mirrors.163.com/debian/ wheezy main non-free contrib \n \
+    deb http://mirrors.163.com/debian/ wheezy-proposed-updates main contrib non-free \n \
+    deb http://mirrors.163.com/debian-security/ wheezy/updates main contrib non-free \n \
+    deb-src http://mirrors.163.com/debian/ wheezy main non-free contrib \n \
+    deb-src http://mirrors.163.com/debian/ wheezy-proposed-updates main contrib non-free \n \
+    deb-src http://mirrors.163.com/debian-security/ wheezy/updates main contrib non-free \n \
+    deb http://ftp.sjtu.edu.cn/debian/ wheezy main non-free contrib \n \
+    deb http://ftp.sjtu.edu.cn/debian/ wheezy-proposed-updates main contrib non-free \n \
+    deb http://ftp.sjtu.edu.cn/debian-security/ wheezy/updates main contrib non-free \n \
+    deb-src http://ftp.sjtu.edu.cn/debian/ wheezy main non-free contrib \n \
+    deb-src http://ftp.sjtu.edu.cn/debian/ wheezy-proposed-updates main contrib non-free \n \
+    deb-src http://ftp.sjtu.edu.cn/debian-security/ wheezy/updates main contrib non-free \n \
+    ' /etc/apt/sources.list
+
+RUN cat /etc/apt/sources.list
+
 RUN apt-get -qq update
+
 RUN apt-get -qqy install gcc libpcre3 libpcre3-dev openssl libssl-dev make wget libreadline-dev libncurses-dev graphicsmagick
 
 WORKDIR /tmp
@@ -34,7 +55,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 EXPOSE 80 443
 
-CMD ["/sbin/my_init"]
+CMD ["/etc/my_init.d/nginx.sh"]
 
 #userage
-#docker build -t mynginx/debian mynginx
+#docker run -d -p 8080:80 --name test -v /home/utgard/www/:/data/www/ mynginx_app

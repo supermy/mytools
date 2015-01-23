@@ -4,6 +4,35 @@ mytools
 qq交流群：178844602
 
 基于debian的images文件小；基于ubuntu的文件大。why
+Dockerfile:
+    RUN是在building image时会运行的指令, 在Dockerfile中可以写多条RUN指令.
+    CMD和ENTRYPOINT则是在运行container 时会运行的指令, 都只能写一条, 如果写了多条, 则最后一条生效.
+    CMD和ENTRYPOINT的区别是:
+    CMD在运行时会被command覆盖, ENTRYPOINT不会被运行时的command覆盖, 但是也可以指定.
+    CMD和ENTRYPOINT一般用于制作具备后台服务的image, 例如apache, database等. 在使用这种image启动container时, 自动启动服务.
+    ENV 命令
+        用于设置环境变量
+        ENV <key> <value>
+        设置了后，后续的RUN命令都可以使用
+    ADD 命令
+        从src复制文件到container的dest路径:
+        ADD <src> <dest>
+    VOLUME 命令
+        VOLUME ["<mountpoint>"]
+        如:
+        VOLUME ["/data"]
+        创建一个挂载点用于共享目录
+    WORKDIR 命令
+        WORKDIR /path/to/workdir
+        配置RUN, CMD, ENTRYPOINT 命令设置当前工作路径
+        可以设置多次，如果是相对路径，则相对前一个 WORKDIR 命令
+    USER 命令
+        比如指定 memcached 的运行用户，可以使用上面的 ENTRYPOINT 来实现:
+        ENTRYPOINT ["memcached", "-u", "daemon"]
+        更好的方式是：
+        ENTRYPOINT ["memcached"]
+        USER daemon
+
 
 应用场景：wordpress,mysql 
     下载安排
@@ -187,7 +216,16 @@ todo
     规则殷勤：drools 平台使用
     工作流：activiti
     云平台: 
-    
+
+20150123
+    删除无效镜像 docker images |grep none|awk '{print $3}'|xargs docker rmi
+    增加mynginx镜像
+        目录共享：通过主目录共享 $HOME/docker-share
+    移入mytomcat镜像源码
+
+    web+app(mytomcat,mynginx)
+        fig-docker-nginx-tomcat-memcached-mysql 集群脚本完成,测试ok
+
 20150120
     Fig 主要用来跟 Docker 一起来构建基于 Docker 的复杂应用，Fig 通过一个配置文件来管理多个Docker容器，非常适合组合使用多个容器进行开发的场景。
     安装配置fig:
