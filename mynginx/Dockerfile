@@ -48,6 +48,7 @@ ENV HOME /root
 RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
 
 RUN mkdir -p /etc/my_init.d
+COPY nginx.d /usr/local/nginx/conf/nginx.d
 ADD nginx.sh /etc/my_init.d/nginx.sh
 RUN chmod 755 /etc/my_init.d/nginx.sh
 

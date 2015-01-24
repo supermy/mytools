@@ -12,7 +12,8 @@ data:
   command: /bin/true
   volumes:
       - /Users/moyong/docker-share/www/:/data/www/
-
+      - /Users/moyong/docker-share/logs/web/:/usr/local/nginx/logs/
+      #- /Users/moyong/docker-share/conf/nginx/:/usr/local/nginx/conf/nginx.d/ #配置文件,fix.me
 # echo 'hello'>index.html
 #docker run -d -p 8080:80 --name testnginx -v /home/utgard/www/:/data/www/ mynginx_app
 #docker run -d -p 8080:80 --name testnginx -v /var/www/:/data/www/ mynginx_app

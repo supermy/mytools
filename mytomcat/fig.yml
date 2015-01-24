@@ -45,4 +45,14 @@ app:
     TOMCAT_PASS: admin
   ports:
     - "8080:8080"
+  volumes_from:
+    - data
 
+#影响内置的webapps/dbtest/,copy2/Users/moyong/docker-share/app/
+data:
+  image: busybox
+  command: /bin/true
+  volumes:
+      - /Users/moyong/docker-share/app/:/tomcat/webapps/ #影响内置的应用程序，去掉可以恢复
+      - /Users/moyong/docker-share/logs/app/:/tomcat/logs/
+      #- /Users/moyong/docker-share/conf/tomcat/:/tomcat/conf/ #影响内置的配置文件,调试时候可用

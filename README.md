@@ -216,7 +216,11 @@ todo
     规则殷勤：drools 平台使用
     工作流：activiti
     云平台: 
-
+20150124
+    docker run -v /usr/local/bin:/target jpetazzo/nsenter:latest
+    nsenter（无需sshd、无需attach也可以登录容器）
+    docker images|grep none|awk '{print $3}'|xargs docker rmi
+    
 20150123
     删除无效镜像 docker images |grep none|awk '{print $3}'|xargs docker rmi
     增加mynginx镜像

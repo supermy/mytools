@@ -18,6 +18,9 @@ data:
   command: /bin/true
   volumes:
       - /Users/moyong/docker-share/www/:/data/www/
+      - /Users/moyong/docker-share/logs/web/:/usr/local/nginx/logs/
+      - /Users/moyong/docker-share/app/:/tomcat/webapps/
+      - /Users/moyong/docker-share/logs/app/:/tomcat/logs/
 
 #启动tomcat
 mytomcat1:
