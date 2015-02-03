@@ -1,0 +1,40 @@
+#单节点，高可用，节点只能是奇数
+zookeeper:
+  image: jplock/zookeeper
+  ports: 
+    - "2181:2181"
+
+##消息队列，配置ip and port
+kafka1:
+  image: wurstmeister/kafka:latest
+  ports:
+    - "9092:9092"
+  links:
+    - zookeeper:zk
+  environment:
+    KAFKA_BROKER_ID: 1
+    KAFKA_ADVERTISED_HOST_NAME: 192.168.59.103
+    KAFKA_ADVERTISED_PORT: 9092
+
+##消息队列，配置ip and port
+kafka2:
+  image: wurstmeister/kafka:latest
+  ports:
+    - "9093:9092"
+  links:
+    - zookeeper:zk
+  environment:
+    KAFKA_BROKER_ID: 2
+    KAFKA_ADVERTISED_HOST_NAME: 192.168.59.103
+    KAFKA_ADVERTISED_PORT: 9093
+
+#及时消息
+#注意端口
+#启动fig start/fig stop
+#fig scale kafka1=2
+#ref http://alvinhenrick.com/2014/08/18/apache-storm-and-kafka-cluster-with-docker/
+#kafka-topics.sh --create --zookeeper 192.168.59.103:2181 --replication-factor 1 --partitions 1 --topic test
+#kafka-topics.sh --describe --topic test --zookeeper 192.168.59.103:2181
+#kafka-topics.sh --list --zookeeper 192.168.59.103:2181
+#kafka-console-producer.sh --broker-list 192.168.59.103:9092,192.168.59.103:9093 --topic test
+#kafka-console-consumer.sh --zookeeper 192.168.59.103:2181 --topic test --from-beginning
