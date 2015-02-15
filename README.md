@@ -211,16 +211,34 @@ docker run -i -t CONTAINER_ID /bin/bash
 
 ******************************************************************
 todo 
-    oracle-java7环境
-    全文检索：solr 环境 含中文分词
     规则殷勤：drools 平台使用
     工作流：activiti
-    云平台: 
+    云平台:
+
+20150206
+    mysolr带中文分词，基于solr4.10.2版本;solr自带运行环境。
+
+20150205
+    实时消息队列 mykafka
+    /mystorm/
+    即时通讯 myim
+    
 20150124
     docker run -v /usr/local/bin:/target jpetazzo/nsenter:latest
-    nsenter（无需sshd、无需attach也可以登录容器）
+        nsenter（无需sshd、无需attach也可以登录容器）
+
     docker images|grep none|awk '{print $3}'|xargs docker rmi
-    
+
+    web+app(mytomcat,mynginx)
+        tomcat and nginx 发布目录和日志绑定到宿主机
+
+    hadoop+hbase+hive平台(version:1.21,2.10)
+        kafuka应用
+        mahout应用
+
+     mydebian/myjava7重新定义，测试ok。
+     
+
 20150123
     删除无效镜像 docker images |grep none|awk '{print $3}'|xargs docker rmi
     增加mynginx镜像

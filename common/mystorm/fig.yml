@@ -1,0 +1,36 @@
+#单节点，高可用，节点只能是奇数
+zookeeper:
+  image: jplock/zookeeper
+  ports: 
+    - "2181:2181"
+
+#storm服务
+nimbus:
+  image: wurstmeister/storm-nimbus:0.9.2
+  ports:
+    - "3773:3773"
+    - "3772:3772"
+    - "6627:6627"
+  links: 
+    - zookeeper:zk
+
+#storm服务
+supervisor:
+  image: wurstmeister/storm-supervisor:0.9.2
+  ports:
+    - "8000:8000"
+  links: 
+    - nimbus:nimbus
+    - zookeeper:zk
+
+#storm服务
+ui:
+  image: wurstmeister/storm-ui:0.9.2
+  ports:
+    - "8088:8080"
+  links: 
+    - nimbus:nimbus
+    - zookeeper:zk
+
+#Supervisor Log ==> http://192.168.59.103:8000/log?file=supervisor.log
+#Storm UI ==> http://192.168.59.103:8088/index.html

@@ -1,4 +1,4 @@
-FROM mydev/debian:latest
+FROM mydebian_base:latest
 
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
 RUN groupadd -r mongodb && useradd -r -g mongodb mongodb
@@ -16,6 +16,8 @@ ENV MONGO_VERSION 2.6.5
 
 #http://127.0.0.1/mongodb-linux-x86_64-2.6.5.tgz
 #curl -SL https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-2.6.5.tgz -o mongo.tgz
+#COPY mongodb-linux-x86_64-2.6.5.gz mongo.tgz
+#RUN ls root  \
 RUN curl -SL "https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-$MONGO_VERSION.tgz" -o mongo.tgz \
 	&& curl -SL "https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-$MONGO_VERSION.tgz.sig" -o mongo.tgz.sig \
 	&& gpg --verify mongo.tgz.sig \
@@ -29,5 +31,3 @@ VOLUME /data/db
 
 EXPOSE 27017
 #EXPOSE 27018
-
-ENTRYPOINT ["mongod"]

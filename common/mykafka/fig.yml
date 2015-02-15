@@ -1,4 +1,8 @@
 #单节点，高可用，节点只能是奇数
+base:
+  build: .
+
+
 zookeeper:
   image: jplock/zookeeper
   ports: 
@@ -15,6 +19,8 @@ kafka1:
     KAFKA_BROKER_ID: 1
     KAFKA_ADVERTISED_HOST_NAME: 192.168.59.103
     KAFKA_ADVERTISED_PORT: 9092
+    #KAFKA_MESSAGE_MAX_BYTES: 2000000
+    KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
 
 ##消息队列，配置ip and port
 kafka2:
@@ -27,6 +33,8 @@ kafka2:
     KAFKA_BROKER_ID: 2
     KAFKA_ADVERTISED_HOST_NAME: 192.168.59.103
     KAFKA_ADVERTISED_PORT: 9093
+    #KAFKA_MESSAGE_MAX_BYTES: 2000000
+    KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
 
 ##消息队列，配置ip and port
 kafka3:
@@ -39,6 +47,8 @@ kafka3:
     KAFKA_BROKER_ID: 3
     KAFKA_ADVERTISED_HOST_NAME: 192.168.59.103
     KAFKA_ADVERTISED_PORT: 9094
+    #KAFKA_MESSAGE_MAX_BYTES: 2000000
+    KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
 
 #及时消息
 #注意端口

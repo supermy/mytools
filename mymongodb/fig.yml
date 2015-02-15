@@ -1,0 +1,153 @@
+#常用工具集合  需要先删除原有目录的数据
+#data11:
+#  image: busybox
+#  command: /bin/true
+#  volumes:
+#      - /Users/moyong/docker-share/data/mongodb/11/:/data/db/
+#data12:
+#  image: busybox
+#  command: /bin/true
+#  volumes:
+#      - /Users/moyong/docker-share/data/mongodb/12:/data/db/
+#data13:
+#  image: busybox
+#  command: /bin/true
+#  volumes:
+#      - /Users/moyong/docker-share/data/mongodb/13:/data/db/
+#data21:
+#  image: busybox
+#  command: /bin/true
+#  volumes:
+#      - /Users/moyong/docker-share/data/mongodb/21:/data/db/
+#data22:
+#  image: busybox
+#  command: /bin/true
+#  volumes:
+#      - /Users/moyong/docker-share/data/mongodb/22:/data/db/
+#data23:
+#  image: busybox
+#  command: /bin/true
+#  volumes:
+#      - /Users/moyong/docker-share/data/mongodb/23:/data/db/
+
+
+
+######
+##集群的复制集1
+rs11:
+    image: base_mongo
+    command: mongod --noprealloc --smallfiles --replSet rs1 --rest --httpinterface
+    ports:
+      - "27018:27017"
+#    volumes_from:
+#      - data11
+
+rs12:
+    image: base_mongo
+    command: mongod --noprealloc --smallfiles --replSet rs1 --rest --httpinterface
+    ports:
+      - "27017"
+
+rs13:
+    image: base_mongo
+    command: mongod --noprealloc --smallfiles --replSet rs1 --rest --httpinterface
+    ports:
+      - "27017"
+
+###集群的复制集2
+rs21:
+    image: base_mongo
+    command: mongod --noprealloc --smallfiles --replSet rs2 --rest --httpinterface
+    ports:
+      - "27019:27017"
+
+rs22:
+    image: base_mongo
+    command: mongod --noprealloc --smallfiles --replSet rs2 --rest --httpinterface
+    ports:
+      - "27017"
+    links:
+      - rs21
+
+rs23:
+    image: base_mongo
+    command: mongod --noprealloc --smallfiles --replSet rs2 --rest --httpinterface
+    ports:
+      - "27017"
+    links:
+      - rs21
+
+###配置文件集群
+##docker run --name cfg1 -P -d mydev/mongodb --noprealloc --smallfiles --configsvr --dbpath /data/db --port 27017
+##docker run --name cfg2 -P -d mydev/mongodb --noprealloc --smallfiles --configsvr --dbpath /data/db --port 27017
+##docker run --name cfg3 -P -d mydev/mongodb --noprealloc --smallfiles --configsvr --dbpath /data/db --port 27017
+cfg1:
+  image: base_mongo
+  command: mongod --noprealloc --smallfiles --configsvr --dbpath /data/db --port 27017
+  ports:
+    - "27017"
+cfg2:
+  image: base_mongo
+  command: mongod --noprealloc --smallfiles --configsvr --dbpath /data/db --port 27017
+  ports:
+    - "27017"
+cfg3:
+  image: base_mongo
+  command: mongod --noprealloc --smallfiles --configsvr --dbpath /data/db --port 27017
+  ports:
+    - "27017"
+#
+###创建一个路由
+##docker run --name mongos1 -P -d mydev/mongos --configdb 172.17.0.8:27017,172.17.0.9:27017,172.17.0.10:27017 --port 27017
+route1:
+  image: base_mongo
+  command: mongos --configdb cfg1:27017,cfg2:27017,cfg3:27017 --port 27017
+  links:
+    - cfg1
+    - cfg2
+    - cfg3
+  ports:
+    - "27017:27017"
+
+#初始化数据在物理主机进行
+
+
+#### 初始化复制集1
+##mongo --port <port>
+##rs.initiate()
+##rs.add("172.17.0.3:27017")
+#rs.add("172.17.0.4:27017")
+#rs.status()
+#mongo 127.0.0.1:3003/test –quiet test.js
+
+#dbinit1:
+#  image: base_mongo
+#  entrypoint: /bin/bash
+#  volumes:
+#    - .:/host
+#  command: -c "sleep 1;awk '{if($2~/^rs12$/){print $1}}' /etc/hosts|xargs -I@ sed -i 's/rs12/@/g' /host/initdb.js ;awk '{if($2~/^rs13$/){print $1}}' /etc/hosts|xargs -I@ sed -i 's/rs13/@/g' /host/initdb.js ;cat /host/initdb.js;mongo  rs11:27017/test --quiet /host/initdb.js; exit 0"
+#  links:
+#    - rs11
+#    - rs12
+#    - rs13
+
+
+#db:
+#  image: mysql
+#  environment:
+#    MYSQL_USER: java
+#    MYSQL_PASSWORD: java
+#    MYSQL_DATABASE: javatest
+#    MYSQL_ROOT_PASSWORD: mysql
+#  ports:
+#    - "3306:3306"
+#
+#dbinit:
+#  image: mysql
+#  entrypoint: /bin/bash
+#  volumes:
+#    - .:/host
+#  command: -c "sleep 18; mysql -u java --password=java -h mysql javatest < /host/init.sql; exit 0"
+#  links:
+#    - db:mysql
+

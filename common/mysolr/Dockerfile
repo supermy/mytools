@@ -10,6 +10,8 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
   tar -C /opt --extract --file /opt/$MYSOLR.tgz && \
   ln -s /opt/$MYSOLR /opt/solr
 
+RUN rm /opt/$MYSOLR.tgz
+
 RUN update-alternatives --install /usr/bin/jar jar /opt/jre/jdk1.7.0_75/bin/jar 100
 RUN mkdir -p /opt/solr/example/solr-webapp/webapp/ && \
     cd /opt/solr/example/solr-webapp/webapp/ && \
@@ -22,4 +24,3 @@ COPY lib/IKAnalyzer2012FF_u1.jar  /opt/solr/example/solr-webapp/webapp/WEB-INF/l
 EXPOSE 8983
 CMD ["/bin/bash", "-c", "/opt/solr/bin/solr -f"]
 
-#rm /opt/$MYSOLR.tgz && \
