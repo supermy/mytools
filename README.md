@@ -3,6 +3,23 @@ mytools
 
 qq交流群：178844602
 
+ig+docker:一键构造mongodb集群；一键集群数据初始化；参数二次优化
+http://t.cn/RwfruoO
+
+fig+docker:一键构造分布式运行环境；参数二次优化
+http://t.cn/RwfrDlM
+
+
+最近摸索的一些新东东放上来2：
+fig+docker:一键提供实时消息队列：kafka、实时运算：storm、应用程序发布：java、中文分词全文检索环境：solr
+http://t.cn/RwfdAjS
+
+fig+docker:一键提供hadoop伪分布式运行环境
+http://t.cn/RwfdiQm
+
+
+
+
 基于debian的images文件小；基于ubuntu的文件大。why
 Dockerfile:
     RUN是在building image时会运行的指令, 在Dockerfile中可以写多条RUN指令.
@@ -214,6 +231,9 @@ todo
     规则殷勤：drools 平台使用
     工作流：activiti
     云平台:
+20150216
+    docker run -d -P -m 1g redis
+    docker run -d -P -e constraint:storage=ssd mysql
 
 20150206
     mysolr带中文分词，基于solr4.10.2版本;solr自带运行环境。
