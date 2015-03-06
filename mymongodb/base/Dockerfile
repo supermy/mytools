@@ -12,10 +12,12 @@ RUN groupadd -r mongodb && useradd -r -g mongodb mongodb
 
 RUN gpg --keyserver pgp.mit.edu --recv-keys DFFA3DCF326E302C4787673A01C4E7FAAAB2461C
 
-ENV MONGO_VERSION 2.6.5
+#ENV MONGO_VERSION 2.6.5
+#ENV MONGO_VERSION 3.0.0
 
 #http://127.0.0.1/mongodb-linux-x86_64-2.6.5.tgz
 #curl -SL https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-2.6.5.tgz -o mongo.tgz
+#  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.0.0.tgz
 #COPY mongodb-linux-x86_64-2.6.5.gz mongo.tgz
 #RUN ls root  \
 RUN curl -SL "https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-$MONGO_VERSION.tgz" -o mongo.tgz \
