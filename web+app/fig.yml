@@ -1,7 +1,8 @@
 #启动web,启动较慢，需要耐心等待一会儿
 ##刷新：http://192.168.59.103/java/manager/status?org.apache.catalina.filters.CSRF_NONCE=66179530393A7744F81BD1EDAE5E6DF2
 ##观察：Hostname的值与IP每次刷新都变动，说明集群成功。
-
+#http://192.168.59.103/java/myweb/
+#http://192.168.59.103/java/dbtest/
 web:
   image: mynginx_web
   links:
