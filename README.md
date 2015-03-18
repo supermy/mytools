@@ -84,7 +84,7 @@ Dockerfile:
     OracleSqlDeveloper 建立链接进行测试，成功。
     
     docker pull filemon/oracle_11g:latest
-    docker run -d --name oracle -P filemon/oracle_11g
+    docker run -d -p 1521:1521 --name oracle  filemon/oracle_11g  
     boot2docker ssh -L 1521:localhost:49159 
     OracleSqlDeveloper
     username-password:system/admin
@@ -231,6 +231,10 @@ todo
     规则殷勤：drools 平台使用
     工作流：activiti
     云平台:
+20150318
+    增加rabbmitmq消息队列镜像包脚本；
+    增加spring-boot-app and rabbmitmq运行脚本；
+
 20150216
     docker run -d -P -m 1g redis
     docker run -d -P -e constraint:storage=ssd mysql
