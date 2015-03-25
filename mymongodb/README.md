@@ -1,6 +1,6 @@
 #2015-01-13
-#启动后台镜像
+https://github.com/supermy/mytools/tree/master/mymongodb
+#fig+docker一键启动mongodb副本集
 fig up -d
-#建立复制集
+#shell+js一键初始化复制集
 ssh initdb.ssh
-#初始化数据
