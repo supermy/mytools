@@ -1,35 +1,54 @@
 #常用工具集合  需要先删除原有目录的数据
-#data11:
-#  image: busybox
-#  command: /bin/true
-#  volumes:
-#      - /Users/moyong/docker-share/data/mongodb/11/:/data/db/
-#data12:
-#  image: busybox
-#  command: /bin/true
-#  volumes:
-#      - /Users/moyong/docker-share/data/mongodb/12:/data/db/
-#data13:
-#  image: busybox
-#  command: /bin/true
-#  volumes:
-#      - /Users/moyong/docker-share/data/mongodb/13:/data/db/
-#data21:
-#  image: busybox
-#  command: /bin/true
-#  volumes:
-#      - /Users/moyong/docker-share/data/mongodb/21:/data/db/
-#data22:
-#  image: busybox
-#  command: /bin/true
-#  volumes:
-#      - /Users/moyong/docker-share/data/mongodb/22:/data/db/
-#data23:
-#  image: busybox
-#  command: /bin/true
-#  volumes:
-#      - /Users/moyong/docker-share/data/mongodb/23:/data/db/
-
+data11:
+    image: busybox
+    command: /bin/true
+    volumes:
+        - /Users/moyong/docker-share/data/mongodb/11/:/data/db/
+data12:
+    image: busybox
+    command: /bin/true
+    volumes:
+        - /Users/moyong/docker-share/data/mongodb/12:/data/db/
+data13:
+    image: busybox
+    command: /bin/true
+    volumes:
+        - /Users/moyong/docker-share/data/mongodb/13:/data/db/
+data21:
+    image: busybox
+    command: /bin/true
+    volumes:
+        - /Users/moyong/docker-share/data/mongodb/21:/data/db/
+data22:
+    image: busybox
+    command: /bin/true
+    volumes:
+        - /Users/moyong/docker-share/data/mongodb/22:/data/db/
+data23:
+    image: busybox
+    command: /bin/true
+    volumes:
+        - /Users/moyong/docker-share/data/mongodb/23:/data/db/
+datacfg1:
+    image: busybox
+    command: /bin/true
+    volumes:
+        - /Users/moyong/docker-share/data/mongodb/cfg1:/data/db/
+datacfg2:
+    image: busybox
+    command: /bin/true
+    volumes:
+        - /Users/moyong/docker-share/data/mongodb/cfg2:/data/db/
+datacfg3:
+    image: busybox
+    command: /bin/true
+    volumes:
+        - /Users/moyong/docker-share/data/mongodb/cfg3:/data/db/
+dataroute:
+    image: busybox
+    command: /bin/true
+    volumes:
+        - /Users/moyong/docker-share/data/mongodb/route:/data/db/
 
 
 ######
@@ -39,6 +58,10 @@ rs11:
     command: mongod --noprealloc --smallfiles --replSet rs1 --rest --httpinterface
     ports:
       - "27018:27017"
+    links:
+      - cfg1
+      - cfg2
+      - cfg3
 #    volumes_from:
 #      - data11
 
@@ -47,12 +70,24 @@ rs12:
     command: mongod --noprealloc --smallfiles --replSet rs1 --rest --httpinterface
     ports:
       - "27017"
+    links:
+      - cfg1
+      - cfg2
+      - cfg3
+#    volumes_from:
+#      - data12
 
 rs13:
     image: base_mongo
     command: mongod --noprealloc --smallfiles --replSet rs1 --rest --httpinterface
     ports:
       - "27017"
+    links:
+      - cfg1
+      - cfg2
+      - cfg3
+#    volumes_from:
+#      - data13
 
 ###集群的复制集2
 rs21:
@@ -60,6 +95,12 @@ rs21:
     command: mongod --noprealloc --smallfiles --replSet rs2 --rest --httpinterface
     ports:
       - "27019:27017"
+    links:
+      - cfg1
+      - cfg2
+      - cfg3
+#    volumes_from:
+#      - data21
 
 rs22:
     image: base_mongo
@@ -67,7 +108,11 @@ rs22:
     ports:
       - "27017"
     links:
-      - rs21
+      - cfg1
+      - cfg2
+      - cfg3
+#    volumes_from:
+#      - data22
 
 rs23:
     image: base_mongo
@@ -75,39 +120,54 @@ rs23:
     ports:
       - "27017"
     links:
-      - rs21
+      - cfg1
+      - cfg2
+      - cfg3
+#    volumes_from:
+#      - data23
 
 ###配置文件集群
 ##docker run --name cfg1 -P -d mydev/mongodb --noprealloc --smallfiles --configsvr --dbpath /data/db --port 27017
 ##docker run --name cfg2 -P -d mydev/mongodb --noprealloc --smallfiles --configsvr --dbpath /data/db --port 27017
 ##docker run --name cfg3 -P -d mydev/mongodb --noprealloc --smallfiles --configsvr --dbpath /data/db --port 27017
 cfg1:
-  image: base_mongo
-  command: mongod --noprealloc --smallfiles --configsvr --dbpath /data/db --port 27017
-  ports:
-    - "27017"
+    image: base_mongo
+    command: mongod --noprealloc --smallfiles --configsvr --dbpath /data/db --port 27017
+    ports:
+      - "27017"
+#    volumes_from:
+#      - datacfg1
+
 cfg2:
-  image: base_mongo
-  command: mongod --noprealloc --smallfiles --configsvr --dbpath /data/db --port 27017
-  ports:
-    - "27017"
+    image: base_mongo
+    command: mongod --noprealloc --smallfiles --configsvr --dbpath /data/db --port 27017
+    ports:
+      - "27017"
+#    volumes_from:
+#      - datacfg2
+
 cfg3:
-  image: base_mongo
-  command: mongod --noprealloc --smallfiles --configsvr --dbpath /data/db --port 27017
-  ports:
-    - "27017"
+    image: base_mongo
+    command: mongod --noprealloc --smallfiles --configsvr --dbpath /data/db --port 27017
+    ports:
+      - "27017"
+#    volumes_from:
+#      - datacfg3
+
 #
 ###创建一个路由
 ##docker run --name mongos1 -P -d mydev/mongos --configdb 172.17.0.8:27017,172.17.0.9:27017,172.17.0.10:27017 --port 27017
 route1:
-  image: base_mongo
-  command: mongos --configdb cfg1:27017,cfg2:27017,cfg3:27017 --port 27017
-  links:
-    - cfg1
-    - cfg2
-    - cfg3
-  ports:
-    - "27017:27017"
+    image: base_mongo
+    command: mongos --configdb cfg1:27017,cfg2:27017,cfg3:27017 --port 27017
+    links:
+      - cfg1
+      - cfg2
+      - cfg3
+    ports:
+      - "27017:27017"
+#    volumes_from:
+#      - dataroute
 
 #初始化数据在物理主机进行
 

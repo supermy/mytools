@@ -1,6 +1,6 @@
 printjson(1);
-sh.addShard("rs1/172.17.2.241:27017");
-sh.addShard("rs2/172.17.2.233:27017");
+sh.addShard("rs1/172.17.0.178:27017");
+sh.addShard("rs2/172.17.0.172:27017");
 sh.status();
 
 db.runCommand( { listshards : 1 } );
