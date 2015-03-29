@@ -1,0 +1,38 @@
+#docker pull probablyfine/flume
+#docker run \
+#  -e FLUME_AGENT_NAME=someagent \
+#  -e FLUME_CONF_FILE=/var/tmp/flume.conf \
+#  my-flume-image
+base:
+  build: .
+  environment:
+    FLUME_AGENT_NAME: a1
+    FLUME_CONF_DIR: /opt/flume/conf
+    FLUME_CONF_FILE: /var/tmp/flume.conf.mykafka
+    #FLUME_CONF_FILE: /var/tmp/flume.conf
+
+  ports:
+    - "44445:44444"
+  links:
+    - kafka1
+
+##消息队列，配置ip and port
+kafka1:
+  image: wurstmeister/kafka:latest
+  ports:
+    - "9092"
+  links:
+    - zk:zk1
+  environment:
+    KAFKA_BROKER_ID: 1
+    KAFKA_ADVERTISED_HOST_NAME: 192.168.59.103
+    KAFKA_ADVERTISED_PORT: 9092
+    #KAFKA_MESSAGE_MAX_BYTES: 2000000
+    KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+
+zk:
+  image: jplock/zookeeper:latest
+  ports:
+    - "2181"
+    - "2888"
+    - "3888"

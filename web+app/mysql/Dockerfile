@@ -1,1 +1,2 @@
-FROM    mysql:latest
+#转移到common/mysql
+#FROM    mysql:latest

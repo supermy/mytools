@@ -1,0 +1,48 @@
+
+# Name the components on this agent
+a1.sources = r1
+a1.sinks = k1 k2
+a1.channels = c1
+
+# Describe/configure the source
+#a1.sources.r1.type = netcat
+#a1.sources.r1.bind = localhost
+#a1.sources.r1.port = 44444
+a1.sources.r1.type = exec
+a1.sources.r1.command =  tail -F /usr/local/var/log/nginx/access.log
+a1.sources.r1.batchSize = 3
+
+# Describe the sink
+# a1.sinks.k1.type = logger
+#a1.channels = c1
+#a1.sinks = k1
+a1.sinks.k1.type = hbase
+a1.sinks.k1.table = foo_table3
+a1.sinks.k1.columnFamily = bar_cf
+a1.sinks.k1.serializer = org.apache.flume.sink.hbase.RegexHbaseEventSerializer
+a1.sinks.k1.channel = c1
+
+a1.sinks.k2.type = logger
+
+#
+#a1.channels = c1
+#a1.sinks = k1
+#a1.sinks.k1.type = asynchbase
+#a1.sinks.k1.table = foo_table
+#a1.sinks.k1.columnFamily = bar_cf
+#a1.sinks.k1.serializer = org.apache.flume.sink.hbase.SimpleAsyncHbaseEventSerializer
+#a1.sinks.k1.channel = c1
+
+
+# Use a channel which buffers events in memory
+a1.channels.c1.type = memory
+a1.channels.c1.capacity = 1000
+a1.channels.c1.transactionCapacity = 100
+
+# Bind the source and sink to the channel
+a1.sources.r1.channels = c1
+a1.sinks.k1.channel = c1
+a1.sinks.k2.channel = c1
+
+#sinks,,hbasehbase shell.
+#bin/flume-ng agent --conf conf --conf-file conf/flume.conf.hbase --name a1 -Dflume.root.logger=INFO,console

@@ -9,6 +9,6 @@ mq:
     - "5672:5672"
 
 app:
-  image: spring_app
+  image: spring_rabbitmq
   links:
     - mq

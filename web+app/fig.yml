@@ -30,7 +30,7 @@ mytomcat1:
     TOMCAT_PASS: admin
   links:
     - dbinit
-    - db:mysql
+    - db:mysql_base
     - memcache1
     - memcache2
   ports:
@@ -43,7 +43,7 @@ mytomcat2:
     TOMCAT_PASS: admin
   links:
     - dbinit
-    - db:mysql
+    - db:mysql_base
     - memcache1
     - memcache2
   ports:
@@ -67,7 +67,7 @@ memcache2:
 
 
 db:
-  image: mysql
+  image: mysql_base
   environment:
     MYSQL_USER: java
     MYSQL_PASSWORD: java
@@ -77,10 +77,10 @@ db:
     - "3306"
 
 dbinit:
-  image: mysql
+  image: mysql_base
   entrypoint: /bin/bash
   volumes:
     - .:/host
   command: -c "sleep 8; mysql -u java --password=java -h mysql javatest < /host/init.sql; exit 0"
   links:
-    - db:mysql
+    - db:mysql_base

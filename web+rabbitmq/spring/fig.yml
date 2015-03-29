@@ -1,2 +1,2 @@
-app:
+rabbitmq:
   build: .

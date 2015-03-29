@@ -231,9 +231,19 @@ todo
     规则殷勤：drools 平台使用
     工作流：activiti
     云平台:
+20150329
+    flume+kafka-storm-hbase:docker4flume+docker4kafa  完成
+
+20150328
+    完成hadoop+hbse4docker镜像脚本；
+    升级mongodb3.0.1镜像；
+    
+
 20150318
     增加rabbmitmq消息队列镜像包脚本；
     增加spring-boot-app and rabbmitmq运行脚本；
+    增加spring-boot-app and redis运行脚本；
+
 
 20150216
     docker run -d -P -m 1g redis
