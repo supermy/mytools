@@ -21,7 +21,7 @@ kafka是一种高吞吐量的分布式发布订阅消息系统，她有如下特
 
 ### 常用场景1 实时消息传递
 
-> 从flume获取数据,放到指定的topic；
+> 从flume获取数据,放到指定的topic；(配置文件使用约定link-name:kafka1)
 >
 > 使用console获取消费者数据，从指定的topic；
 >
