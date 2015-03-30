@@ -1,4 +1,3 @@
-
 # Name the components on this agent
 a1.sources = r1
 a1.sinks = k1
@@ -6,13 +5,16 @@ a1.channels = c1
 
 # Describe/configure the source
 #a1.sources.r1.type = netcat
-#a1.sources.r1.bind = localhost
+#a1.sources.r1.bind = 0.0.0.0
 #a1.sources.r1.port = 44444
+
 a1.sources.r1.type = exec
-a1.sources.r1.command =  tail -F /usr/local/var/log/nginx/access.log
+#a1.sources.r1.command =  tail -F /usr/local/var/log/nginx/access.log
+#未安装nxing,暂时用secure代替
+a1.sources.r1.command =  tail -F /var/log/dpkg.log
 a1.sources.r1.batchSize = 3
 
-# Describe the sink
+# Describe the sink 输出到日志
 a1.sinks.k1.type = logger
 
 # Use a channel which buffers events in memory

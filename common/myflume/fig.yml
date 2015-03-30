@@ -1,0 +1,18 @@
+base:
+  build: .
+  environment:
+    FLUME_AGENT_NAME: a1
+    FLUME_CONF_DIR: /opt/flume/conf
+    FLUME_CONF_FILE: /var/tmp/flume.conf.netcat
+  ports:
+    - "44445:44444"
+
+
+base1:
+  image: myflume_base:latest
+  environment:
+    FLUME_AGENT_NAME: a1
+    FLUME_CONF_DIR: /opt/flume/conf
+    FLUME_CONF_FILE: /var/tmp/flume.conf.nginx
+  ports:
+    - "44446:44444"
