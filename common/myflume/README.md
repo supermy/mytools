@@ -88,10 +88,10 @@ storage（file，HDFS等）。
 > 进入到当前目录
 > ## fig up -d && fig ps
 ### 观察日志
->telnet 192.168.59.103 44445
->输入abc
->fig logs base
->显示abc
->显示dokg.log日志信息
->fig logs base1
+> telnet 192.168.59.103 44445
+> 输入abc
+> fig logs base
+> 显示abc
+> 显示dokg.log日志信息
+> fig logs base1
 > ## 显示 cde
