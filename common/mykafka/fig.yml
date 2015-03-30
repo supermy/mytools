@@ -50,7 +50,6 @@ kafka3:
     #KAFKA_MESSAGE_MAX_BYTES: 2000000
     KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
 
-#及时消息
 #注意端口
 #启动fig start/fig stop
 #fig scale kafka1=2
@@ -59,3 +58,24 @@ kafka3:
 #kafka-topics.sh --list --zookeeper 192.168.59.103:2181
 #kafka-console-producer.sh --broker-list 192.168.59.103:9092,192.168.59.103:9093,192.168.59.103:9094 --topic test
 #kafka-console-consumer.sh --zookeeper 192.168.59.103:2181 --topic test --from-beginning
+
+
+#采集数据，传输给kafka
+flume1:
+  image: myflume_base:latest
+  environment:
+    FLUME_AGENT_NAME: producer
+    FLUME_CONF_DIR: /opt/flume/conf
+    FLUME_CONF_FILE: /var/tmp/flume.conf.mykafka
+  ports:
+    - "44447:44444"
+  links:
+    - kafka1
+
+#建立通道
+#kafka-topics.sh --create --zookeeper 192.168.59.103:2181 --replication-factor 1 --partitions 1 --topic mykafka
+#生产数据
+#telnet 192.168.59.103 44447
+#消费数据
+#kafka-console-consumer.sh --zookeeper 192.168.59.103:2181 --topic mykafka --from-beginning
+#ok,数据到消费端显示出来
