@@ -20,7 +20,10 @@ Flume-ng最明显的改动就是取消了集中管理配置的 Master 和 Zookee
 出数据现在由不同的工作线程处理（称为 Runner）。 在 Flume-og 中，读入线程同样做写出工作（除了故障重试）。如果写出慢的话（不是完全失败），
 它将阻塞 Flume 接收数据的能力。这种异步的设计使读入线程可以顺畅的工作而无需关注下游的任何问题。
 
-![alt text](/resource/UserGuide_image00.png "Title")
+为了保证可扩展性，Flume采用了多Master的方式。为了保证配置数据的一致性，Flume引入了ZooKeeper，用于保存配置数据，ZooKeeper本身可保证配
+置数据的一致性和高可用，另外，在配置数据发生变化时，ZooKeeper可以通知Flume Master节点。
+
+![alt text](resource/UserGuide_image00.png "Title")
 
 (1) 可靠性
 
