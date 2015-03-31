@@ -53,6 +53,7 @@
 
 ######
 ##集群的复制集1
+##--noprealloc 生产机发布的时候去掉此选项
 rs11:
     image: base_mongo
     command: mongod --storageEngine=wiredTiger --noprealloc --smallfiles --replSet rs1 --rest --httpinterface
