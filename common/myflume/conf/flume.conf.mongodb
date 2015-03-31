@@ -14,8 +14,8 @@ agent2.sinks.sink2.type = org.riderzen.flume.sink.MongoSink
 #也可以是docker-link-name
 agent2.sinks.sink2.host = 192.168.59.103
 agent2.sinks.sink2.port = 27017
-agent2.sinks.sink2.username = admin
-agent2.sinks.sink2.password =
+#agent2.sinks.sink2.username = test
+#agent2.sinks.sink2.password =
 agent2.sinks.sink2.model = single
 agent2.sinks.sink2.collection = events
 agent2.sinks.sink2.batch = 100
