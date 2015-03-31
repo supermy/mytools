@@ -211,3 +211,11 @@ route1:
 #  links:
 #    - db:mysql
 
+flume1:
+  image: myflume_base:latest
+  environment:
+    FLUME_AGENT_NAME: agent2
+    FLUME_CONF_DIR: /opt/flume/conf
+    FLUME_CONF_FILE: /var/tmp/flume.conf.mongodb
+  ports:
+    - "44449:44444"

@@ -23,6 +23,12 @@ Flume-ng最明显的改动就是取消了集中管理配置的 Master 和 Zookee
 为了保证可扩展性，Flume采用了多Master的方式。为了保证配置数据的一致性，Flume引入了ZooKeeper，用于保存配置数据，ZooKeeper本身可保证配
 置数据的一致性和高可用，另外，在配置数据发生变化时，ZooKeeper可以通知Flume Master节点。
 
+
+Flume OG:Flume original generation 即Flume 0.9.x版本
+Flume NG:Flume next generation ，即Flume 1.x版本
+对于 Flume NG ，它摒弃了Master和zookeeper，collector也没有了，web配置台也没有了，只剩下source，sink和channel，此时一个Agent的概念包括source,channel和sink，完全由一个分布式系统变成了传输工具。
+
+
 ![alt text](resource/UserGuide_image00.png "Title")
 
 (1) 可靠性
@@ -89,9 +95,15 @@ storage（file，HDFS等）。
 > ## fig up -d && fig ps
 ### 观察日志
 > telnet 192.168.59.103 44445
+>
 > 输入abc
+>
 > fig logs base
+>
 > 显示abc
+>
 > 显示dokg.log日志信息
+>
 > fig logs base1
+>
 > ## 显示 cde

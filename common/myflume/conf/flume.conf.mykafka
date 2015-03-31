@@ -9,7 +9,8 @@ producer.sources.s.port= 44444
 
 producer.sinks.r.type = org.apache.flume.plugins.KafkaSink
 #kafka interface
-producer.sinks.r.metadata.broker.list=192.168.59.103:9092
+#docker link names
+producer.sinks.r.metadata.broker.list=kafka1:9092
 producer.sinks.r.serializer.class=kafka.serializer.StringEncoder
 producer.sinks.r.request.required.acks=1
 producer.sinks.r.max.message.size=1000000

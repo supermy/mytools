@@ -1,105 +1,113 @@
-#8020        namenode RPC交互端口
-#8021        JT RPC交互端口
-#50030       mapred.job.tracker.http.address        JobTracker administrative web GUI
-##JOBTRACKER的HTTP服务器和端口
-#50070              dfs.http.address                             NameNode administrative web GUI
-##NAMENODE的HTTP服务器和端口
-#50010          dfs.datanode.address                   DataNode control port (each DataNode listens on this port and registers it with the  NameNode on startup)
-##DATANODE控制端口，主要用于DATANODE初始化时向NAMENODE提出注册和应答请求
-#50020          dfs.datanode.ipc.address               DataNode IPC port, used for block transfer
-##DATANODE的RPC服务器地址和端口
-#50060      mapred.task.tracker.http.address           Per TaskTracker web interface
-##TASKTRACKER的HTTP服务器和端口
-#50075          dfs.datanode.http.address                  Per   DataNode web interface
-##DATANODE的HTTP服务器和端口
-#50090            dfs.secondary.http.address             Per secondary NameNode web interface
-##辅助DATANODE的HTTP服务器和端口
-
-#HBase
-#HMaster 60010 hbase.master.info.port
-#HRegionServer 60030 hbase.regionserver.info.port
-
-#hadoop集群
+#hbase集群
 nn:
   image: nn_base:latest
+  environment:
+    HOSTNAME_NN: mynn
   ports:
     - "50070:50070"
     - "8020:8020"
     - "8021:8021"
     - "1022:22"
-
+  hostname: mynn
 
 dn1:
   image: dn_base:latest
   links:
-    - nn:namenode1
+    - nn:mynn
   environment:
-    HDFSNAMENODERPC_SERVICE_HOST: namenode1
+    HDFSNAMENODERPC_SERVICE_HOST: mynn
     HDFSNAMENODERPC_SERVICE_PORT: 8020
   ports:
     - "50075:50075"
+  hostname: mydn1
+
 
 dn2:
   image: dn_base:latest
   links:
-    - nn:namenode1
+    - nn:mynn
   environment:
-    HDFSNAMENODERPC_SERVICE_HOST: namenode1
+    HDFSNAMENODERPC_SERVICE_HOST: mynn
     HDFSNAMENODERPC_SERVICE_PORT: 8020
   ports:
     - "50076:50075"
-#
-#datanode3:
-#  image: bioshrek/hadoop-hdfs-datanode:cdh5
-#  links:
-#    - namenode:namenode1
-#  environment:
-#    HDFSNAMENODERPC_SERVICE_HOST: namenode1
-#    HDFSNAMENODERPC_SERVICE_PORT: 8020
-#  ports:
-#    - "50077:50075"
-#
+  hostname: mydn2
+
+
 zk:
   image: jplock/zookeeper:latest
   ports:
-    - "2181"
-    - "2888"
-    - "3888"
+    - "2181:2181"
+    - "2888:2888"
+    - "3888:3888"
 
 hb:
-  #image: bioshrek/hbase-master:cdh5
   image: hmaster_base:latest
   links:
-    - nn:namenode1
+    - nn:mynn
+    - dn1:mydn1
+    - dn2:mydn2
     - zk:zookeeper1
   environment:
     #HBASEMASTERIPC_SERVICE_PORT: 60000
     HBASEMASTERIPC_SERVICE_PORT_SERVICE_PORT: 60000
-    HDFSNAMENODERPC_SERVICE_HOST: namenode1
+    HDFSNAMENODERPC_SERVICE_HOST: mynn
     HDFSNAMENODERPC_SERVICE_PORT: 8020
     ZOOKEEPERCLIENT_SERVICE_HOST: zookeeper1
     ZOOKEEPERCLIENT_SERVICE_PORT: 2181
   ports:
     - "60010:60010"
+  hostname: hbasemasteripc
 
 rs:
-  #image: bioshrek/hbase-regionserver:cdh5
   image: hregionserver_base:latest
   links:
-    - nn:namenode2
+    - nn:mynn
+    - dn1:mydn1
+    - dn2:mydn2
     - zk:zookeeper2
-    - hb:hbase1
+    - hb:hbasemasteripc
   environment:
-    HBASEMASTERIPC_SERVICE_HOST: hbase1
+    HBASEMASTERIPC_SERVICE_HOST: hbasemasteripc
     HBASEMASTERIPC_SERVICE_PORT: 60010
     HBASEMASTERIPC_SERVICE_PORT_SERVICE_PORT: 60000
-    HDFSNAMENODERPC_SERVICE_HOST: namenode2
+    HDFSNAMENODERPC_SERVICE_HOST: mynn
     HDFSNAMENODERPC_SERVICE_PORT: 8020
     ZOOKEEPERCLIENT_SERVICE_HOST: zookeeper2
     ZOOKEEPERCLIENT_SERVICE_PORT: 2181
   ports:
     - "60030:60030"
+  hostname: hregionserver1
+
+
+#  volumes:
+#    - /Users/moyong/docker-share/data/hadoop/:/tmp/
+
+#初始化建立日志表
+#dbinit:
+#  image: hregionserver_base:latest
+#  entrypoint: /bin/bash
+#  command: -c "sudo -u hdfs sh /home/jamesmo//home/jamesmo/pre-start-hive.sh; exit 0"
+#  links:
+#    - rs
 
 #web namenode http://192.168.59.103:50075/
 #web hbase #web http://192.168.59.103:60010/
 #web regionserver http://192.168.59.103:60030/
+
+#hive 集成 hbase
+#hive 建表
+
+
+#采集数据，传输给kafka
+flume1:
+  image: myflume_base:latest
+  environment:
+    FLUME_AGENT_NAME: a1
+    FLUME_CONF_DIR: /opt/flume/conf
+    FLUME_CONF_FILE: /var/tmp/flume.conf.hbase
+  ports:
+    - "44448:44444"
+  links:
+    - zk:zk1
+

@@ -17,9 +17,6 @@ http://t.cn/RwfdAjS
 fig+docker:一键提供hadoop伪分布式运行环境
 http://t.cn/RwfdiQm
 
-
-
-
 基于debian的images文件小；基于ubuntu的文件大。why
 Dockerfile:
     RUN是在building image时会运行的指令, 在Dockerfile中可以写多条RUN指令.
@@ -69,7 +66,7 @@ Dockerfile:
     安装完成之后进入登陆见面
     http://127.0.0.1:8081/wp-login.php    
   
-应用场景：DB4Oracle  性能可以  oracel-11g <<<***todo download***>>>
+应用场景：DB4Oracle  性能可以  oracel-11g
 
     docker pull wnameless/oracle-xe-11g:latest
     docker run -d -p 49160:22 -p 49161:1521 wnameless/oracle-xe-11g 
@@ -90,7 +87,7 @@ Dockerfile:
     username-password:system/admin
 
     
-应用场景：app-server tomcat 没有优化，没有集群
+应用场景：app-server tomcat
 
     docker pull tutum/tomcat
     启动服务
@@ -132,7 +129,7 @@ Dockerfile:
     docker run --name some-nginx -v /some/nginx.conf:/etc/nginx/nginx.conf:ro -d nginx
     docker cp some-nginx:/etc/nginx/nginx.conf some/nginx.conf
     
-应用场景：nosql-mongodb 性能不错；没有集群
+应用场景：nosql-mongodb
     
     docker pull mongo:latest
     docker run --name some-mongo -d mongo
@@ -181,7 +178,7 @@ Dockerfile:
         docker run --name cdh -t -d -p 8020:8020 -p 50070:50070 -p 50010:50010 -p 50020:50020 -p 50075:50075 -p 8030:8030 -p 8031:8031 -p 8032:8032 -p 8033:8033 -p 8088:8088 -p 8040:8040 -p 8042:8042 -p 10020:10020 -p 19888:19888 chalimartines/cdh5-pseudo-distributed
         docker run --name cdh -t -d -P chalimartines/cdh5-pseudo-distributed
 
-应用场景：全文检索 solr  未完成
+应用场景：全文检索 solr 
 
         docker pull makuk66/docker-solr
         docker run -it -p 8983:8983 -t makuk66/docker-solr
@@ -216,23 +213,15 @@ docker run -i -t myjava7/debian:latest
 >java -version
 
 
-----------------------------------------------------------------------    
-集群todo
-
-# 第一个-d表示让容器在后台运行
-# 末尾的-D表示启动ssh的daemon模式，不然容器启动后立刻就变为停止状态了
-docker run -i -t --name mydebian debian:latest
-直接访问容器
-docker run -i -t CONTAINER_ID /bin/bash
 
 
 ******************************************************************
 todo 
     规则殷勤：drools 平台使用
     工作流：activiti
-    云平台:
+
 20150329
-    flume+kafka-storm-hbase:docker4flume+docker4kafa  完成
+    云平台:flume+kafka-storm-hbase:docker4flume+docker4kafa  完成
 
 20150328
     完成hadoop+hbse4docker镜像脚本；

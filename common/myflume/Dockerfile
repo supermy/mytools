@@ -1,4 +1,5 @@
 FROM probablyfine/flume:latest
+
 COPY conf /var/tmp/
 COPY lib /opt/flume/lib/
 

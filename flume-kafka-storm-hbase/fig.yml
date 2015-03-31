@@ -165,7 +165,7 @@ flume:
   image: flume_base:latest
   environment:
     FLUME_AGENT_NAME: producer
-    FLUME_CONF_FILE: /var/tmp/flume.conf.mykafka
+    FLUME_CONF_FILE: /var/tmp/flume.conf.netcat.mykafka
   ports:
     - "44444:44444"
   links:

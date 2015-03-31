@@ -7,7 +7,8 @@ a1.channels = c1
 # Describe/configure the source
 a1.sources.r1.type = netcat
 a1.sources.r1.bind = 0.0.0.0
-a1.sources.r1.port = 44445
+a1.sources.r1.port = 44444
+
 #a1.sources.r1.type = exec
 #a1.sources.r1.command =  tail -F /usr/local/var/log/nginx/access.log
 #a1.sources.r1.batchSize = 3
@@ -16,20 +17,32 @@ a1.sources.r1.port = 44445
 # a1.sinks.k1.type = logger
 #a1.channels = c1
 #a1.sinks = k1
+
+
 a1.sinks.k1.type = hbase
-a1.sinks.k1.table = foo_table2
-a1.sinks.k1.columnFamily = bar_cf
+
+#***docker link-name zookeeper1
+a1.sinks.k1.zookeeperQuorum = zk1:2181
+a1.sinks.k1.znodeParent=/hbase
+
+a1.sinks.k1.table = hive_hbase_log
+a1.sinks.k1.columnFamily = log
 a1.sinks.k1.serializer = org.apache.flume.sink.hbase.RegexHbaseEventSerializer
 a1.sinks.k1.channel = c1
 
+
 a1.sinks.k2.type = logger
+
+
+#a1.sinks.k1.serializer = org.apache.flume.sink.hbase.SplittingSerializer
+#a1.sinks.k1.serializer.columns = id,nom,valeur,batiment,etage,piece
 
 #
 #a1.channels = c1
 #a1.sinks = k1
 #a1.sinks.k1.type = asynchbase
-#a1.sinks.k1.table = foo_table
-#a1.sinks.k1.columnFamily = bar_cf
+#a1.sinks.k1.table = hive_hbase_log
+#a1.sinks.k1.columnFamily = log
 #a1.sinks.k1.serializer = org.apache.flume.sink.hbase.SimpleAsyncHbaseEventSerializer
 #a1.sinks.k1.channel = c1
 
