@@ -1,128 +1,134 @@
 #常用工具集合  需要先删除原有目录的数据
-data11:
-    image: busybox
-    command: /bin/true
-    volumes:
-        - /Users/moyong/docker-share/data/mongodb/11/:/data/db/
-data12:
-    image: busybox
-    command: /bin/true
-    volumes:
-        - /Users/moyong/docker-share/data/mongodb/12:/data/db/
-data13:
-    image: busybox
-    command: /bin/true
-    volumes:
-        - /Users/moyong/docker-share/data/mongodb/13:/data/db/
-data21:
-    image: busybox
-    command: /bin/true
-    volumes:
-        - /Users/moyong/docker-share/data/mongodb/21:/data/db/
-data22:
-    image: busybox
-    command: /bin/true
-    volumes:
-        - /Users/moyong/docker-share/data/mongodb/22:/data/db/
-data23:
-    image: busybox
-    command: /bin/true
-    volumes:
-        - /Users/moyong/docker-share/data/mongodb/23:/data/db/
-datacfg1:
-    image: busybox
-    command: /bin/true
-    volumes:
-        - /Users/moyong/docker-share/data/mongodb/cfg1:/data/db/
-datacfg2:
-    image: busybox
-    command: /bin/true
-    volumes:
-        - /Users/moyong/docker-share/data/mongodb/cfg2:/data/db/
-datacfg3:
-    image: busybox
-    command: /bin/true
-    volumes:
-        - /Users/moyong/docker-share/data/mongodb/cfg3:/data/db/
-dataroute:
-    image: busybox
-    command: /bin/true
-    volumes:
-        - /Users/moyong/docker-share/data/mongodb/route:/data/db/
+#data11:
+#    image: busybox
+#    command: /bin/true
+#    volumes:
+#        - /Users/moyong/docker-share/data/mongodb/11/:/data/db/
+#data12:
+#    image: busybox
+#    command: /bin/true
+#    volumes:
+#        - /Users/moyong/docker-share/data/mongodb/12:/data/db/
+#data13:
+#    image: busybox
+#    command: /bin/true
+#    volumes:
+#        - /Users/moyong/docker-share/data/mongodb/13:/data/db/
+#data21:
+#    image: busybox
+#    command: /bin/true
+#    volumes:
+#        - /Users/moyong/docker-share/data/mongodb/21:/data/db/
+#data22:
+#    image: busybox
+#    command: /bin/true
+#    volumes:
+#        - /Users/moyong/docker-share/data/mongodb/22:/data/db/
+#data23:
+#    image: busybox
+#    command: /bin/true
+#    volumes:
+#        - /Users/moyong/docker-share/data/mongodb/23:/data/db/
+#datacfg1:
+#    image: busybox
+#    command: /bin/true
+#    volumes:
+#        - /Users/moyong/docker-share/data/mongodb/cfg1:/data/db/
+#datacfg2:
+#    image: busybox
+#    command: /bin/true
+#    volumes:
+#        - /Users/moyong/docker-share/data/mongodb/cfg2:/data/db/
+#datacfg3:
+#    image: busybox
+#    command: /bin/true
+#    volumes:
+#        - /Users/moyong/docker-share/data/mongodb/cfg3:/data/db/
+#dataroute:
+#    image: busybox
+#    command: /bin/true
+#    volumes:
+#        - /Users/moyong/docker-share/data/mongodb/route:/data/db/
 
 
 ######
 ##集群的复制集1
 rs11:
     image: base_mongo
-    command: mongod --noprealloc --smallfiles --replSet rs1 --rest --httpinterface
+    command: mongod --storageEngine=wiredTiger --noprealloc --smallfiles --replSet rs1 --rest --httpinterface
     ports:
       - "27018:27017"
     links:
       - cfg1
       - cfg2
       - cfg3
+    hostname: rs11
 #    volumes_from:
 #      - data11
 
 rs12:
     image: base_mongo
-    command: mongod --noprealloc --smallfiles --replSet rs1 --rest --httpinterface
+    command: mongod --storageEngine=wiredTiger --noprealloc --smallfiles --replSet rs1 --rest --httpinterface
     ports:
       - "27017"
     links:
       - cfg1
       - cfg2
       - cfg3
+    hostname: rs12
 #    volumes_from:
 #      - data12
 
 rs13:
     image: base_mongo
-    command: mongod --noprealloc --smallfiles --replSet rs1 --rest --httpinterface
+    command: mongod --storageEngine=wiredTiger --noprealloc --smallfiles --replSet rs1 --rest --httpinterface
     ports:
       - "27017"
     links:
       - cfg1
       - cfg2
       - cfg3
+    hostname: rs13
 #    volumes_from:
 #      - data13
 
 ###集群的复制集2
 rs21:
     image: base_mongo
-    command: mongod --noprealloc --smallfiles --replSet rs2 --rest --httpinterface
+    command: mongod --storageEngine=wiredTiger --noprealloc --smallfiles --replSet rs2 --rest --httpinterface
     ports:
       - "27019:27017"
     links:
       - cfg1
       - cfg2
       - cfg3
+    hostname: rs21
 #    volumes_from:
 #      - data21
 
 rs22:
     image: base_mongo
-    command: mongod --noprealloc --smallfiles --replSet rs2 --rest --httpinterface
+    command: mongod --storageEngine=wiredTiger --noprealloc --smallfiles --replSet rs2 --rest --httpinterface
     ports:
       - "27017"
     links:
       - cfg1
       - cfg2
       - cfg3
+    hostname: rs22
 #    volumes_from:
 #      - data22
 
 rs23:
     image: base_mongo
-    command: mongod --noprealloc --smallfiles --replSet rs2 --rest --httpinterface
+    command: mongod --storageEngine=wiredTiger --noprealloc --smallfiles --replSet rs2 --rest --httpinterface
     ports:
       - "27017"
     links:
       - cfg1
       - cfg2
       - cfg3
+    hostname: rs23
 #    volumes_from:
 #      - data23
 
@@ -132,7 +138,8 @@ rs23:
 ##docker run --name cfg3 -P -d mydev/mongodb --noprealloc --smallfiles --configsvr --dbpath /data/db --port 27017
 cfg1:
     image: base_mongo
-    command: mongod --noprealloc --smallfiles --configsvr --dbpath /data/db --port 27017
+    hostname: cfg1
+    command: mongod --storageEngine=wiredTiger --noprealloc --smallfiles --configsvr --dbpath /data/db --port 27017
     ports:
       - "27017"
 #    volumes_from:
@@ -140,7 +147,8 @@ cfg1:
 
 cfg2:
     image: base_mongo
-    command: mongod --noprealloc --smallfiles --configsvr --dbpath /data/db --port 27017
+    hostname: cfg2
+    command: mongod --storageEngine=wiredTiger --noprealloc --smallfiles --configsvr --dbpath /data/db --port 27017
     ports:
       - "27017"
 #    volumes_from:
@@ -148,7 +156,8 @@ cfg2:
 
 cfg3:
     image: base_mongo
-    command: mongod --noprealloc --smallfiles --configsvr --dbpath /data/db --port 27017
+    hostname: cfg3
+    command: mongod --storageEngine=wiredTiger --noprealloc --smallfiles --configsvr --dbpath /data/db --port 27017
     ports:
       - "27017"
 #    volumes_from:
@@ -159,6 +168,7 @@ cfg3:
 ##docker run --name mongos1 -P -d mydev/mongos --configdb 172.17.0.8:27017,172.17.0.9:27017,172.17.0.10:27017 --port 27017
 route1:
     image: base_mongo
+    hostname: route1
     command: mongos --configdb cfg1:27017,cfg2:27017,cfg3:27017 --port 27017
     links:
       - cfg1
@@ -212,10 +222,11 @@ route1:
 #    - db:mysql
 
 flume1:
-  image: myflume_base:latest
-  environment:
-    FLUME_AGENT_NAME: agent2
-    FLUME_CONF_DIR: /opt/flume/conf
-    FLUME_CONF_FILE: /var/tmp/flume.conf.mongodb
-  ports:
-    - "44449:44444"
+    image: myflume_base:latest
+    hostname: flume1
+    environment:
+      FLUME_AGENT_NAME: agent2
+      FLUME_CONF_DIR: /opt/flume/conf
+      FLUME_CONF_FILE: /var/tmp/flume.conf.mongodb
+    ports:
+      - "44449:44444"
