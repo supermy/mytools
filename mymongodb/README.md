@@ -49,7 +49,7 @@ MongoDB把数据存储在文件中（默认路径为：/data/db），为提高�
 ### 观察日志
 > 初始化数据
 >
-> sh initdb.sh
+> sh initdb.sh //****必须先完成初始化，否则mongsink 不能自动生成数据库。
 > mongo 192.168.59.103:27018  rs.status() ;mongo 192.168.59.103:27019 rs.status() ; mongo 192.168.59.103:27017 sh.status()
 >
 > 生产数据
@@ -64,6 +64,3 @@ MongoDB把数据存储在文件中（默认路径为：/data/db），为提高�
 > db.events.find()
 >
 > ## END
-
-
-TODO 联调，数据未入库
