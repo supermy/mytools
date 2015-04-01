@@ -1,0 +1,15 @@
+#hive 集成 hbase
+#hive 建表
+
+
+#采集数据，传输给kafka
+flume1:
+  image: myflume_base:latest
+  environment:
+    FLUME_AGENT_NAME: a1
+    FLUME_CONF_DIR: /opt/flume/conf
+    FLUME_CONF_FILE: /var/tmp/flume.conf.hbase
+  ports:
+    - "44449:44444"
+  hostname: flume1
+

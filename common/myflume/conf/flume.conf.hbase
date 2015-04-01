@@ -21,8 +21,8 @@ a1.sources.r1.port = 44444
 
 a1.sinks.k1.type = hbase
 
-#***docker link-name zookeeper1
-a1.sinks.k1.zookeeperQuorum = zk1:2181
+#***docker link-name zookeeper1 192.168.59.103
+a1.sinks.k1.zookeeperQuorum = zookeeper1:2181
 a1.sinks.k1.znodeParent=/hbase
 
 a1.sinks.k1.table = hive_hbase_log
@@ -41,7 +41,7 @@ a1.sinks.k2.type = logger
 #a1.channels = c1
 #a1.sinks = k1
 #a1.sinks.k1.type = asynchbase
-#a1.sinks.k1.table = hive_hbase_log
+#a1.sinks.k1.table = hive_hbase_log1
 #a1.sinks.k1.columnFamily = log
 #a1.sinks.k1.serializer = org.apache.flume.sink.hbase.SimpleAsyncHbaseEventSerializer
 #a1.sinks.k1.channel = c1

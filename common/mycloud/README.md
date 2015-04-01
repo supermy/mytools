@@ -45,21 +45,22 @@ Pig和Hive还为HBase提供了高层语言支持，使得在HBase上进行数据
 *
 * docker run -v /usr/local/bin:/target jpetazzo/nsenter:latest
 *
-* 初始化环境：docker-enter cid 进入 hregionserver容器：cd /home/jamesmo/ && start pre-start-hive.sh
+* 初始化环境：docker-enter cid 进入 hregionserver容器：完成hive-hbase环境准备，和日志表建设，cd /home/jamesmo/ && start pre-start-hive.sh
+*
+* flume-ng启动：因hbase启动较慢，flume-ng_hbase镜像启动完成的时候hbase条件还不具备，看fig logs initdb完成之后，重新启动一下fig restart flume1，启动日志正常。
+* flume-ng_hbase会自动建表，如果有同名表会被覆盖。注意/hbase目录允许所有用户777。
+*
 *
 * 生产数据
-*
 * telnet 192.168.59.103 44448
 *
-* 查看数据-hive(hregionserver-node)
+* 查看数据-hive数据(hregionserver-node)
 *
-* sh /home/jamesmo/start-hive  && select * from hive_hbase_log
+* sh /home/jamesmo/start-hive.sh  && select * from hive_hbase_log
 *
-* 查看数据-hbse(hregionserver-node)
+* 查看数据-hbse数据(hregionserver-node)
 *
 * hbase shell <'scan "hive_hbase_log"'
 *
 *
 > ## flume+kafka示例
-
-TODO 联调，数据未入库
