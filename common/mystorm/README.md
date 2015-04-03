@@ -54,13 +54,14 @@ Storm的主要特点如下：
 >   1.2 按mytools/common/mykafka/的数据采集-运行示例1的步骤启动；
 >   1.3 先创建topic：
 >       kafka-topics.sh --create --zookeeper 192.168.59.103:2181 --replication-factor 1 --partitions 1 --topic storm-sentence
->   1.3 生产数据：telnet 192.168.59.103 44447
+>   1.3 生产数据：telnet 192.168.59.103 44450
 >
 > 2.启动Topology作为Kafka的comsumer( -c nimbus.thrift.port=49627)
 >   2.1 git clone https://github.com/supermy/storm-kafka-0.8-plus-test.git/
 >   2.2 mvn package
->   2.3 java -cp target/storm-kafka-0.8-plus-test-0.2.0-SNAPSHOT-jar-with-dependencies.jar storm.kafka.trident.SentenceAggregaonTopology 192.168.59.103:2181
->
+>   2.3 运行示例
+>   java -cp storm-kafka-0.8-plus-test-0.2.0-SNAPSHOT-jar-with-dependencies.jar storm.kafka.KafkaSpoutTestTopology 192.168.59.103:2181
+>   java -cp target/storm-kafka-0.8-plus-test-0.2.0-SNAPSHOT-jar-with-dependencies.jar storm.kafka.trident.SentenceAggregationTopology 192.168.59.103:2181
 > 3.观察Storm数据处理情况
 >
 > ## 日志输出到屏幕
