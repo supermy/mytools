@@ -27,7 +27,7 @@ kafka是一种高吞吐量的分布式发布订阅消息系统，她有如下特
 >
 > ## 获取数据
 
-数据采集-运行示例
+数据采集-运行示例1
 ---------------------
 ### 构造镜像包
 > 进入到当前目录
@@ -52,3 +52,39 @@ kafka是一种高吞吐量的分布式发布订阅消息系统，她有如下特
 > ok,数据到消费端显示出来
 >
 > ## flume+kafka示例
+
+数据采集-spring调用示例2
+---------------------
+### 构造镜像包
+> 进入到当前目录
+> ## fig build
+### 运行
+> 进入到当前目录
+> ## fig up -d && fig ps
+### 观察日志
+
+> 下载源码：git clone https://github.com/supermy/spring-kafka-demo
+>
+> 修改地址：consumer_context.xml 192.168.59.103
+> 修改地址：context.xml 192.168.59.103
+> 运行测试类，查看spring对kafka的调用结果。
+>
+> ## spring+kafka示例
+
+数据采集-kafka自带示例3
+---------------------
+### 自带示例代码
+> 将数据从kafka服务器推送道儿HDFS：kafka/0.8.1.1/libexec/contrib/hadoop-consumer；
+> 将数据推送到kafka服务器：/kafka/0.8.1.1/libexec/contrib/hadoop-producer
+> 建议：可以用flume直接采集进Hbase.
+>
+> 代码示例1:数据的生产和消费：https://github.com/supermy/kafka0.8-examples
+>    更改地址为192.168.59.103:2181 192.168.59.203
+>    先创建topic kafka-topics.sh --create --zookeeper 192.168.59.103:2181 --replication-factor 1 --partitions 1 --topic topic1
+>    先创建topic kafka-topics.sh --create --zookeeper 192.168.59.103:2181 --replication-factor 1 --partitions 1 --topic topic2
+>    先创建topic kafka-topics.sh --create --zookeeper 192.168.59.103:2181 --replication-factor 1 --partitions 1 --topic topic3
+>   SimpleConsumerDemo,两个多线程生产数据，同时获取topic2/topic2的数据。
+>   KafkaConsumerProducerDemo,一个线程生产，一个线程消费，都是topic的数据。
+>
+> ## kafka示例
+
