@@ -63,7 +63,7 @@ https://github.com/brianfrankcooper/YCSB/tree/master/mongodb
 > fig logs flume1
 >
 > mongo 192.168.59.103:27017
-> show collections  
+> show collections
 > db.events.find()
 >
 > ## END
@@ -85,3 +85,38 @@ https://github.com/brianfrankcooper/YCSB/tree/master/mongodb
 > 监控mongodb的运行状态：mongostat -h 192.168.59.103 -p 27017
 > 查看服务器状态：mongo 192.168.59.103:27017   db.serverStatus()   
 > ## END
+
+
+数据导入-运行示例
+---------------------
+>
+>导入csv格式的数据  用户：--db  集合：--c  格式:--type
+>
+>--headerline 表示CSV格式的第一行为字段，如果不指定这个参数，则会将CSV格式第一行当数据导入到目标库。
+>
+
+* 同步数据: rsync -avz -e ssh root@192.168.*.*:/file/mymongodb/initdbi*.js .
+* 初始化数据: sh initdb-*.*.sh
+* shell环境: mongo 192.168.*.*:27017
+* 导入数据脚本；转换数据格式为tsv；转换文档编码  -v --stopOnError
+* time ls \
+    | xargs iconv -f utf8 -t utf8 -c \
+    | awk -F"|" 'BEGIN{OFS="\t";}{NF=NF;print $0}'  \
+    | mongoimport  -h 192.168.*.*:27017 -d gndata -c tellog --type tsv -f f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f15,f16,f17,f18,19,f20,f21,f22,f23,f24,f25,f26,f27,f28,f29,f30,f31,f32,f33,f34,f35,f36
+
+* time ls \
+    | xargs iconv -f utf8 -t utf8 -c \
+    | awk -F"|" 'BEGIN{OFS="\t";}{NF=NF;print $0}'  \
+    | mongoimport  -d gndata -c tellog --type tsv -f f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f15,f16,f17,f18,19,f20,f21,f22,f23,f24,f25,f26,f27,f28,f29,f30,f31,f32,f33,f34,f35,f36
+
+##存储优化
+> docker容器默认的空间是10G,docker -d --storage-opt dm.basesize=20G,修改后需要重启docker。
+启动docker服务时，加上–g参数指定docker工作目录，镜像等文件会存到这。
+
+* --storage-opt dm.metadatadev=/dev/dm-26
+* --storage-opt dm.datadev=/dev/dm-27
+* --storage-opt dm.fs=xfs
+
+##性能监控
+mongostat -h 192.168.6.53:27017 1
+> ## 数据导入

@@ -10,6 +10,9 @@ db = db.getSiblingDB("test");
 for(var i=1;i<=2000;i++) db.c1.save({id:i,value1:"12345678"});
 db.c1.stats();
 
+db.runCommand( { enablesharding:"gndata" });
+db.runCommand( { shardcollection : "gndata.tellog",key : {_id: 1} } );
+
 
 
 //
