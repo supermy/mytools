@@ -63,7 +63,7 @@ https://github.com/brianfrankcooper/YCSB/tree/master/mongodb
 > fig logs flume1
 >
 > mongo 192.168.59.103:27017
-> show collections
+> show collections  
 > db.events.find()
 >
 > ## END

@@ -1,5 +1,5 @@
 printjson(1);
-sh.addShard("rs1/172.17.0.32:27017");
+sh.addShard("rs1/172.17.1.9:27017");
 sh.addShard("rs2/rs21:27017");
 sh.status();
 
