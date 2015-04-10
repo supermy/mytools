@@ -13,7 +13,8 @@ if [ "$1" = 'mongod' ]; then
 		set -- $numa "$@"
 	fi
 
-	exec gosu mongodb "$@"
+	#exec gosu mongodb "$@"
+	#exec mongodb "$@"
 fi
 
 exec "$@"

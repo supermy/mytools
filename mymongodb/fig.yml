@@ -55,7 +55,7 @@
 ##集群的复制集1
 ##--noprealloc 生产机发布的时候去掉此选项
 rs11:
-    image: jamesmo/mongodb:3.0.1
+    image: jamesmo/mongodb:3.0.2
     command: mongod --storageEngine=wiredTiger  --replSet rs1 --rest --httpinterface
     ports:
       - "27018:27017"
@@ -68,7 +68,7 @@ rs11:
 #      - data11
 
 rs12:
-    image: jamesmo/mongodb:3.0.1
+    image: jamesmo/mongodb:3.0.2
     command: mongod --storageEngine=wiredTiger  --replSet rs1 --rest --httpinterface
     ports:
       - "27017"
@@ -81,7 +81,7 @@ rs12:
 #      - data12
 
 rs13:
-    image: jamesmo/mongodb:3.0.1
+    image: jamesmo/mongodb:3.0.2
     command: mongod --storageEngine=wiredTiger  --replSet rs1 --rest --httpinterface
     ports:
       - "27017"
@@ -95,7 +95,7 @@ rs13:
 
 ###集群的复制集2
 rs21:
-    image: jamesmo/mongodb:3.0.1
+    image: jamesmo/mongodb:3.0.2
     command: mongod --storageEngine=wiredTiger  --replSet rs2 --rest --httpinterface
     ports:
       - "27019:27017"
@@ -108,7 +108,7 @@ rs21:
 #      - data21
 
 rs22:
-    image: jamesmo/mongodb:3.0.1
+    image: jamesmo/mongodb:3.0.2
     command: mongod --storageEngine=wiredTiger  --replSet rs2 --rest --httpinterface
     ports:
       - "27017"
@@ -121,7 +121,7 @@ rs22:
 #      - data22
 
 rs23:
-    image: jamesmo/mongodb:3.0.1
+    image: jamesmo/mongodb:3.0.2
     command: mongod --storageEngine=wiredTiger  --replSet rs2 --rest --httpinterface
     ports:
       - "27017"
@@ -138,7 +138,7 @@ rs23:
 ##docker run --name cfg2 -P -d mydev/mongodb  --configsvr --dbpath /data/db --port 27017
 ##docker run --name cfg3 -P -d mydev/mongodb  --configsvr --dbpath /data/db --port 27017
 cfg1:
-    image: jamesmo/mongodb:3.0.1
+    image: jamesmo/mongodb:3.0.2
     hostname: cfg1
     command: mongod --storageEngine=wiredTiger  --configsvr --dbpath /data/db --port 27017
     ports:
@@ -147,7 +147,7 @@ cfg1:
 #      - datacfg1
 
 cfg2:
-    image: jamesmo/mongodb:3.0.1
+    image: jamesmo/mongodb:3.0.2
     hostname: cfg2
     command: mongod --storageEngine=wiredTiger  --configsvr --dbpath /data/db --port 27017
     ports:
@@ -156,7 +156,7 @@ cfg2:
 #      - datacfg2
 
 cfg3:
-    image: jamesmo/mongodb:3.0.1
+    image: jamesmo/mongodb:3.0.2
     hostname: cfg3
     command: mongod --storageEngine=wiredTiger  --configsvr --dbpath /data/db --port 27017
     ports:
@@ -168,7 +168,7 @@ cfg3:
 ###创建一个路由
 ##docker run --name mongos1 -P -d mydev/mongos --configdb 172.17.0.8:27017,172.17.0.9:27017,172.17.0.10:27017 --port 27017
 route1:
-    image: jamesmo/mongodb:3.0.1
+    image: jamesmo/mongodb:3.0.2
     hostname: route1
     command: mongos --configdb cfg1:27017,cfg2:27017,cfg3:27017 --port 27017
     links:
@@ -192,7 +192,7 @@ route1:
 #mongo 127.0.0.1:3003/test –quiet test.js
 
 #dbinit1:
-#  image: jamesmo/mongodb:3.0.1
+#  image: jamesmo/mongodb:3.0.2
 #  entrypoint: /bin/bash
 #  volumes:
 #    - .:/host

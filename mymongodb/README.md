@@ -104,10 +104,14 @@ https://github.com/brianfrankcooper/YCSB/tree/master/mongodb
     | awk -F"|" 'BEGIN{OFS="\t";}{NF=NF;print $0}'  \
     | mongoimport  -h 192.168.*.*:27017 -d gndata -c tellog --type tsv -f f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f15,f16,f17,f18,19,f20,f21,f22,f23,f24,f25,f26,f27,f28,f29,f30,f31,f32,f33,f34,f35,f36
 
-* time ls \
+*
+time ls gndata/1.txt \
     | xargs iconv -f utf8 -t utf8 -c \
     | awk -F"|" 'BEGIN{OFS="\t";}{NF=NF;print $0}'  \
-    | mongoimport  -d gndata -c tellog --type tsv -f f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f15,f16,f17,f18,19,f20,f21,f22,f23,f24,f25,f26,f27,f28,f29,f30,f31,f32,f33,f34,f35,f36
+    |  mongoimport -h 192.168.59.103:27017 -d gndata -c tellog --type tsv -f f1,f2,f3,f4
+
+
+,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f15,f16,f17,f18,19,f20,f21,f22,f23,f24,f25,f26,f27,f28,f29,f30,f31,f32,f33,f34,f35,f36
 
 ##存储优化
 > docker容器默认的空间是10G,docker -d --storage-opt dm.basesize=20G,修改后需要重启docker。
@@ -120,3 +124,5 @@ https://github.com/brianfrankcooper/YCSB/tree/master/mongodb
 ##性能监控
 mongostat -h 192.168.6.53:27017 1
 > ## 数据导入
+https://github.com/supermy/mytools/tree/master/mymongodb
+http://t.cn/RwfruoO
