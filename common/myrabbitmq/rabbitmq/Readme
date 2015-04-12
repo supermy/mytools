@@ -4,8 +4,7 @@ docker run --name some-app --link some-rabbit:rabbit -d application-that-uses-ra
 docker run -d -e RABBITMQ_NODENAME=my-rabbit --name some-rabbit -p 8080:15672 rabbitmq_base:latest
 docker run -d -e RABBITMQ_NODENAME=my-rabbit --name some-rabbit myrabbitmq_base:latest
 
-http://192.168.59.103:15762/#/
-http://192.168.59.103:15762/#/  guest/guest
+http://192.168.59.103:15672/#/  guest/guest
 
 
 #boot2docker ssh -L 5672:localhost:5672
