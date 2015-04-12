@@ -10,7 +10,7 @@ zookeeper:
 
 ##消息队列，配置ip and port
 kafka1:
-  image: wurstmeister/kafka:latest
+  image: jamesmo/kafka:0.8
   ports:
     - "9092:9092"
   links:
@@ -24,7 +24,7 @@ kafka1:
 
 ##消息队列，配置ip and port
 kafka2:
-  image: wurstmeister/kafka:latest
+  image: jamesmo/kafka:0.8
   ports:
     - "9093:9092"
   links:
@@ -38,7 +38,7 @@ kafka2:
 
 ##消息队列，配置ip and port
 kafka3:
-  image: wurstmeister/kafka:latest
+  image: jamesmo/kafka:0.8
   ports:
     - "9094:9092"
   links:
@@ -62,7 +62,7 @@ kafka3:
 
 #采集数据，传输给kafka
 flume1:
-  image: myflume_base:latest
+  image: jamesmo/myflume:latest
   environment:
     FLUME_AGENT_NAME: producer
     FLUME_CONF_DIR: /opt/flume/conf

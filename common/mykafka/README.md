@@ -67,7 +67,7 @@ kafka是一种高吞吐量的分布式发布订阅消息系统，她有如下特
 >
 > 修改地址：consumer_context.xml 192.168.59.103
 > 修改地址：context.xml 192.168.59.103
-> 运行测试类，查看spring对kafka的调用结果。
+> 运行测试类，查看spring对kafka的调用结果。com.colobu.spring_kafka_demo.Producer  com.colobu.spring_kafka_demo.Consumer
 >
 > ## spring+kafka示例
 
