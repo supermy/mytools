@@ -214,11 +214,13 @@ docker run -i -t myjava7/debian:latest
 
 
 
-
 ******************************************************************
 todo 
     规则殷勤：drools 平台使用
     工作流：activiti
+
+20150408
+    增加dns-docker镜像，方便通过dns配置域名
 
 20150329
     云平台:flume+kafka-storm-hbase:docker4flume+docker4kafa  完成

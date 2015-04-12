@@ -1,7 +1,7 @@
 微云（可快速扩充）
 ====================
 
-大数据-介绍
+大数据-介绍(https://github.com/supermy/hadoop-docker-nn)
 ---------------------
 
 HBase是一个分布式的、面向列的开源数据库，该技术来源于 Fay Chang 所撰写的Google论文“Bigtable：一个结构化数据的分布式存储系统”。就像

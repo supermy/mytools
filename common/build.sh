@@ -4,8 +4,10 @@ docker build -t jamesmo/jdk:7 myjava7
 docker build -t jamesmo/solr:4.10.2 mysolr
 
 docker build -t jamesmo/kafka:0.8 mykafka
+
 docker build -t jamesmo/rabbitmq_base:3.5 myrabbitmq
 docker build -t jamesmo/rabbitmq:3.5 myrabbitmq/rabbitmq
+#docker build -t jamesmo/rabbitmq:3.5 myredis
 
 docker build -t jamesmo/myflume:latest myflume
 
