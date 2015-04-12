@@ -1,6 +1,6 @@
 #源和中文环境配置
 base:
-  build: .
+  image: jamesmo/solr:4.10.2
   ports:
     - "8983:8983"
   volumes_from:

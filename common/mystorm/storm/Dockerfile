@@ -1,10 +1,10 @@
-FROM myjre7_base:latest
+FROM jamesmo/jre:7
 
 MAINTAINER JamesMo <springclick@gmail.com>
 
 RUN echo 'root:supermy' | chpasswd
 
-RUN sed -i '1,7d' /etc/apt/sources.list
+#RUN sed -i '1,7d' /etc/apt/sources.list
 
 #更换比较快的镜像
 #RUN echo 'deb http://mirrors.sohu.com/debian/ wheezy main non-free contrib '>>/etc/apt/sources.list

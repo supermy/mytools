@@ -51,7 +51,8 @@ Pig和Hive还为HBase提供了高层语言支持，使得在HBase上进行数据
 * flume-ng_hbase会自动建表，如果有同名表会被覆盖。注意/hbase目录允许所有用户777。
 *
 *
-* 生产数据
+* 生产数据（nodeame启动慢;fig restart flume1）
+* 
 * telnet 192.168.59.103 44448
 *
 * 查看数据-hive数据(hregionserver-node)

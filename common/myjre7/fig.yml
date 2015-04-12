@@ -1,6 +1,6 @@
 #源和中文环境配置
 base:
-  build: .
+  build: jamesmo/jre:7
   ports:
     - "22"
   volumes_from:

@@ -1,4 +1,4 @@
-FROM storm_base:latest
+FROM jamesmo/storm_base:0.9.3
 MAINTAINER Jamesmo<springclick@gmail.com>
 
 EXPOSE 6700

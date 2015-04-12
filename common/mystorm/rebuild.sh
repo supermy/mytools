@@ -1,6 +1,5 @@
 #!/bin/bash
-
-#docker build -t="storm_base" storm
-docker build -t="storm-nimbus_base" storm-nimbus
-docker build -t="storm-supervisor_base" storm-supervisor
-docker build -t="storm-ui_base" storm-ui
+docker build -t jamesmo/storm_base:0.9.3 mystorm/storm
+docker build -t jamesmo/storm-nimbus:0.9.3 mystorm/storm-nimbus
+docker build -t jamesmo/storm-supervisor:0.9.3 mystorm/storm-supervisor
+docker build -t jamesmo/storm-ui:0.9.3 mystorm/storm-ui

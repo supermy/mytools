@@ -1,6 +1,7 @@
 #hbase集群
+#hadoop集群
 nn:
-  image: nn_base:latest
+  image: jamesmo/snappy-spark-nn:cdh5
   environment:
     HOSTNAME_NN: mynn
   ports:
@@ -10,10 +11,24 @@ nn:
     - "1022:22"
   hostname: mynn
 
-dn1:
-  image: dn_base:latest
+
+yarn:
+  image: jamesmo/snappy-spark-yarn:cdh5
   links:
     - nn:mynn
+  environment:
+    HDFSNAMENODERPC_SERVICE_HOST: mynn
+    HDFSNAMENODERPC_SERVICE_PORT: 8020
+  ports:
+    - "8088:8088"
+    - "19888:19888"
+  hostname: yarn
+
+dn1:
+  image: jamesmo/snappy-spark-dn:cdh5
+  links:
+    - nn:mynn
+    - yarn
   environment:
     HDFSNAMENODERPC_SERVICE_HOST: mynn
     HDFSNAMENODERPC_SERVICE_PORT: 8020
@@ -23,9 +38,10 @@ dn1:
 
 
 dn2:
-  image: dn_base:latest
+  image: jamesmo/snappy-spark-dn:cdh5
   links:
     - nn:mynn
+    - yarn
   environment:
     HDFSNAMENODERPC_SERVICE_HOST: mynn
     HDFSNAMENODERPC_SERVICE_PORT: 8020
@@ -42,7 +58,7 @@ zk:
     - "3888:3888"
 
 hb:
-  image: hmaster_base:latest
+  image: jamesmo/snappy-spark-hb:cdh5
   links:
     - nn:mynn
     - dn1:mydn1
@@ -60,7 +76,7 @@ hb:
   hostname: hbasemasteripc
 
 rs:
-  image: hregionserver_base:latest
+  image: jamesmo/snappy-spark-rs:cdh5
   links:
     - nn:mynn
     - dn1:mydn1
@@ -80,40 +96,9 @@ rs:
   hostname: hregionserver1
 
 
-#  volumes:
-#    - /Users/moyong/docker-share/data/hadoop/:/tmp/
-
-#初始化建立日志表
-#dbinit:
-#  image: hregionserver_base:latest
-#  entrypoint: /bin/bash
-#  command: -c "sudo -u hdfs sh /home/jamesmo//home/jamesmo/pre-start-hive.sh; exit 0"
-#  links:
-#    - rs
-
-#web namenode http://192.168.59.103:50075/
-#web hbase #web http://192.168.59.103:60010/
-#web regionserver http://192.168.59.103:60030/
-
-#hive 集成 hbase
-#hive 建表
-
-
-#采集数据，传输给kafka
-#flume1:
-#  image: myflume_base:latest
-#  environment:
-#    FLUME_AGENT_NAME: a1
-#    FLUME_CONF_DIR: /opt/flume/conf
-#    FLUME_CONF_FILE: /var/tmp/flume.conf.hbase
-#  ports:
-#    - "44448:44444"
-#  links:
-#    - zk:zk1
-
 
 initdb:
-  image: inithivehbase_base:latest
+  image: jamesmo/snappy-spark-initdb:cdh5
   links:
     - nn:mynn
     - dn1:mydn1
@@ -131,7 +116,7 @@ initdb:
   hostname: hregionserver1
 
 flume1:
-  image: myflume_base:latest
+  image: jamesmo/myflume:latest
   environment:
     FLUME_AGENT_NAME: a1
     FLUME_CONF_DIR: /opt/flume/conf
