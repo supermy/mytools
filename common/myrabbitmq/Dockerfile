@@ -1,4 +1,4 @@
-FROM mydebian_base:latest
+FROM jamesmo/debian:7
 
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
 RUN groupadd -r rabbitmq && useradd -r -d /var/lib/rabbitmq -m -g rabbitmq rabbitmq
@@ -15,7 +15,7 @@ RUN echo 'deb http://packages.erlang-solutions.com/debian wheezy contrib' > /etc
 RUN apt-key adv --keyserver pool.sks-keyservers.net --recv-keys F78372A06FF50C80464FC1B4F7B8CEA6056E8E56
 RUN echo 'deb http://www.rabbitmq.com/debian/ testing main' > /etc/apt/sources.list.d/rabbitmq.list
 
-ENV RABBITMQ_VERSION 3.5.0-1
+ENV RABBITMQ_VERSION 3.5.1-1
 
 RUN apt-get update && apt-get install -y rabbitmq-server=$RABBITMQ_VERSION --no-install-recommends && rm -rf /var/lib/apt/lists/*
 

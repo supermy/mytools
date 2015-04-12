@@ -1,6 +1,6 @@
 #源和中文环境配置
 base:
-  build: .
+  image: jamesmo/rabbitmq:3.5
   ports:
     - "5672:5672"
 #  volumes_from:
