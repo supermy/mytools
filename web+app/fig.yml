@@ -4,10 +4,11 @@
 #http://192.168.59.103/java/myweb/
 #http://192.168.59.103/java/dbtest/
 web:
-  image: mynginx_web
+  image: jamesmo/mynginx:2.1
   links:
     - mytomcat1
     - mytomcat2
+    - myredis
   ports:
     - "80:80"
   volumes_from:
@@ -25,12 +26,12 @@ data:
 
 #启动tomcat
 mytomcat1:
-  image: mytomcat_app
+  image: jamesmo/mytomcat:7
   environment:
     TOMCAT_PASS: admin
   links:
     - dbinit
-    - db:mysql_base
+    - db:mysql
     - memcache1
     - memcache2
   ports:
@@ -38,12 +39,12 @@ mytomcat1:
 
 #启动tomcat
 mytomcat2:
-  image: mytomcat_app
+  image: jamesmo/mytomcat:7
   environment:
     TOMCAT_PASS: admin
   links:
     - dbinit
-    - db:mysql_base
+    - db:mysql
     - memcache1
     - memcache2
   ports:
@@ -65,9 +66,14 @@ memcache2:
   ports:
     - "11211"
 
+myredis:
+  image: redis:latest
+  ports:
+      - "6379:6379"
+
 
 db:
-  image: mysql_base
+  image: jamesmo/mysql:latest
   environment:
     MYSQL_USER: java
     MYSQL_PASSWORD: java
@@ -77,10 +83,10 @@ db:
     - "3306"
 
 dbinit:
-  image: mysql_base
+  image: jamesmo/mysql:latest
   entrypoint: /bin/bash
   volumes:
     - .:/host
   command: -c "sleep 8; mysql -u java --password=java -h mysql javatest < /host/init.sql; exit 0"
   links:
-    - db:mysql_base
+    - db:mysql
