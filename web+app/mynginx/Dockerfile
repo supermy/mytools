@@ -12,19 +12,29 @@ RUN sed -i '1a \
     deb-src http://mirrors.163.com/debian/ wheezy main non-free contrib \n \
     deb-src http://mirrors.163.com/debian/ wheezy-proposed-updates main contrib non-free \n \
     deb-src http://mirrors.163.com/debian-security/ wheezy/updates main contrib non-free \n \
-    deb http://ftp.sjtu.edu.cn/debian/ wheezy main non-free contrib \n \
-    deb http://ftp.sjtu.edu.cn/debian/ wheezy-proposed-updates main contrib non-free \n \
-    deb http://ftp.sjtu.edu.cn/debian-security/ wheezy/updates main contrib non-free \n \
-    deb-src http://ftp.sjtu.edu.cn/debian/ wheezy main non-free contrib \n \
-    deb-src http://ftp.sjtu.edu.cn/debian/ wheezy-proposed-updates main contrib non-free \n \
-    deb-src http://ftp.sjtu.edu.cn/debian-security/ wheezy/updates main contrib non-free \n \
     ' /etc/apt/sources.list
+
+# sohu 更新服务器：
+#RUN sed -i '1a \
+#    deb http://mirrors.sohu.com/debian/ wheezy main non-free contrib  \
+#    deb http://mirrors.sohu.com/debian/ wheezy-proposed-updates main non-free contrib \
+#    deb http://mirrors.sohu.com/debian-security/ wheezy/updates main contrib non-free \n \
+#    deb-src http://mirrors.sohu.com/debian/ wheezy main non-free contrib \
+#    deb-src http://mirrors.sohu.com/debian/ wheezy-proposed-updates main non-free contrib \
+#    deb-src http://mirrors.sohu.com/debian-security/ wheezy/updates main contrib non-free \n \
+#    ' /etc/apt/sources.list
+
+#    deb http://ftp.sjtu.edu.cn/debian/ wheezy main non-free contrib \n \
+#    deb http://ftp.sjtu.edu.cn/debian/ wheezy-proposed-updates main contrib non-free \n \
+#    deb http://ftp.sjtu.edu.cn/debian-security/ wheezy/updates main contrib non-free \n \
+#    deb-src http://ftp.sjtu.edu.cn/debian/ wheezy main non-free contrib \n \
+#    deb-src http://ftp.sjtu.edu.cn/debian/ wheezy-proposed-updates main contrib non-free \n \
+#    deb-src http://ftp.sjtu.edu.cn/debian-security/ wheezy/updates main contrib non-free \n \
 
 RUN cat /etc/apt/sources.list
 
-RUN apt-get -qq update
-
-RUN apt-get -qqy install gcc libpcre3 libpcre3-dev openssl libssl-dev make wget libreadline-dev libncurses-dev graphicsmagick
+RUN apt-get -qqy update && \
+    apt-get -qqy install gcc libpcre3 libpcre3-dev openssl libssl-dev make wget libreadline-dev libncurses-dev graphicsmagick
 
 WORKDIR /tmp
 RUN wget http://tengine.taobao.org/download/tengine-2.1.0.tar.gz
@@ -36,9 +46,55 @@ RUN tar zxf lua-5.1.5.tar.gz
 WORKDIR /tmp/lua-5.1.5
 RUN make linux && make install
 
+#配置 openrestry
+WORKDIR /tmp
+RUN wget  http://luajit.org/download/LuaJIT-2.0.3.tar.gz
+RUN wget http://www.kyne.com.au/~mark/software/download/lua-cjson-2.1.0.tar.gz
+RUN wget http://openresty.org/download/ngx_openresty-1.7.10.1.tar.gz
+
+# mysql depends bit
+RUN wget http://bitop.luajit.org/download/LuaBitOp-1.0.2.tar.gz
+
+RUN tar zxf LuaJIT-2.0.3.tar.gz
+RUN tar zxf lua-cjson-2.1.0.tar.gz
+RUN tar zxf ngx_openresty-1.7.10.1.tar.gz
+RUN tar zxf LuaBitOp-1.0.2.tar.gz
+
+
+WORKDIR /tmp/LuaJIT-2.0.3
+RUN make && make install
+
+WORKDIR /tmp/lua-cjson-2.1.0
+RUN make && make install
+
+WORKDIR /tmp/ngx_openresty-1.7.10.1
+RUN ./configure --prefix=/usr/local/openresty --with-luajit && make && make install
+
+
+WORKDIR /tmp/LuaBitOp-1.0.2
+RUN make && make install
+
+
+#配置 openrestry end
+
+
+RUN echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf
+
 WORKDIR /tmp/tengine-2.1.0
-RUN cd /tmp/tengine-2.1.0 && ./configure --with-http_lua_module && make && make install
+RUN \
+    cd /tmp/tengine-2.1.0 &&\
+    ./configure  \
+       --with-ld-opt='-Wl,-rpath,/usr/local/lib/' \
+        --add-module=/tmp/ngx_openresty-1.7.10.1/bundle/redis2-nginx-module-0.11/ \
+        --add-module=/tmp/ngx_openresty-1.7.10.1/bundle/ngx_devel_kit-0.2.19/ \
+        --add-module=/tmp/ngx_openresty-1.7.10.1/bundle/set-misc-nginx-module-0.28/ \
+        --add-module=/tmp/ngx_openresty-1.7.10.1/bundle/echo-nginx-module-0.57/ \
+        --add-module=/tmp/ngx_openresty-1.7.10.1/bundle/ngx_lua-0.9.15/ \
+    && make && make install
+
+
 ADD nginx.conf /usr/local/nginx/conf/nginx.conf
+
 
 WORKDIR /root
 RUN rm -rf /tmp/tengine-*
@@ -58,5 +114,7 @@ EXPOSE 80 443
 
 CMD ["/etc/my_init.d/nginx.sh"]
 
-#userage
-#docker run -d -p 8080:80 --name test -v /home/utgard/www/:/data/www/ mynginx_app
+# build
+# docker build -t jamesmo/mynginx:2.1 .
+# userage
+# docker run -d -p 8080:80 --name test -v /home/utgard/www/:/data/www/ mynginx_web
