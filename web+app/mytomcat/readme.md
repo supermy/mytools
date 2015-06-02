@@ -1,4 +1,9 @@
-2014-01-23
+2015-06-02
+    nginx+lua配置token.lua
+    curl -v -b "uid=1234;nickname=soga;token=aa6f21ec0fcf008aa5250904985a817b" "http://192.168.59.103/java/dbtest/token.jsp"
+
+
+2015-01-23
     配置公用数据源；
     启动nginx
     
