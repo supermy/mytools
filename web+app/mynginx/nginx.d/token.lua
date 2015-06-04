@@ -1,4 +1,32 @@
-ngx.log(ngx.ERR,">>>111")
+--获取ip 地址，进行token验证
+--require("redis-ip")
+
+local function isempty(s)
+  return s == nil or s == ''
+end
+
+local myIp = ngx.req.get_headers()["X-Real-IP"]
+
+if isempty(myIp) then
+    myIp = ngx.req.get_headers()["x_forwarded_for"]
+end
+
+if isempty(myIp) then
+    myIp=ngx.var.remote_addr
+end
+
+if isempty(myIp) then
+    myIp = '没有获取到ip 地址'
+end
+
+ngx.log(ngx.ERR,">>>ip:" .. myIp)
+
+--if myIp == "公司出口IP" then
+--    ngx.exec("@client")
+--else
+--    ngx.exec("@client_test")
+--end
+
 
 local secretkey='1234567890abcdefghi'
 
@@ -43,3 +71,5 @@ return
 --curl -v -b "uid=12345;nickname=soga;token=aa6f21ec0fcf008aa5250904985a817b" "http://192.168.59.103/hello1"
 --token 正确测试
 --curl -v -b "uid=1234;nickname=soga;token=aa6f21ec0fcf008aa5250904985a817b"  "http://192.168.59.103/hello1"
+
+
