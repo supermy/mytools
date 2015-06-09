@@ -40,25 +40,27 @@ WORKDIR /tmp
 RUN wget http://tengine.taobao.org/download/tengine-2.1.0.tar.gz
 RUN tar xvf tengine-2.1.0.tar.gz
 
+#lua5.3不支持cjson LuaBitOp，降级到lua-5.1.5
 WORKDIR /tmp
-RUN wget http://www.lua.org/ftp/lua-5.3.0.tar.gz
-RUN tar zxf lua-5.3.0.tar.gz
-WORKDIR /tmp/lua-5.3.0
+RUN wget http://www.lua.org/ftp/lua-5.1.5.tar.gz
+RUN tar zxf lua-5.1.5.tar.gz
+WORKDIR /tmp/lua-5.1.5
 RUN make linux && make install
 
 #配置 openrestry
 WORKDIR /tmp
 RUN wget  http://luajit.org/download/LuaJIT-2.0.4.tar.gz
 RUN wget http://www.kyne.com.au/~mark/software/download/lua-cjson-2.1.0.tar.gz
-RUN wget http://openresty.org/download/ngx_openresty-1.7.10.1.tar.gz
+RUN wget -e "http_proxy=http://10.77.45.191:8087" http://openresty.org/download/ngx_openresty-1.7.10.1.tar.gz
+#
 
 # mysql depends bit ,不兼容lua-5.3.0 ,兼容lua-5.2.0
-# RUN wget http://bitop.luajit.org/download/LuaBitOp-1.0.2.tar.gz
+RUN wget http://bitop.luajit.org/download/LuaBitOp-1.0.2.tar.gz
 
 RUN tar zxf LuaJIT-2.0.4.tar.gz
 RUN tar zxf lua-cjson-2.1.0.tar.gz
 RUN tar zxf ngx_openresty-1.7.10.1.tar.gz
-#RUN tar zxf LuaBitOp-1.0.2.tar.gz
+RUN tar zxf LuaBitOp-1.0.2.tar.gz
 
 
 WORKDIR /tmp/LuaJIT-2.0.4
@@ -72,8 +74,8 @@ WORKDIR /tmp/ngx_openresty-1.7.10.1
 RUN ./configure --prefix=/usr/local/openresty --with-luajit && make && make install
 
 
-#WORKDIR /tmp/LuaBitOp-1.0.2
-#RUN make && make install
+WORKDIR /tmp/LuaBitOp-1.0.2
+RUN make && make install
 
 
 #配置 openrestry end

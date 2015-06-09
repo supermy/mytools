@@ -1,6 +1,29 @@
+--[[
+    认证通过之后分配的ctoken与使用者的IP 关联；
+    渠道和个人用户都可以使用；
+--]]
+
+--判断字符串是否为空
 local function isempty(s)
   return s == nil or s == ''  or  s == ngx.null
 end
+
+
+--从head or cookie 获取参数值
+--[[local function getHCValue(key)
+    local value1 = ngx.req.get_headers()[key]
+
+    if isempty(value1) then
+        local cookie_name = key
+        local var_name = "cookie_" .. cookie_name
+        local value1 = ngx.var[var_name]
+    end
+    ngx.log(ngx.ERR,value1)
+
+    return value1
+end
+]]
+
 
 --支撑head或者cookie 获取参数;
 --java 对渠道参数配置进行管理，并且将数据同步到redis
@@ -12,24 +35,30 @@ ip_bind_time = 300  --封禁IP时间,300秒
 ip_time_out = 60    --指定ip访问频率时间段,60秒
 connect_count = 100 --指定ip访问频率计数最大值,100次/分钟
 
+local myconfig = ngx.shared.myconfig
+local redis_host=myconfig:get("redis-host")
+local redis_port=myconfig:get("redis-port")
 
 --连接redis
 local redis = require "resty.redis"
 local cache = redis.new()
-local ok , err = cache.connect(cache,"192.168.59.103","6379")
+local ok , err = cache.connect(cache,redis_host,redis_port)
 cache:set_timeout(60000) --1分钟
 
 --如果连接失败，跳转到脚本结尾
 if not ok then
   ngx.log(ngx.ERR,">>>redis链接失败")
 
-  goto authdone
+  --goto authdone
+
+  local ok,err = cache:close()
+  return
 
 end
 
 
 --验证渠道与ip 地址是否一致
-myIp = ngx.req.get_headers()["X-Real-IP"]
+local myIp = ngx.req.get_headers()["X-Real-IP"]
 if isempty(myIp) then
   myIp = ngx.req.get_headers()["x_forwarded_for"]
 end
@@ -42,7 +71,10 @@ if isempty(myIp) then
     ngx.say("没有获取到ip 地址");
     ngx.exit(ngx.HTTP_SERVICE_UNAVAILABLE);
 
-    goto authdone
+    --goto authdone
+
+    local ok,err = cache:close()
+    return
   --ngx.exit(403)
 end
 
@@ -61,8 +93,10 @@ if is_bind == '1' then
     --ngx.exit(ngx.HTTP_SERVICE_UNAVAILABLE);
     ngx.exit(403)
 
-    goto authdone
+    --goto authdone
 
+    local ok,err = cache:close()
+    return
 end
 
 start_time , err = cache:get("time_"..ngx.var.remote_addr)
@@ -101,13 +135,17 @@ end
 
 --设置ctoken 数据
 --telnet 192.168.59.103 6379/monitor/keys */set aa6f21ec0fcf008aa5250904985a817b 192.168.59.3/get aa6f21ec0fcf008aa5250904985a817b
---curl -v -b "ctoken=aa6f21ec0fcf008aa5250904985a817b"  http://192.168.59.103/hello
---ab -n 5000 -c 200  -C ctoken=aa6f21ec0fcf008aa5250904985a817b  http://192.168.59.103/hello
+--curl -v -b "ctoken=testf97a93b6e5e08843a7c825a53bdae246" http://192.168.59.103/api
+--ab -n 5000 -c 200  -C ctoken=testf97a93b6e5e08843a7c825a53bdae246 http://192.168.59.103/api
 --如果已经动态分配ctoken,token 与IP 地址绑定；验证token 的有效性；则不进行认证,直接进行能力管控
 ctoken = ngx.req.get_headers()["ctoken"]
 if isempty(ctoken) then
     ctoken = ngx.var.cookie_ctoken
 end
+
+--ctoken1=getHCValue("ctoken")
+--ngx.log(ngx.ERR,ctoken1)
+
 
 --验证ctoken 在有效期内，跳过认证流程;不在有效期，继续认证流程；
 if not isempty(ctoken) then
@@ -119,7 +157,11 @@ if not isempty(ctoken) then
 
     ngx.log(ngx.ERR,">>>ctoken 有效，不再进行渠道认证......")
 
-    goto authdone --跳过认证
+    --goto authdone --跳过认证
+
+    local ok,err = cache:close()
+    return
+
   else
 
     ngx.say("无效的令牌");
@@ -132,9 +174,9 @@ end
 --进行认证
 
 --获取从head 或者cookie 中渠道编码code/渠道秘钥-动态生成  ab -C 会更改cookie 的名称
---curl -v -b "ChannelCode=test;ChannelSecretkey=37966a74c488ce7b74db90d065aa7cc3"  http://192.168.59.103/hello
+--curl -v -b "ChannelCode=test;ChannelSecretkey=a8152b13f4ef9daca84cf981eb5a7907"  http://192.168.59.103/api
 --mysql2redis.sh 同步数据
---ab -n 5000 -c 200 -H "Cookie:ChannelCode=1234;ChannelSecretkey=37966a74c488ce7b74db90d065aa7cc3"   http://192.168.59.103/hello
+--ab -n 5000 -c 200 -H "Cookie:ChannelCode=test;ChannelSecretkey=a8152b13f4ef9daca84cf981eb5a7907"   http://192.168.59.103/api
 channel_code = ngx.req.get_headers()["ChannelCode"]
 channel_secretkey = ngx.req.get_headers()["ChannelSecretkey"]
 
@@ -157,7 +199,11 @@ if isempty(channel_code)  or isempty(channel_secretkey) then
 
       --ngx.exit(403)
 
-      goto authdone
+      --goto authdone
+
+      local ok,err = cache:close()
+      return
+
 end
 
 
@@ -214,7 +260,11 @@ if not isempty(channel_code) then
         ngx.say("实际ip 地址与渠道设置的ip 地址不匹配");
         ngx.exit(ngx.HTTP_SERVICE_UNAVAILABLE);
         --ngx.exit(403)
-        goto authdone
+        --goto authdone
+
+        local ok,err = cache:close()
+        return
+
     end
 
     --验证秘钥 是否有效
@@ -229,7 +279,11 @@ if not isempty(channel_code) then
         ngx.exit(ngx.HTTP_SERVICE_UNAVAILABLE);
 
         --ngx.exit(403)
-        goto authdone
+        --goto authdone
+
+        local ok,err = cache:close()
+        return
+
     end
 
     --给渠道返回一个token,有效期
@@ -240,31 +294,33 @@ if not isempty(channel_code) then
 
     ngx.log(ngx.ERR,"新的令牌"..ctoken.."，有效期：" .. channel_token_expire*60*60*60)
 
-    tokenvalue = "{status:200,message:ok,ctoken:"..ctoken..",expire:" .. channel_token_expire*60*60*60 .. "}"
+    --tokenvalue = "{status:200,message:ok,ctoken:"..ctoken..",expire:" .. channel_token_expire*60*60*60 .. "}"
 
-    ngx.say(tokenvalue);
+    --ngx.say(tokenvalue);
 
-    --[[#local cjson = require "cjson"
-    #local data = {}
-    #    data.message= "ok";
-    #    data.status=200;
-    #    data.ctoken=ctoken;
-    #    data.token_expire=channel_token_expire*60*60*60;
-    #    data.attachment={}
+    --local cjson = require "cjson"
+    local data = {}
+        data.message= "ok";
+        data.status=200;
+        data.ctoken=ctoken;
+        data.token_expire=channel_token_expire*60*60*60;
+        data.attachment={}
 
-    #local jsonvalue=cjson.encode(data);
+    local jsonvalue=cjson.encode(data);
 
-    #ngx.say(jsonvalue);
-    --]]
+    ngx.say(jsonvalue);
+
 
     ngx.exit(ngx.HTTP_OK);
 
-    goto authdone
+    --goto authdone
+    local ok,err = cache:close()
+    return
 
 end
 
 
 --认证完成，下面是进行并发控制
-::authdone::
-local ok,err = cache:close()
+--::authdone::
+--local ok,err = cache:close()
 
