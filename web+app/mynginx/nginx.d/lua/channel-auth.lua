@@ -214,17 +214,6 @@ end
 if not isempty(channel_code) then
     --渠道带宽控制
 
---[[
-    local channel_ip_bind_time , err = cache:get(channel_code.."ip_bind_time")
-    local channel_ip_time_out ,  err = cache:get(channel_code.."ip_time_out")
-    local channel_connect_count ,err = cache:get(channel_code.."connect_count")
-
-    local channel_pwd ,err = cache:get(channel_code.."pwd") --秘钥盐渍
-    local channel_iplist ,err = cache:get(channel_code.."iplist") --渠道ip 地址
-    local channel_token ,err = cache:get(channel_code.."token") --渠道令牌
-    local channel_token_expire ,err = cache:get(channel_code.."token_expire") --渠道有效期
---]]
-
     local channel_ip_bind_time , err = cache:hget("hash_"..channel_code,"ip_bind_time")
     local channel_ip_time_out ,  err = cache:hget("hash_"..channel_code,"ip_time_out")
     local channel_connect_count ,err = cache:hget("hash_"..channel_code,"connect_count")
