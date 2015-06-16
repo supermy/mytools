@@ -1,3 +1,20 @@
+2015-06-16
+    增加webjars 集群配置
+    确保webapps 管理目录存在
+    http://192.168.59.103/java/myweb/webjars/bootstrap/3.3.4/css/bootstrap.min.css
+    http://192.168.59.103/java/dbtest//webjars/bootstrap/3.3.4/css/bootstrap.min.css
+    
+    http://192.168.59.103/java/webjars/bootstrap/3.3.4/css/bootstrap.min.css
+    
+    <spring:url value="/webjars/jquery/2.1.4/jquery.js" var="jQuery"/>
+    <script src="${jQuery}"></script>
+
+    <spring:url value="/webjars/bootstrap/3.3.4/js/bootstrap.min.js" var="bootstrapJs"/>
+    <script src="${bootstrapJs}"></script>
+
+    
+
+    
 2015-06-02
     nginx+lua配置token.lua
     curl -v -b "uid=1234;nickname=soga;token=aa6f21ec0fcf008aa5250904985a817b" "http://192.168.59.103/java/dbtest/token.jsp"

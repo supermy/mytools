@@ -14,9 +14,9 @@ data:
   image: busybox
   command: /bin/true
   volumes:
-      - /Users/moyong/docker-share/www/:/data/www/
+      - /Users/moyong/project/env-myopensource/3-tools/mytools/web+app/mynginx/www:/data/www/
       - /Users/moyong/docker-share/logs/web/:/usr/local/nginx/logs/
-      - /Users/moyong/docker-share/conf/nginx/lua/:/usr/local/nginx/conf/nginx.d/lua/ #配置文件,fix.me
+      - /Users/moyong/project/env-myopensource/3-tools/mytools/web+app/mynginx/nginx.d/lua/:/usr/local/nginx/conf/nginx.d/lua/ #配置文件,fix.me
 
 myredis:
   image: redis:latest

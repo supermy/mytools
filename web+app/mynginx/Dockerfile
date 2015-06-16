@@ -51,16 +51,18 @@ RUN make linux && make install
 WORKDIR /tmp
 RUN wget  http://luajit.org/download/LuaJIT-2.0.4.tar.gz
 RUN wget http://www.kyne.com.au/~mark/software/download/lua-cjson-2.1.0.tar.gz
-RUN wget -e "http_proxy=http://10.77.45.191:8087" http://openresty.org/download/ngx_openresty-1.7.10.1.tar.gz
-#
+RUN wget -e "http_proxy=http://172.16.70.18:8087" http://openresty.org/download/ngx_openresty-1.7.10.1.tar.gz
+RUN wget http://labs.frickle.com/files/ngx_cache_purge-2.3.tar.gz
+
 
 # mysql depends bit ,不兼容lua-5.3.0 ,兼容lua-5.2.0
-RUN wget http://bitop.luajit.org/download/LuaBitOp-1.0.2.tar.gz
+RUN wget -e "http_proxy=http://172.16.70.18:8087" http://bitop.luajit.org/download/LuaBitOp-1.0.2.tar.gz
 
 RUN tar zxf LuaJIT-2.0.4.tar.gz
 RUN tar zxf lua-cjson-2.1.0.tar.gz
 RUN tar zxf ngx_openresty-1.7.10.1.tar.gz
 RUN tar zxf LuaBitOp-1.0.2.tar.gz
+RUN tar zxf ngx_cache_purge-2.3.tar.gz
 
 
 WORKDIR /tmp/LuaJIT-2.0.4
@@ -93,6 +95,7 @@ RUN \
         --add-module=/tmp/ngx_openresty-1.7.10.1/bundle/set-misc-nginx-module-0.28/ \
         --add-module=/tmp/ngx_openresty-1.7.10.1/bundle/echo-nginx-module-0.57/ \
         --add-module=/tmp/ngx_openresty-1.7.10.1/bundle/ngx_lua-0.9.15/ \
+        --add-module=/tmp/ngx_cache_purge-2.3/ \
     && make && make install
 
 
@@ -112,6 +115,12 @@ ADD nginx.sh /etc/my_init.d/nginx.sh
 RUN chmod 755 /etc/my_init.d/nginx.sh
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN mkdir -p /var/lib/nginx/cache
+
+#配置时区
+RUN echo "Asia/Shanghai" > /etc/timezone
+RUN dpkg-reconfigure -f noninteractive tzdata
 
 EXPOSE 80 443
 

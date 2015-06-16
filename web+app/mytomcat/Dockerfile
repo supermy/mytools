@@ -2,6 +2,7 @@ FROM tutum/tomcat:7.0
 COPY dbtest /tomcat/webapps/dbtest
 COPY dbtest /home/dbtest
 COPY lib-cluster/* /tomcat/lib/
+COPY lib-webjars/* /tomcat/lib/
 
 
 
@@ -66,5 +67,10 @@ RUN cat /tomcat/conf/context.xml
 #删除注释文件
 RUN sed -i '/<!–/,/–>/d' /tomcat/conf/server.xml
 RUN sed -i '/<!–/,/–>/d' /tomcat/conf/tomcat-users.xml
+
+
+#配置时区
+RUN echo "Asia/Shanghai" > /etc/timezone
+RUN dpkg-reconfigure -f noninteractive tzdata
 
 #集群session配置

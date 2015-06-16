@@ -19,16 +19,16 @@ data:
   image: busybox
   command: /bin/true
   volumes:
-      - /Users/moyong/docker-share/www/:/data/www/
+      - /Users/moyong/project/env-myopensource/3-tools/mytools/web+app/mynginx/www:/data/www/
       - /Users/moyong/docker-share/logs/web/:/usr/local/nginx/logs/
-      - /Users/moyong/docker-share/conf/nginx/lua/:/usr/local/nginx/conf/nginx.d/lua/ #配置文件,fix.me
+      - /Users/moyong/project/env-myopensource/3-tools/mytools/web+app/mynginx/nginx.d/lua/:/usr/local/nginx/conf/nginx.d/lua/ #配置文件,fix.me
 
-
+#/Users/moyong/docker-share/app/ 覆盖了管理目录导致，导致管理功能不可用
 data4app:
   image: busybox
   command: /bin/true
   volumes:
-      - /Users/moyong/docker-share/app/:/tomcat/webapps/
+#      - /Users/moyong/docker-share/app/:/tomcat/webapps/
       - /Users/moyong/docker-share/logs/app/:/tomcat/logs/
 
 

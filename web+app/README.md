@@ -8,7 +8,7 @@ nginx(tengine)+tomcat+mysql+memcached 集群
 
 >   nginx 整合HttpRedis2Module/lua-resty-redis完成，http方式访问redis;
 >   mysql2redis.sh 将mysql 的数据同步到redis,通过linux 的crontab 进行配置；
->
+>   增加webjars and nginx4webjars 缓存配置
 >
 >开发调试脚本
 >
