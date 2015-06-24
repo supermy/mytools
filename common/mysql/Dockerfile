@@ -14,4 +14,8 @@ connect_timeout = 20    \n\
 
 ' /etc/mysql/my.cnf
 
+#配置时区
+RUN echo "Asia/Shanghai" > /etc/timezone
+RUN dpkg-reconfigure -f noninteractive tzdata
+
 RUN  more /etc/mysql/my.cnf
