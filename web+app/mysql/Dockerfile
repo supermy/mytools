@@ -1,6 +1,6 @@
 #转移到common/mysql
 FROM    mysql:latest
-MAINTAINER jamesmo <springclick@gmail.com>
+MAINTAINER supermy <springclick@gmail.com>
 
 
 #配置时区

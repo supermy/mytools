@@ -1,4 +1,4 @@
-#docker build -t jamesmo/mynginx:2.1 .
+#docker build -t supermy/docker-mynginx:2.1 .
 
 #http://192.168.59.103:8080/redisfoo
 #http://192.168.59.103:8080/redisget?key=one

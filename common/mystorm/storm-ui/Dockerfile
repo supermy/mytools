@@ -1,5 +1,5 @@
-FROM jamesmo/storm_base:0.9.3
-MAINTAINER Jamesmo<springclick@gmail.com>
+FROM supermy/docker-storm_base:0.9.3
+MAINTAINER supermy<springclick@gmail.com>
 RUN /usr/bin/config-supervisord.sh ui
 
 EXPOSE 8080

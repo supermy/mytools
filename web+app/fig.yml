@@ -4,7 +4,7 @@
 #http://192.168.59.103/java/myweb/
 #http://192.168.59.103/java/dbtest/
 web:
-  image: jamesmo/mynginx:2.1
+  image: supermy/docker-mynginx:2.1
   links:
     - mytomcat1
     - mytomcat2
@@ -34,7 +34,7 @@ data4app:
 
 #启动tomcat
 mytomcat1:
-  image: jamesmo/mytomcat:7
+  image: supermy/docker-mytomcat:7
   environment:
     TOMCAT_PASS: admin
   links:
@@ -49,7 +49,7 @@ mytomcat1:
 
 #启动tomcat
 mytomcat2:
-  image: jamesmo/mytomcat:7
+  image: supermy/docker-mytomcat:7
   environment:
     TOMCAT_PASS: admin
   links:
@@ -86,7 +86,7 @@ myredis:
 
 
 db:
-  image: jamesmo/mysql:latest
+  image: supermy/docker-mysql:latest
   environment:
     MYSQL_USER: java
     MYSQL_PASSWORD: java
@@ -96,7 +96,7 @@ db:
     - "3306"
 
 dbinit:
-  image: jamesmo/mysql:latest
+  image: supermy/docker-mysql:latest
   entrypoint: /bin/bash
   volumes:
     - .:/host

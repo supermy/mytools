@@ -278,6 +278,7 @@ if not isempty(channel_code) then
     --给渠道返回一个token,有效期
     local ctoken = ngx.md5( channel_code .. myIp .. channel_pwd .. os.time())
     res , err = cache:set(channel_code .. ctoken,myIp)
+
     --设置生存时间 天数转换为秒
     res , err = cache:expire(channel_code .. ctoken,channel_token_expire*60*60*60)
 

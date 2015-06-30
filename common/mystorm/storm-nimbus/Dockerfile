@@ -1,5 +1,5 @@
-FROM jamesmo/storm_base:0.9.3
-MAINTAINER JamesMo<springclick@gmail.com>
+FROM supermy/docker-storm_base:0.9.3
+MAINTAINER supermy<springclick@gmail.com>
 
 RUN /usr/bin/config-supervisord.sh nimbus 
 RUN /usr/bin/config-supervisord.sh drpc

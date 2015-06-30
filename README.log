@@ -186,6 +186,9 @@ docker run -i -t myjava7/debian:latest
 todo 
     规则殷勤：drools 平台使用
     工作流：activiti
+2015-06-16
+    设置默认时区为上海，debian 镜像包，重新构建其他镜像包。
+
 
 20150408
     增加dns-docker镜像，方便通过dns配置域名

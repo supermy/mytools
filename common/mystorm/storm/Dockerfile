@@ -1,6 +1,6 @@
-FROM jamesmo/jre:7
+FROM supermy/docker-jre:7
 
-MAINTAINER JamesMo <springclick@gmail.com>
+MAINTAINER supermy <springclick@gmail.com>
 
 RUN echo 'root:supermy' | chpasswd
 

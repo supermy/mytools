@@ -1,6 +1,6 @@
 printjson(1);
-sh.addShard("rs1/172.17.0.69:27017");
-sh.addShard("rs2/172.17.0.59:27017");
+sh.addShard("rs1/172.17.0.94:27017");
+sh.addShard("rs2/172.17.0.88:27017");
 sh.status();
 
 db.runCommand( { listshards : 1 } );
@@ -11,8 +11,6 @@ db = db.getSiblingDB("test");
 for(var i=1;i<=2000;i++) db.c1.save({id:i,value1:"12345678"});
 db.c1.stats();
 
-db.runCommand( { enablesharding:"gndata" });
-db.runCommand( { shardcollection : "gndata.tellog",key : {_id: 1} } );
 
 
 //

@@ -1,1 +1,1 @@
-docker build -t jamesmo/mongodb:3.0.2 .
+docker build -t supermy/docker-mongodb:3.0.4 .

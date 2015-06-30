@@ -1,5 +1,5 @@
 base:
-  image: jamesmo/myflume:latest
+  image: supermy/docker-myflume:latest
   environment:
     FLUME_AGENT_NAME: a1
     FLUME_CONF_DIR: /opt/flume/conf

@@ -1,4 +1,4 @@
-FROM    jamesmo/jre:7
+FROM    supermy/docker-jre:7
 
 ENV SOLR_VERSION 4.10.2
 ENV MYSOLR solr-$SOLR_VERSION

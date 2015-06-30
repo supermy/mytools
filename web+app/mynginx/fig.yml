@@ -1,6 +1,6 @@
 #启动web
 web:
-  image: jamesmo/mynginx:2.1
+  image: supermy/docker-mynginx:2.1
   links:
     - myredis:myredis
     - mydb:mydb

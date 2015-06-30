@@ -1,4 +1,4 @@
-FROM jamesmo/debian:7
+FROM supermy/docker-debian:7
 
 ## Install Oracle JDK
 RUN wget --no-check-certificate --header "Cookie: oraclelicense=accept-securebackup-cookie" \

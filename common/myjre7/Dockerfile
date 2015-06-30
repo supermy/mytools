@@ -1,4 +1,4 @@
-FROM jamesmo/debian:7
+FROM supermy/docker-debian:7
 
 RUN wget --no-check-certificate --header "Cookie: oraclelicense=accept-securebackup-cookie" \
     http://download.oracle.com/otn-pub/java/jdk/7u76-b13/server-jre-7u76-linux-x64.tar.gz

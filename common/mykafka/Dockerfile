@@ -1,6 +1,6 @@
-FROM    jamesmo/jre:7
+FROM    supermy/docker-jre:7
 
-MAINTAINER jamesmo
+MAINTAINER supermy
 
 RUN apt-get update && apt-get install -y unzip
 
