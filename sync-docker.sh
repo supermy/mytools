@@ -28,8 +28,6 @@ rsync -avz  web+app/mytomcat/*  /Users/moyong/project/env-myopensource/3-tools/d
 # 同步到网上数据库
 
 
-
-
 cd    /Users/moyong/project/env-myopensource/3-tools/docker/apps/docker-debian/
 sh /Users/moyong/project/env-myopensource/3-tools/docker/mygit.sh  更新项目名称
 cd   /Users/moyong/project/env-myopensource/3-tools/docker/apps/docker-jdk/

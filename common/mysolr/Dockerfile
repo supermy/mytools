@@ -1,6 +1,6 @@
 FROM    supermy/docker-jre:7
 
-ENV SOLR_VERSION 4.10.2
+ENV SOLR_VERSION 4.10.4
 ENV MYSOLR solr-$SOLR_VERSION
 
 #procps是一个实用程序包，主要包括ps top kill等程序主要用来显示与控制一些系统信息，进程状态之类的内容。

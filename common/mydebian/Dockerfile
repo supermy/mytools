@@ -5,14 +5,14 @@ MAINTAINER supermy <springclick@gmail.com>
 
 #RUN sed -i '1,3d'   /etc/apt/sources.list
 
-RUN sed -i '4a \
-    deb http://mirrors.163.com/debian/ wheezy main non-free contrib \n \
-    deb http://mirrors.163.com/debian/ wheezy-proposed-updates main contrib non-free \n \
-    deb http://mirrors.163.com/debian-security/ wheezy/updates main contrib non-free \n \
-    deb-src http://mirrors.163.com/debian/ wheezy main non-free contrib \n \
-    deb-src http://mirrors.163.com/debian/ wheezy-proposed-updates main contrib non-free \n \
-    deb-src http://mirrors.163.com/debian-security/ wheezy/updates main contrib non-free \n \
-    ' /etc/apt/sources.list
+#RUN sed -i '4a \
+#    deb http://mirrors.163.com/debian/ wheezy main non-free contrib \n \
+#    deb http://mirrors.163.com/debian/ wheezy-proposed-updates main contrib non-free \n \
+#    deb http://mirrors.163.com/debian-security/ wheezy/updates main contrib non-free \n \
+#    deb-src http://mirrors.163.com/debian/ wheezy main non-free contrib \n \
+#    deb-src http://mirrors.163.com/debian/ wheezy-proposed-updates main contrib non-free \n \
+#    deb-src http://mirrors.163.com/debian-security/ wheezy/updates main contrib non-free \n \
+#    ' /etc/apt/sources.list
 
 # 慢
 #    deb http://ftp.sjtu.edu.cn/debian/ wheezy main non-free contrib \n \

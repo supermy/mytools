@@ -4,7 +4,10 @@ MAINTAINER supermy
 
 RUN apt-get update && apt-get install -y unzip
 
-RUN wget  http://mirrors.cnnic.cn/apache/kafka/0.8.2.1/kafka_2.11-0.8.2.1.tgz -O /tmp/kafka_2.11-0.8.2.1.tgz
+#http://mirrors.cnnic.cn/apache/kafka/0.8.2.1/kafka_2.11-0.8.2.1.tgz -O /tmp/kafka_2.11-0.8.2.1.tgz
+#http://apache.fayea.com/kafka/0.8.2.1/kafka_2.11-0.8.2.1.tgz
+RUN wget  http://apache.fayea.com/kafka/0.8.2.1/kafka_2.11-0.8.2.1.tgz -O /tmp/kafka_2.11-0.8.2.1.tgz
+
 RUN tar xfz /tmp/kafka_2.11-0.8.2.1.tgz -C /opt
 
 RUN rm /tmp/kafka_2.11-0.8.2.1.tgz
