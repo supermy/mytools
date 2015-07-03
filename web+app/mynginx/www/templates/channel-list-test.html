@@ -21,37 +21,30 @@
 
 <div class="container">
 
-
-
     <h2>渠道列表</h2>
 
     <table id="owners" class="table table-striped">
         <thead>
         <tr>
             <th>序号</th>
-            <th>名称</th>
+            <th style="width: 200px;">名称</th>
             <th>编码</th>
-            <th>秘钥</th>
-            <th>秘钥有效期</th>
-            <th>ip 地址</th>
-            <th>封禁时长</th>
-            <th>访问间隔</th>
-            <th>访问峰值</th>
-            <th>带宽</th>
-            <th>是否上线</th>
+            <th style="width: 150px;">秘钥</th>
+            <th  style="width:60px;">秘钥有效期</th>
+            <th style="width: 100px;">ip 地址</th>
+            <th style="width: 100px;">封禁时长</th>
+            <th style="width: 100px;">访问间隔</th>
+            <th style="width: 100px;">访问峰值</th>
+            <th style="width: 100px;">带宽</th>
+            <th style="width: 100px;">是否上线</th>
         </tr>
         </thead>
         <tbody>
         {% for _, channel in ipairs(channels) do %}
-            {(channel.html, channel)}
+            {(channel-test.html, channel)}
         {% end %}
         </tbody>
     </table>
-
-    {(channel-pagenav.html, page)}
-
-    {(channel-pageupdown.html, page)}
-
 
 
     <script src="/webjars/jquery/2.1.4/jquery.js"></script>

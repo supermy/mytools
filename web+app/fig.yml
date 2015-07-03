@@ -93,11 +93,11 @@ db:
     MYSQL_DATABASE: javatest
     MYSQL_ROOT_PASSWORD: mysql
   ports:
-    - "3306"
+    - "3306:3306"
 
 dbinit:
   image: supermy/docker-mysql:latest
-  entrypoint: /bin/bash
+  #entrypoint: "/bin/bash"
   volumes:
     - .:/host
   command: -c "sleep 8; mysql -u java --password=java -h mysql javatest < /host/mysql/init.sql; exit 0"

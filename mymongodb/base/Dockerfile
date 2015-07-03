@@ -3,6 +3,8 @@ FROM supermy/docker-debian:7
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
 RUN groupadd -r mongodb && useradd -r -g mongodb mongodb
 
+#RUN export http_proxy=http://172.16.71.25:8087
+
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
 		ca-certificates curl \

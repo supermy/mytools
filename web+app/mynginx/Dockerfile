@@ -1,18 +1,21 @@
-FROM    debian:latest
+#latest=8.1   wheezy=7.8
+FROM    debian:7.8
+#FROM    supermy/docker-debian:7
+
 
 MAINTAINER supermy <springclick@gmail.com>
 
-#RUN sed -i '1,3d'   /etc/apt/sources.list
-#RUN echo '#hello'>> /etc/apt/sources.list
+RUN sed -i '1,3d'   /etc/apt/sources.list
+RUN echo '#hello'>> /etc/apt/sources.list
 
-#RUN sed -i '1a \
-#    deb http://mirrors.163.com/debian/ wheezy main non-free contrib \n \
-#    deb http://mirrors.163.com/debian/ wheezy-proposed-updates main contrib non-free \n \
-#    deb http://mirrors.163.com/debian-security/ wheezy/updates main contrib non-free \n \
-#    deb-src http://mirrors.163.com/debian/ wheezy main non-free contrib \n \
-#    deb-src http://mirrors.163.com/debian/ wheezy-proposed-updates main contrib non-free \n \
-#    deb-src http://mirrors.163.com/debian-security/ wheezy/updates main contrib non-free \n \
-#    ' /etc/apt/sources.list
+RUN sed -i '1a \
+    deb http://mirrors.163.com/debian/ wheezy main non-free contrib \n \
+    deb http://mirrors.163.com/debian/ wheezy-proposed-updates main contrib non-free \n \
+    deb http://mirrors.163.com/debian-security/ wheezy/updates main contrib non-free \n \
+    deb-src http://mirrors.163.com/debian/ wheezy main non-free contrib \n \
+    deb-src http://mirrors.163.com/debian/ wheezy-proposed-updates main contrib non-free \n \
+    deb-src http://mirrors.163.com/debian-security/ wheezy/updates main contrib non-free \n \
+    ' /etc/apt/sources.list
 
 # sohu 更新服务器：
 #RUN sed -i '1a \
@@ -52,9 +55,11 @@ WORKDIR /tmp
 RUN wget  http://luajit.org/download/LuaJIT-2.0.4.tar.gz
 RUN wget http://www.kyne.com.au/~mark/software/download/lua-cjson-2.1.0.tar.gz
 
-#RUN export http_proxy=http://10.77.45.191:8087
-RUN wget http://openresty.org/download/ngx_openresty-1.7.10.1.tar.gz
-RUN wget http://labs.frickle.com/files/ngx_cache_purge-2.3.tar.gz
+#RUN export http_proxy=http://172.16.71.25:8087
+RUN wget -e http_proxy=172.16.71.25:8087 http://openresty.org/download/ngx_openresty-1.7.10.1.tar.gz
+#RUN wget http://openresty.org/download/ngx_openresty-1.7.10.1.tar.gz
+RUN wget -e http_proxy=172.16.71.25:8087  http://labs.frickle.com/files/ngx_cache_purge-2.3.tar.gz
+#RUN wget http://labs.frickle.com/files/ngx_cache_purge-2.3.tar.gz
 
 
 # mysql depends bit ,不兼容lua-5.3.0 ,兼容lua-5.2.0

@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-docker build -t supermy/docker-docker-debian:7 mydebian
-docker build -t supermy/docker-docker-jre:7 myjre7
+docker build -t supermy/docker-debian:7 mydebian
+docker build -t supermy/docker-jre:7 myjre7
 docker build -t supermy/docker-jdk:7 myjava7
 docker build -t supermy/docker-solr:4.10.2 mysolr
 
 docker build -t supermy/docker-kafka:0.8 mykafka
 
-docker build -t supermy/docker-rabbitmq_base:3.5 myrabbitmq
+docker build -t supermy/docker-rabbitmq-base:3.5 myrabbitmq
 docker build -t supermy/docker-rabbitmq:3.5 myrabbitmq/rabbitmq
 
 docker build -t supermy/docker-myflume:latest myflume

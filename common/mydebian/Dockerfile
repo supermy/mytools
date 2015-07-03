@@ -1,4 +1,4 @@
-FROM    debian:latest
+FROM    debian:7.8
 
 #2015-01-24修订,中文语言
 MAINTAINER supermy <springclick@gmail.com>
@@ -12,6 +12,7 @@ MAINTAINER supermy <springclick@gmail.com>
 #    deb-src http://mirrors.163.com/debian/ wheezy main non-free contrib \n \
 #    deb-src http://mirrors.163.com/debian/ wheezy-proposed-updates main contrib non-free \n \
 #    deb-src http://mirrors.163.com/debian-security/ wheezy/updates main contrib non-free \n \
+#	\
 #    ' /etc/apt/sources.list
 
 # 慢
@@ -22,13 +23,10 @@ MAINTAINER supermy <springclick@gmail.com>
 #    deb-src http://ftp.sjtu.edu.cn/debian/ wheezy-proposed-updates main contrib non-free \n \
 #    deb-src http://ftp.sjtu.edu.cn/debian-security/ wheezy/updates main contrib non-free \n \
 
-RUN cat /etc/apt/sources.list
+#RUN cat /etc/apt/sources.list
 
 
-RUN apt-get -y update
-#&&  apt-get  -y upgrade
-
-RUN	   apt-get install -qq -y curl wget sudo
+RUN apt-get -y update  &&  apt-get install -qq -y curl wget sudo
 
 RUN     apt-get -y install locales && \
         sed -i 's/# zh_CN.UTF-8 UTF-8/zh_CN.UTF-8 UTF-8/' /etc/locale.gen && \
