@@ -6,6 +6,7 @@
 web:
   image: supermy/docker-mynginx:2.1
   links:
+    - springboot
     - mytomcat1
     - mytomcat2
     - myredis
@@ -84,7 +85,6 @@ myredis:
   ports:
       - "6379:6379"
 
-
 db:
   image: supermy/docker-mysql:latest
   environment:
@@ -103,3 +103,10 @@ dbinit:
   command: -c "sleep 8; mysql -u java --password=java -h mysql javatest < /host/mysql/init.sql; exit 0"
   links:
     - db:mysql
+
+springboot:
+  image: supermy/docker-springboot:latest
+  links:
+      - db:mysql
+  ports:
+      - "8080"

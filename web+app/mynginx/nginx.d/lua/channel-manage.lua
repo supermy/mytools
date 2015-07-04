@@ -26,7 +26,8 @@ end
 local http = require "resty.http"
 
 local httpc = http.new()
-local res, err = httpc:request_uri("http://192.168.0.121:8080/channel_auth/filter?"..myargs, {
+local res, err = httpc:request_uri("http://127.0.0.1/springboot/channel_auth/filter?"..myargs, {
+--local res, err = httpc:request_uri("http://172.17.0.239:8080/channel_auth/filter?"..myargs, {
     method = "GET",
     body = myargs,
     headers = {

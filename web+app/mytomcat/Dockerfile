@@ -4,6 +4,9 @@ COPY dbtest /home/dbtest
 COPY lib-cluster/* /tomcat/lib/
 COPY lib-webjars/* /tomcat/lib/
 
+#COPY gs-accessing-data-rest-0.1.0.war /tomcat/webapps/rest.war
+
+
 
 
 #优化运行环境

@@ -1,3 +1,12 @@
+2015-07-04
+    https://spring.io/guides/gs/spring-boot-docker/
+
+    http://192.168.59.103/java/rest/public/channel.html
+
+    http://192.168.59.103:32801/channel_auth/filter
+
+    http://192.168.59.103/channel-manage?page=0&start=0&size=15
+
 2015-07-03
     lua+template 与 spring-data-rest 完成整合；
     http://192.168.59.103/channel-manage?page=0&start=0&size=15
