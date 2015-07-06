@@ -2,7 +2,8 @@ FROM    supermy/docker-jre:7
 
 MAINTAINER supermy
 
-RUN apt-get update && apt-get install -y unzip
+#RUN apt-get update &&
+RUN apt-get install -y unzip
 
 #http://mirrors.cnnic.cn/apache/kafka/0.8.2.1/kafka_2.11-0.8.2.1.tgz -O /tmp/kafka_2.11-0.8.2.1.tgz
 #http://apache.fayea.com/kafka/0.8.2.1/kafka_2.11-0.8.2.1.tgz
