@@ -39,9 +39,19 @@ RUN mkdir /data && chown redis:redis /data
 VOLUME /data
 WORKDIR /data
 
+#RUN mkdir -p /usr/local/var/db/redis/
+RUN mkdir -p /usr/local/etc/redis
+
+#COPY redis.conf /usr/local/etc/redis/redis.conf
+
+COPY sysctl.conf  /etc/sysctl.conf
+
 COPY entrypoint.sh /entrypoint.sh
+
+RUN  chmod a+wxr /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
-EXPOSE 6379
-CMD [ "redis-server" ]
 
+EXPOSE 6379
+#CMD [ "redis-server" ]
+CMD [ "redis-server", "/etc/redis.conf" ]
