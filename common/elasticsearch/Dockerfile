@@ -32,7 +32,14 @@ RUN grep node.name /etc/elasticsearch/elasticsearch.yml
 
 
 ENV PATH /usr/share/elasticsearch/bin:$PATH
+
 COPY config /usr/share/elasticsearch/config
+
+RUN mkdir -p /usr/share/elasticsearch/logs/  && chmod 777 /usr/share/elasticsearch/logs/
+RUN mkdir -p /usr/share/elasticsearch/plugins/analysis-ik/
+
+COPY elasticsearch-analysis-ik-1.4.0-jar-with-dependencies.jar /usr/share/elasticsearch/plugins/analysis-ik/
+
 
 VOLUME /usr/share/elasticsearch/data
 

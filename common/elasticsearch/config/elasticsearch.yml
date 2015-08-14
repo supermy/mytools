@@ -383,3 +383,11 @@ cluster.name: elasticsearch
 # it unless you need it is recommended (it is disabled by default).
 #
 #http.jsonp.enable: true
+index:
+  analysis:
+    analyzer:
+      ik:
+          alias: [news_analyzer_ik,ik_analyzer]
+          type: org.elasticsearch.index.analysis.IkAnalyzerProvider
+
+index.analysis.analyzer.default.type : "ik"

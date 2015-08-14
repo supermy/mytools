@@ -7,6 +7,8 @@ docker run -d -v "$PWD/config":/usr/share/elasticsearch/config elasticsearch
 
 docker run -d -v "$PWD/esdata":/usr/share/elasticsearch/data elasticsearch
 
+
+
 curl -XPUT http://192.168.59.103:9200/supermy/test/123 -d '{
     "name" : "史密斯"
 }'
@@ -81,6 +83,10 @@ curl -XGET http://192.168.59.103:9200/twitter/_search?pretty=true -d '{
         }
     }
 }'
+
+中文分词
+https://github.com/supermy/elasticsearch-analysis-ik
+http://my.oschina.net/u/579033/blog/394845#OSC_h4_18
 
 
 http://www.elasticsearch.cn/guide/reference/setup/installation.html
