@@ -15,7 +15,17 @@ docker build -t supermy/docker-mytwemproxy:0.3 mytwemproxy
 docker build -t supermy/docker-myredis:3.5 myredis
 docker build -t supermy/docker-mysql:latest mysql
 
+docker build -t supermy/docker-mycodis mycodis
+
+
 docker build -t supermy/docker-storm:0.9.3 mystorm/storm
 docker build -t supermy/docker-storm-nimbus:0.9.3 mystorm/storm-nimbus
 docker build -t supermy/docker-storm-supervisor:0.9.3 mystorm/storm-supervisor
 docker build -t supermy/docker-storm-ui:0.9.3 mystorm/storm-ui
+
+
+docker build -t supermy/mymonitor:latest -f Dockerfile-nagios .
+
+docker build -t supermy/elasticsearch:latest elasticsearch
+
+

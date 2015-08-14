@@ -1,0 +1,36 @@
+#源和中文环境配置
+#http://www.elasticsearch.cn/
+fulltext1:
+  image: supermy/elasticsearch:latest
+  links:
+      - config1
+  ports:
+    - "9200:9200"
+    - "9300"
+  environment:
+    node.name: testnode1
+
+fulltext2:
+  image: supermy/elasticsearch:latest
+  links:
+      - config2
+  ports:
+    - "9200"
+    - "9300"
+  environment:
+    node.name: testnode2
+
+
+#常用工具集合
+config1:
+  image: busybox
+  command: /bin/true
+  volumes:
+      - /Users/moyong/project/env-myopensource/3-tools/mytools/common/elasticsearch/config/elasticsearch-nn1.yml:/etc/elasticsearch/elasticsearch.yml
+
+config2:
+  image: busybox
+  command: /bin/true
+  volumes:
+      - /Users/moyong/project/env-myopensource/3-tools/mytools/common/elasticsearch/config/elasticsearch-nn2.yml:/etc/elasticsearch/elasticsearch.yml
+

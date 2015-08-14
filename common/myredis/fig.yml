@@ -1,3 +1,5 @@
+#docker pull supermy/docker-myredis:3.5
+
 myredis4master:
   image: supermy/docker-myredis:3.5
   volumes_from:
@@ -46,9 +48,9 @@ data4slave:
   volumes:
       - /Users/moyong/project/env-myopensource/3-tools/mytools/common/myredis/redis-slave.conf:/etc/redis.conf
 
-#docker build -t supermy/docker-myredis:3.5  . && fig stop && fig rm --force && fig up -d && fig ps && fig logs
 
-#/myredis/conf/redis-master.conf:/usr/local/etc/redis/redis-master.conf
+#docker build -t supermy/docker-myredis:3.5  . && fig stop && fig rm --force && fig up -d && fig ps && fig logs
+#docker pull supermy/docker-myredis
 
 #export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.7.0_60.jdk/Contents/Home/"
 #build spring app use jdk1.7
