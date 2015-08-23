@@ -1,4 +1,23 @@
 FROM  supermy/docker-debian:7
+
+RUN cat /etc/apt/sources.list
+
+RUN sed -i '1,3d'   /etc/apt/sources.list
+
+RUN echo '#' >> /etc/apt/sources.list
+
+RUN sed -i '$a \
+    deb http://mirrors.163.com/debian/ wheezy main non-free contrib \n \
+    deb http://mirrors.163.com/debian/ wheezy-proposed-updates main contrib non-free \n \
+    deb http://mirrors.163.com/debian-security/ wheezy/updates main contrib non-free \n \
+    deb-src http://mirrors.163.com/debian/ wheezy main non-free contrib \n \
+    deb-src http://mirrors.163.com/debian/ wheezy-proposed-updates main contrib non-free \n \
+    deb-src http://mirrors.163.com/debian-security/ wheezy/updates main contrib non-free \n \
+	\
+    ' /etc/apt/sources.list
+
+RUN cat /etc/apt/sources.list
+
 # gcc for cgo
 RUN apt-get update && apt-get install -y \
 		gcc libc6-dev make \
@@ -23,35 +42,27 @@ ENV GOPATH /go
 ENV PATH /go/bin:$PATH
 WORKDIR /go
 
-RUN ls /go/bin
 COPY go-wrapper /usr/local/bin/
 
+#### build go end ####
 
-#RUN sed -i '1,3d'   /etc/apt/sources.list
-#RUN sed -i '4a \
-#    deb http://mirrors.163.com/debian/ wheezy main non-free contrib \n \
-#    deb http://mirrors.163.com/debian/ wheezy-proposed-updates main contrib non-free \n \
-#    deb http://mirrors.163.com/debian-security/ wheezy/updates main contrib non-free \n \
-#    deb-src http://mirrors.163.com/debian/ wheezy main non-free contrib \n \
-#    deb-src http://mirrors.163.com/debian/ wheezy-proposed-updates main contrib non-free \n \
-#    deb-src http://mirrors.163.com/debian-security/ wheezy/updates main contrib non-free \n \
-#	\
-#    ' /etc/apt/sources.list
+#### build codis begin ####
 
-
-RUN cat /etc/apt/sources.list
-
-RUN apt-get update -y
-
-RUN apt-get install -y git
+RUN apt-get update -y && apt-get install -y git
 
 # Add codis
 Add codis /go/src/github.com/wandoulabs/codis/
 WORKDIR /go/src/github.com/wandoulabs/codis/
 
+#采用下面的数据源，文件不全编译错误
+#RUN git clone https://github.com/wandoulabs/codis
+#WORKDIR codis
+
 # Install dependency
 RUN ./bootstrap.sh
-WORKDIR /go/src/github.com/wandoulabs/codis/sample
+#WORKDIR /go/src/github.com/wandoulabs/codis/sample
+WORKDIR  codis/sample
+
 
 # Expose ports
 EXPOSE 19000
