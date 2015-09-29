@@ -48,6 +48,8 @@ RUN tar zxf ngx_cache_purge-2.3.tar.gz
 WORKDIR /tmp/ngx_openresty-1.9.3.1
 RUN ./configure --prefix=/usr/local/openresty --with-luajit && make && make install
 
+WORKDIR /tmp/ngx_openresty-1.9.3.1/bundle/lua-5.1.5
+RUN make linux && make install
 
 WORKDIR /tmp/tengine-2.1.1
 RUN echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf
@@ -64,11 +66,11 @@ RUN \
     cd /tmp/tengine-2.1.1 &&\
     ./configure  \
        --with-ld-opt='-Wl,-rpath,/usr/local/lib/' \
-        --add-module=/tmp/ngx_openresty-1.7.10.2/bundle/redis2-nginx-module-0.12/ \
-        --add-module=/tmp/ngx_openresty-1.7.10.2/bundle/ngx_devel_kit-0.2.19/ \
-        --add-module=/tmp/ngx_openresty-1.7.10.2/bundle/set-misc-nginx-module-0.29/ \
-        --add-module=/tmp/ngx_openresty-1.7.10.2/bundle/echo-nginx-module-0.58/ \
-        --add-module=/tmp/ngx_openresty-1.7.10.2/bundle/ngx_lua-0.9.16/ \
+        --add-module=/tmp/ngx_openresty-1.9.3.1/bundle/redis2-nginx-module-0.12/ \
+        --add-module=/tmp/ngx_openresty-1.9.3.1/bundle/ngx_devel_kit-0.2.19/ \
+        --add-module=/tmp/ngx_openresty-1.9.3.1/bundle/set-misc-nginx-module-0.29/ \
+        --add-module=/tmp/ngx_openresty-1.9.3.1/bundle/echo-nginx-module-0.58/ \
+        --add-module=/tmp/ngx_openresty-1.9.3.1/bundle/ngx_lua-0.9.16/ \
         --add-module=/tmp/ngx_cache_purge-2.3/ \
         --with-ld-opt="-L /usr/local/lib" \
     && make && make install
