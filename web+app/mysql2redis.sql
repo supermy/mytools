@@ -1,5 +1,5 @@
 SELECT CONCAT(
-    '*18\r\n',
+    '*22\r\n',
     '$', LENGTH(redis_cmd),'\r\n',
     CAST(redis_cmd AS CHAR),'\r\n',
     '$', LENGTH(redis_key),'\r\n',
@@ -11,7 +11,9 @@ SELECT CONCAT(
     '$', LENGTH(hkey5), '\r\n',hkey5, '\r\n','$', LENGTH(hval5), '\r\n', hval5, '\r\n',
     '$', LENGTH(hkey6), '\r\n',hkey6, '\r\n','$', LENGTH(hval6), '\r\n', hval6, '\r\n',
     '$', LENGTH(hkey7), '\r\n',hkey7, '\r\n','$', LENGTH(hval7), '\r\n', hval7, '\r\n',
-    '$', LENGTH(hkey8), '\r\n',hkey8, '\r\n','$', LENGTH(hval8), '\r\n', hval8, '\r' )
+    '$', LENGTH(hkey8), '\r\n',hkey8, '\r\n','$', LENGTH(hval8), '\r\n', hval8, '\r\n',
+    '$', LENGTH(hkey9), '\r\n',hkey9, '\r\n','$', LENGTH(hval9), '\r\n', hval9, '\r\n',
+    '$', LENGTH(hkey10), '\r\n',hkey10, '\r\n','$', LENGTH(hval10), '\r\n', hval10, '\r')
 
 FROM (SELECT
         "HMSET"                       AS redis_cmd,
@@ -31,7 +33,12 @@ FROM (SELECT
         concat("token_expire")        AS hkey7,
         token_expire                  AS hval7,
         concat("limit_bandwidth")     AS hkey8,
-        limit_bandwidth               AS hval8
+        limit_bandwidth               AS hval8,
+        concat("save_host")           AS hkey9,
+        save_host                     AS hval9,
+        concat("save_port")           AS hkey10,
+        save_port                     AS hval10
+
       FROM channel_auth
       WHERE status=1)
   AS t

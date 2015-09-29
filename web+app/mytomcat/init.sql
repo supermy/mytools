@@ -20,14 +20,11 @@ CREATE TABLE channel_auth
 
   limit_bandwidth INT NOT NULL comment '渠道分配带宽',
 
-  save_host VARCHAR(32) NOT NULL comment '存储IP',
-  save_port VARCHAR(32) NOT NULL comment '存储端口',
-
   status  INT DEFAULT 0 NOT NULL COMMENT '是否生效,0/1  未生效/生效'
 
 ) comment '渠道认证表';
 
-insert into channel_auth values(1,'test','test','test',md5('testtest192.168.59.103bonc1234'),1,'192.168.59.103',300,60,100,10,'127.0.0.1',19000,1);
+insert into channel_auth values(1,'test','test','test',md5('testtest192.168.59.103bonc1234'),1,'192.168.59.103',300,60,100,10,1);
 
 # --验证ip 地址与渠道号是否一致；
 # --验证渠道号与账号是否一致；

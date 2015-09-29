@@ -51,8 +51,9 @@ http {
     #server_tokens off；
 
 
-    include   /usr/local/nginx/conf/http.d/1-http-ext.conf;
-    include   /usr/local/nginx/conf/http.d/2-upstream.conf;
+    include   /usr/local/nginx/conf/nginx.d/http-ext.conf;
+    include   /usr/local/nginx/conf/nginx.d/upstream.conf;
+
 
 
   server {
@@ -70,6 +71,7 @@ http {
         #proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 
         location / {
+
             root   /data/www;
             index  index.html index.htm;
         }
@@ -107,7 +109,23 @@ http {
         #}
 
 
-    include   /usr/local/nginx/conf/server.d/*.conf;
+
+
+
+
+    include   /usr/local/nginx/conf/nginx.d/java.conf;
+
+    include   /usr/local/nginx/conf/nginx.d/api.conf;
+
+    include   /usr/local/nginx/conf/nginx.d/lua.conf;
+    include   /usr/local/nginx/conf/nginx.d/redis.conf;
+    include   /usr/local/nginx/conf/nginx.d/lua-redis.conf;
+    include   /usr/local/nginx/conf/nginx.d/lua-mysql.conf;
+    include   /usr/local/nginx/conf/nginx.d/echo.conf;
+    include   /usr/local/nginx/conf/nginx.d/channel.conf;
+    include   /usr/local/nginx/conf/nginx.d/es.conf;
+
+    include   /usr/local/nginx/conf/nginx.d/server-ext.conf;
 
 
     }

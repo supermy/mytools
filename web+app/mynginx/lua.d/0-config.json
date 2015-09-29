@@ -3,6 +3,6 @@
   "port": "6379",
   "redis-host": "192.168.59.103",
   "redis-port": "6379",
-  "mysql-host": "192.168.59.103",
+  "mysql-host": "mysql",
   "mysql-port": "3306"
 }
