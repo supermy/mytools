@@ -10,10 +10,10 @@ db:
 
 dbinit:
   image: mysql
-  entrypoint: /bin/bash
+#  entrypoint: /bin/bash
   volumes:
     - .:/host
-  command: -c "sleep 18; mysql -u java --password=java -h mysql javatest < /host/../mysql/init.sql; exit 0"
+  command: /bin/bash -c "sleep 18; mysql -u java --password=java -h mysql javatest < /host/init.sql; exit 0"
   links:
     - db:mysql
 

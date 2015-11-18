@@ -9,7 +9,7 @@ web:
     - springboot
     - mytomcat1
     - mytomcat2
-    - myredis
+    - myredis:myredis
   ports:
     - "80:80"
   volumes_from:
@@ -20,9 +20,16 @@ data:
   image: busybox
   command: /bin/true
   volumes:
+      #- /home/yuan/docker/web/www:/data/www/
+      #- /home/yuan/docker/web/logs/:/usr/local/nginx/logs/
+      #- /home/yuan/docker/web/lua/:/usr/local/nginx/conf/nginx.d/lua/ #配置文件,fix.me
       - /Users/moyong/project/env-myopensource/3-tools/mytools/web+app/mynginx/www:/data/www/
       - /Users/moyong/docker-share/logs/web/:/usr/local/nginx/logs/
-      - /Users/moyong/project/env-myopensource/3-tools/mytools/web+app/mynginx/nginx.d/lua/:/usr/local/nginx/conf/nginx.d/lua/ #配置文件,fix.me
+      - /Users/moyong/project/env-myopensource/3-tools/mytools/web+app/mynginx/nginx.conf:/usr/local/nginx/conf/nginx.conf #配置文件,fix.me
+      - /Users/moyong/project/env-myopensource/3-tools/mytools/web+app/mynginx/lua.d/:/usr/local/nginx/conf/lua.d/ #配置文件,fix.me
+      - /Users/moyong/project/env-myopensource/3-tools/mytools/web+app/mynginx/http.d/:/usr/local/nginx/conf/http.d/ #配置文件,fix.me
+      - /Users/moyong/project/env-myopensource/3-tools/mytools/web+app/mynginx/server.d/:/usr/local/nginx/conf/server.d/ #配置文件,fix.me
+      - /Users/moyong/project/env-myopensource/3-tools/mytools/web+app/mynginx/lua-lib/:/usr/local/nginx/conf/lua-lib/
 
 #/Users/moyong/docker-share/app/ 覆盖了管理目录导致，导致管理功能不可用
 data4app:
@@ -97,10 +104,9 @@ db:
 
 dbinit:
   image: supermy/docker-mysql:latest
-  entrypoint: "/bin/bash"
   volumes:
     - .:/host
-  command: -c "sleep 8; mysql -u java --password=java -h mysql javatest < /host/mysql/init.sql; exit 0"
+  command: /bin/bash -c "sleep 8; mysql -u java --password=java -h mysql javatest < /host/mysql/init.sql; exit 0"
   links:
     - db:mysql
 

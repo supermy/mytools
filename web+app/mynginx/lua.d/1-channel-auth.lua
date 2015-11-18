@@ -192,7 +192,7 @@ end
 --mysql2redis.sh 同步数据
 --ab -n 5000 -c 200 -H "Cookie:ChannelCode=test;ChannelSecretkey=a8152b13f4ef9daca84cf981eb5a7907"   http://192.168.59.103/api
 channel_code = common.getHeadCookie("ChannelCode")
-channel_code = common.getHeadCookie("ChannelSecretkey")
+channel_secretkey = common.getHeadCookie("ChannelSecretkey")
 if common.isempty(channel_code) or common.isempty(channel_secretkey) then
 
     ngx.log(ngx.DEBUG, "传递的参数不全，或者名称不对")

@@ -1,27 +1,8 @@
 #!/usr/bin/env bash
 #    apt-get -qqy install gcc libpcre3 libpcre3-dev openssl libssl-dev make wget libreadline-dev libncurses-dev graphicsmagick
 tar xvf tengine-2.1.1.tar.gz
-
-tar zxf lua-5.1.5.tar.gz
-cd lua-5.1.5
-make linux && make install
-cd -
-
-
-tar zxf LuaJIT-2.0.4.tar.gz
-tar zxf lua-cjson-2.1.0.tar.gz
 tar zxf ngx_openresty-1.7.10.2.tar.gz
-tar zxf LuaBitOp-1.0.2.tar.gz
 tar zxf ngx_cache_purge-2.3.tar.gz
-
-
-cd LuaJIT-2.0.4
-make && make install
-cd -
-
-cd lua-cjson-2.1.0
-make && make install
-cd -
 
 cd ngx_openresty-1.7.10.2
 ./configure --prefix=/usr/local/openresty --with-luajit --with-ld-opt="-L /usr/local/lib" && make && make install

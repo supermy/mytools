@@ -10,9 +10,8 @@ db:
 
 dbinit:
   image: mysql:latest
-  entrypoint: /bin/bash
   volumes:
     - .:/host
-  command: -c "sleep 8; mysql -ujava -pjava -hmysql_base javatest < /host/init.sql; exit 0"
+  command: /bin/bash -c "sleep 8; mysql -ujava -pjava -hmysql_base javatest < /host/init.sql; exit 0"
   links:
     - db:mysql_base
