@@ -21,6 +21,10 @@ select id, foo, bar from testdata
   获取header 设置的值
   <%=request.getHeader("Check-Login")%>
 
+  获取session ID,不同端口的tomcat session id 相同,负载均衡可用.
+  <%=request.getSession().getId()%>
+
+
 
   </body>
 </html>

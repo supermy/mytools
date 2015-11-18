@@ -8,15 +8,14 @@ db:
   ports:
     - "3306:3306"
 
-#容器升级之后不支持
-#dbinit:
-#  image: mysql
-#  entrypoint: /bin/bash
-#  volumes:
-#    - .:/host
-#  command: -c "sleep 18; mysql -u java --password=java -h mysql javatest < /host/init.sql; exit 0"
-#  links:
-#    - db:mysql
+#数据初始化
+dbinit:
+  image: mysql
+  volumes:
+    - .:/host
+  command: /bin/bash -c "sleep 18; mysql -u java --password=java -h mysql javatest < /host/init.sql; exit 0"
+  links:
+    - db:mysql
 
 myredis:
   image: supermy/docker-myredis:3.5
@@ -26,16 +25,28 @@ myredis:
     ulimit: nofile=20480:40960
 
 
-app:
+app1:
   image: supermy/docker-tomcat-redis:7
   links:
-#    - dbinit
+    - dbinit
     - db:mysql
-    - myredis
+    - myredis:myredis
   environment:
     TOMCAT_PASS: admin
   ports:
-    - "8080:8080"
+    - "8080"
+  volumes_from:
+    - data
+
+app2:
+  image: supermy/docker-tomcat-redis:7
+  links:
+    - db:mysql
+    - myredis:myredis
+  environment:
+    TOMCAT_PASS: admin
+  ports:
+    - "8080"
   volumes_from:
     - data
 
