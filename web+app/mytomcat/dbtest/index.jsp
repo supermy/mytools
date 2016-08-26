@@ -1,3 +1,4 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
@@ -14,6 +15,7 @@ select id, foo, bar from testdata
   <h2>Results</h2>
   
 <c:forEach var="row" items="${rs.rows}">
+    Id ${row.id}<br/>
     Foo ${row.foo}<br/>
     Bar ${row.bar}<br/>
 </c:forEach>

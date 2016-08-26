@@ -1,3 +1,9 @@
+2016-04-29
+    经过测试session 相同
+    http://192.168.99.101/myweb/token.jsp
+    http://192.168.99.101:8080/myweb/token.jsp
+    http://192.168.99.101:8081/myweb/token.jsp
+    
 2015-11-18
     tomcat-redis session 共享ok
     dockerfile and fig.yml 默认设置为redis
@@ -21,7 +27,7 @@
     
 2015-06-02
     nginx+lua配置token.lua
-    curl -v -b "uid=1234;nickname=soga;token=aa6f21ec0fcf008aa5250904985a817b" "http://192.168.59.103/java/dbtest/token.jsp"
+    curl -v -b "uid=1234;nickname=soga;token=aa6f21ec0fcf008aa5250904985a817b" "http://192.168.99.101/java/dbtest/token.jsp"
 
 
 2015-01-23

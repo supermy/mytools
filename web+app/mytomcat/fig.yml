@@ -1,5 +1,5 @@
 db:
-  image: mysql
+  image: supermy/docker-mysql:latest
   environment:
     MYSQL_USER: java
     MYSQL_PASSWORD: java
@@ -10,7 +10,7 @@ db:
 
 #数据初始化
 dbinit:
-  image: mysql
+  image: supermy/docker-mysql:latest
   volumes:
     - .:/host
   command: /bin/bash -c "sleep 18; mysql -u java --password=java -h mysql javatest < /host/init.sql; exit 0"
@@ -26,7 +26,7 @@ myredis:
 
 
 app1:
-  image: supermy/docker-tomcat:7
+  image: supermy/docker-tomcat-redis:7
   links:
     - dbinit
     - db:mysql
@@ -39,7 +39,7 @@ app1:
     - data
 
 app2:
-  image: supermy/docker-tomcat:7
+  image: supermy/docker-tomcat-redis:7
   links:
     - db:mysql
     - myredis:myredis
