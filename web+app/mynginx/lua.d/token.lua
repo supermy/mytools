@@ -66,10 +66,10 @@ end
 
 return
 
---curl -v "http://192.168.59.103/hello1"
+--curl -v "http://192.168.99.101/hello1"
 --token 错误测试
---curl -v -b "uid=12345;nickname=soga;token=aa6f21ec0fcf008aa5250904985a817b" "http://192.168.59.103/hello1"
+--curl -v -b "uid=12345;nickname=soga;token=aa6f21ec0fcf008aa5250904985a817b" "http://192.168.99.101/hello1"
 --token 正确测试
---curl -v -b "uid=1234;nickname=soga;token=aa6f21ec0fcf008aa5250904985a817b"  "http://192.168.59.103/hello1"
+--curl -v -b "uid=1234;nickname=soga;token=aa6f21ec0fcf008aa5250904985a817b"  "http://192.168.99.101/hello1"
 
 

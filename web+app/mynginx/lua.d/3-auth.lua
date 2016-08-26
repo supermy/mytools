@@ -100,7 +100,7 @@ if isempty(ctoken) then
     end
 
 
-    --- telnet 192.168.59.103 6379/monitor/keys */set 1234ip_bind_time 300/set 1234ip_time_out 60 /set 1234connect_count 100
+    --- telnet 192.168.99.101 6379/monitor/keys */set 1234ip_bind_time 300/set 1234ip_time_out 60 /set 1234connect_count 100
     --- set 1234pwd 111111/set 1234iplist 192.168.59.3/set 1234token_expire 1/
     -- 设置渠道的封禁时间，访问频率和统计时间段
     -- 注意数字和字符串类型

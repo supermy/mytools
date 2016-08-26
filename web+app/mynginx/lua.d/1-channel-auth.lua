@@ -88,12 +88,12 @@ end
 
 
 --设置ctoken 数据
---redis-cli 192.168.59.103 6379/monitor/keys */set testf97a93b6e5e08843a7c825a53bdae246 192.168.59.3/get aa6f21ec0fcf008aa5250904985a817b
---curl -v -b "ChannelCode=test;ctoken=testf97a93b6e5e08843a7c825a53bdae246" http://192.168.59.103/api?key=one
+--redis-cli 192.168.99.101 6379/monitor/keys */set testf97a93b6e5e08843a7c825a53bdae246 192.168.59.3/get aa6f21ec0fcf008aa5250904985a817b
+--curl -v -b "ChannelCode=test;ctoken=testf97a93b6e5e08843a7c825a53bdae246" http://192.168.99.101/api?key=one
 --curl -v -b "ChannelCode=test;ctoken=testf97a93b6e5e08843a7c825a53bdae246" http://127.0.0.1:8888/api?key=one
 
---curl -v -b "ChannelCode=test;ctoken=testf97a93b6e5e08843a7c825a53bdae246" http://192.168.59.103/api?key=one&type=hash
---ab -n 5000 -c 200  -C ctoken=testf97a93b6e5e08843a7c825a53bdae246 http://192.168.59.103/api
+--curl -v -b "ChannelCode=test;ctoken=testf97a93b6e5e08843a7c825a53bdae246" http://192.168.99.101/api?key=one&type=hash
+--ab -n 5000 -c 200  -C ctoken=testf97a93b6e5e08843a7c825a53bdae246 http://192.168.99.101/api
 --如果已经动态分配ctoken,token 与IP 地址绑定；验证token 的有效性；则不进行认证,直接进行能力管控
 ctoken = common.getHeadCookie("ctoken")
 
@@ -188,9 +188,9 @@ end
 --进行认证
 
 --获取从head 或者cookie 中渠道编码code/渠道秘钥-动态生成  ab -C 会更改cookie 的名称
---curl -v -b "ChannelCode=test;ChannelSecretkey=a8152b13f4ef9daca84cf981eb5a7907"  http://192.168.59.103/api
+--curl -v -b "ChannelCode=test;ChannelSecretkey=a8152b13f4ef9daca84cf981eb5a7907"  http://192.168.99.101/api
 --mysql2redis.sh 同步数据
---ab -n 5000 -c 200 -H "Cookie:ChannelCode=test;ChannelSecretkey=a8152b13f4ef9daca84cf981eb5a7907"   http://192.168.59.103/api
+--ab -n 5000 -c 200 -H "Cookie:ChannelCode=test;ChannelSecretkey=a8152b13f4ef9daca84cf981eb5a7907"   http://192.168.99.101/api
 channel_code = common.getHeadCookie("ChannelCode")
 channel_secretkey = common.getHeadCookie("ChannelSecretkey")
 if common.isempty(channel_code) or common.isempty(channel_secretkey) then
@@ -203,7 +203,7 @@ if common.isempty(channel_code) or common.isempty(channel_secretkey) then
 end
 
 
---- telnet 192.168.59.103 6379/monitor/keys */set 1234ip_bind_time 300/set 1234ip_time_out 60 /set 1234connect_count 100
+--- telnet 192.168.99.101 6379/monitor/keys */set 1234ip_bind_time 300/set 1234ip_time_out 60 /set 1234connect_count 100
 --- set 1234pwd 111111/set 1234iplist 192.168.59.3/set 1234token_expire 1/
 -- 设置渠道的封禁时间，访问频率和统计时间段
 -- 注意数字和字符串类型

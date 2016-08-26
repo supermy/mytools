@@ -68,8 +68,10 @@ local jsonvalue=cjson.decode(res.body);
 
 local template = require "resty.template"
 
-
-template.render("channel-list.html", {
+#url?temp=channel-list.html
+local templatefile = ngx.var.arg_temp
+template.render(templatefile, {
+#template.render("channel-list.html", {
     channels = jsonvalue._embedded.channel_auth ,
     page = jsonvalue.page
 })

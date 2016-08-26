@@ -17,13 +17,15 @@ data:
       #- /home/yuan/docker/web/www:/data/www/
       #- /home/yuan/docker/web/logs/:/usr/local/nginx/logs/
       #- /home/yuan/docker/web/lua/:/usr/local/nginx/conf/nginx.d/lua/ #配置文件,fix.me
-      - /Users/moyong/project/env-myopensource/3-tools/mytools/web+app/mynginx/www:/data/www/
-      - /Users/moyong/docker-share/logs/web/:/usr/local/nginx/logs/
-      - /Users/moyong/project/env-myopensource/3-tools/mytools/web+app/mynginx/nginx.conf:/usr/local/nginx/conf/nginx.conf #配置文件,fix.me
-      - /Users/moyong/project/env-myopensource/3-tools/mytools/web+app/mynginx/lua.d/:/usr/local/nginx/conf/lua.d/ #配置文件,fix.me
-      - /Users/moyong/project/env-myopensource/3-tools/mytools/web+app/mynginx/http.d/:/usr/local/nginx/conf/http.d/ #配置文件,fix.me
-      - /Users/moyong/project/env-myopensource/3-tools/mytools/web+app/mynginx/server.d/:/usr/local/nginx/conf/server.d/ #配置文件,fix.me
-      - /Users/moyong/project/env-myopensource/3-tools/mytools/web+app/mynginx/lua-lib/:/usr/local/nginx/conf/lua-lib/
+      - ./www:/data/www/
+      - ./logs:/usr/local/nginx/logs/
+      - ./nginx.conf:/usr/local/nginx/conf/nginx.conf #配置文件,fix.me
+      - ./lua.d/:/usr/local/nginx/conf/lua.d/ #配置文件,fix.me
+      - ./http.d/:/usr/local/nginx/conf/http.d/ #配置文件,fix.me
+      - ./server.d/:/usr/local/nginx/conf/server.d/ #配置文件,fix.me
+      - ./naxsi.d/:/usr/local/nginx/conf/naxsi.d/ #配置文件,fix.me
+      - ./lua-lib/:/usr/local/nginx/conf/lua-lib/
+
 
 
 myredis:
