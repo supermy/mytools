@@ -1,3 +1,25 @@
+2016--04-11
+    增加nginx-naxsi-waf;在web端增强安全防范;
+
+
+2015-11-19
+    docker 直通构建mynginx,mytomcat 完成
+
+    使用busybox 进行任务调度:
+    docker run -e CRON="*/ * * * *" busybox sh -c 'echo Hello'
+
+    $ docker run -i -t --link autodock prologic/autodock-cron
+    启动插件模式;
+
+    $ docker run -e CRON="*/1 * * * *" busybox sh -c 'echo Hello'
+    直至容器删除会一直调用;
+
+    $ docker logs hello
+    Hello
+    Hello
+    Hello
+
+
 2015-11-18
     lua 改造之后/mysql 升级之后/ 正常运行;
     spring-boot 正常运行;
