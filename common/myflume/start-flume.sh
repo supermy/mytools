@@ -13,4 +13,3 @@ flume-ng agent \
   -f ${FLUME_CONF_FILE} \
   -n ${FLUME_AGENT_NAME} \
   -Dflume.root.logger=INFO,console
-

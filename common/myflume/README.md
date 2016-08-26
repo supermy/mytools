@@ -107,3 +107,10 @@ storage（file，HDFS等）。
 > fig logs base1
 >
 > ## 显示 cde
+
+--------flume1.6增加的事项
+·增加了apache kafka的sink和source两大组件
+·增加了一个新的channel——kafka channel
+·增加了hive的sink组件，需要hive streaming的支持
+·端到端的认证
+·简单的正则搜索和替换的拦截器
