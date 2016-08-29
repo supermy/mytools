@@ -1,0 +1,9 @@
+mymongodb:
+  image: supermy/docker-mongodb:ap
+#  volumes_from:
+#    - data4master
+  ports:
+    - "27017:27017"
+  environment:
+    ulimit: nofile=20480:40960
+  net: "host"
