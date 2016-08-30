@@ -1,31 +1,74 @@
 #源和中文环境配置
 #http://www.elasticsearch.cn/
+#
+#elasticsearch_master:
+#    image: elasticsearch
+#    command: "elasticsearch -Des.cluster.name=mycluster -Des.node.master=true -Des.node.data=false"
+#    environment:
+#        - ES_HEAP_SIZE=512m
+#
+#elasticsearch:
+#    image: elasticsearch
+#    command: "elasticsearch -Des.cluster.name=mycluster -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master"
+#    links:
+#        - elasticsearch_master
+#    volumes:
+#        - "/var/elasticsearch:/usr/share/elasticsearch/data"
+#    environment:
+#        - ES_HEAP_SIZE=2g
 
-fulltext1:
+#-Des.discovery.zen.ping.unicast.hosts=elasticsearch_master
+#指定ES的集群发现机制为查询elasticsearch_master主节点.(多播发现机制不被推荐用在生产环境)
+# -Des.network.host=0.0.0.0  -Des.discovery.zen.ping.multicast.enabled=false -Des.discovery.zen.minimum_master_nodes=1
+
+EsMaster:
   image: supermy/elasticsearch:latest
-#  links:
-#      - config
+  command: "elasticsearch -Des.cluster.name=mycluster  -Des.node.master=true -Des.node.data=false  -Des.node.name=master  -Des.cluster.routing.allocation.disk.threshold_enabled=false"
+#  volumes_from:
+#      - config1
   ports:
     - "9200:9200"
-    - "9300"
+    - "9300:9300"
   environment:
-    es.node.name: testnode1
+    - ES_HEAP_SIZE=512m
 
-fulltext2:
+Es1:
   image: supermy/elasticsearch:latest
-#  links:
-#      - config
+  command: "elasticsearch -Des.cluster.name=mycluster  -Des.node.master=false  -Des.discovery.zen.ping.unicast.hosts=EsMaster  -Des.node.name=d1 -Des.cluster.routing.allocation.disk.threshold_enabled=false"
   ports:
     - "9200"
     - "9300"
+  links:
+    - EsMaster
+#  volumes:
+#    - /var/log/esdata1:/usr/share/elasticsearch/data
   environment:
-    es.node.name: testnode2
+    - ES_HEAP_SIZE=512m
 
+    #- ES_HEAP_SIZE=1g
 
-#常用工具集合
-config:
-  image: busybox
-  command: /bin/true
-  volumes:
-      - /Users/moyong/project/env-myopensource/3-tools/mytools/common/elasticsearch/config:/usr/share/elasticsearch/config
-      - /Users/moyong/project/env-myopensource/3-tools/mytools/common/elasticsearch/data:/usr/share/elasticsearch/data
+Es2:
+  image: supermy/elasticsearch:latest
+  command: "elasticsearch -Des.cluster.name=mycluster  -Des.node.master=false  -Des.discovery.zen.ping.unicast.hosts=EsMaster  -Des.node.name=d2 -Des.cluster.routing.allocation.disk.threshold_enabled=false"
+  ports:
+    - "9200"
+    - "9300"
+  links:
+    - EsMaster
+#  volumes:
+#    - ./esdata2:/usr/share/elasticsearch/data/
+  environment:
+    - ES_HEAP_SIZE=512m
+#
+#Es3:
+#  image: supermy/elasticsearch:latest
+#  command: "elasticsearch -Des.cluster.name=myes -Des.node.master=false  -Des.discovery.zen.ping.unicast.hosts=EsMaster  -Des.node.name=d2 -Des.cluster.routing.allocation.disk.threshold_enabled=false"
+#  ports:
+#    - "9200"
+#    - "9300"
+#  links:
+#    - EsMaster
+##  volumes:
+##    - ./esdata2:/usr/share/elasticsearch/data/
+#  environment:
+#    - ES_HEAP_SIZE=512m
