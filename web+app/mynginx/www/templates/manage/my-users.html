@@ -1,4 +1,4 @@
-{% layout = "/layouts/mylayout.html" %}
+{% layout = "layouts/mylayout.html" %}
 
 
 {-sidebar-}
@@ -18,7 +18,7 @@
 <!-- PAGE CONTENT WRAPPER -->
 <div class="page-content-wrap">
 
-    {(manage/my-users-content-wrap-list.html)}
+    {(/manage/my-users-content-wrap-list.html)}
 
 </div>
 <!-- END PAGE CONTENT WRAPPER -->
@@ -39,7 +39,7 @@
 {-page_css-}
 
 {-page_js-}
-{(manage/my-users-footer-plugins.html,{page=formvalue["users"].page})}
+{(/manage/my-users-footer-plugins.html,{page=formvalue["users"].page})}
 {-page_js-}
 
 {-page_demo_js-}
