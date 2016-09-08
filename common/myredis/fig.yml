@@ -2,37 +2,43 @@
 
 myredis4master:
   image: supermy/docker-myredis:3.5
-  volumes_from:
-    - data4master
+#  volumes_from:
+#    - data4master
   ports:
-      - "6379:6379"
+    - "6379:6379"
+  environment:
+    ulimit: nofile=20480:40960
+  net: "host"
+#走的是虚拟机的网络效率提升不会很快.
 
-myredis4slave1:
-  image: supermy/docker-myredis:3.5
-  links:
-      - myredis4master
-  volumes_from:
-    - data4slave
-  ports:
-      - "6379"
-
-myredis4slave2:
-  image: supermy/docker-myredis:3.5
-  links:
-      - myredis4master
-  volumes_from:
-    - data4slave
-  ports:
-      - "6379"
-
-myredis4slave3:
-  image: supermy/docker-myredis:3.5
-  links:
-      - myredis4master
-  volumes_from:
-    - data4slave
-  ports:
-      - "6379"
+#
+#myredis4slave1:
+#  image: supermy/docker-myredis:3.5
+#  links:
+#      - myredis4master
+#  volumes_from:
+#    - data4slave
+#  ports:
+#      - "6379"
+##  net: "host"
+#
+#myredis4slave2:
+#  image: supermy/docker-myredis:3.5
+#  links:
+#      - myredis4master
+#  volumes_from:
+#    - data4slave
+#  ports:
+#      - "6379"
+#
+#myredis4slave3:
+#  image: supermy/docker-myredis:3.5
+#  links:
+#      - myredis4master
+#  volumes_from:
+#    - data4slave
+#  ports:
+#      - "6379"
 
 
 #常用工具集合
@@ -41,12 +47,14 @@ data4master:
   command: /bin/true
   volumes:
       - /Users/moyong/project/env-myopensource/3-tools/mytools/common/myredis/redis-master.conf:/etc/redis.conf
+      #- /home/yuan/docker/myredis/redis-master.conf:/etc/redis.conf
 
 data4slave:
   image: busybox
   command: /bin/true
   volumes:
       - /Users/moyong/project/env-myopensource/3-tools/mytools/common/myredis/redis-slave.conf:/etc/redis.conf
+      #- /home/yuan/docker/myredis/redis-slave.conf:/etc/redis.conf
 
 
 #docker build -t supermy/docker-myredis:3.5  . && fig stop && fig rm --force && fig up -d && fig ps && fig logs

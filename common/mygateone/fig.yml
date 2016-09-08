@@ -1,0 +1,5 @@
+#源和中文环境配置
+gateone:
+  image: supermy/mygateone:latest
+  ports:
+    - "443:8000"

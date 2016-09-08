@@ -54,14 +54,16 @@ RUN apt-get update -y && apt-get install -y git
 Add codis /go/src/github.com/wandoulabs/codis/
 WORKDIR /go/src/github.com/wandoulabs/codis/
 
+# Install dependency
+RUN ./bootstrap.sh
+WORKDIR /go/src/github.com/wandoulabs/codis/sample
+
+
 #采用下面的数据源，文件不全编译错误
 #RUN git clone https://github.com/wandoulabs/codis
 #WORKDIR codis
+#WORKDIR  codis/sample
 
-# Install dependency
-RUN ./bootstrap.sh
-#WORKDIR /go/src/github.com/wandoulabs/codis/sample
-WORKDIR  codis/sample
 
 
 # Expose ports

@@ -4,6 +4,7 @@
 docker run --name dns -v /var/run/docker.sock:/docker.sock phensley/docker-dns \
     --domain aabb.com
 docker logs -f dns
+
 #启动容器的时候指定DNS服务器，可选 使用--no-recursion 禁止外网访问
 docker run -it --dns $(docker inspect -f '{{.NetworkSettings.IPAddress}}' dns) \
     --dns-search aabb.com debian:wheezy bash

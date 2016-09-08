@@ -1,4 +1,4 @@
-FROM    debian:7.9
+FROM    debian:8
 
 #2015-01-24修订,中文语言
 MAINTAINER supermy <springclick@gmail.com>
@@ -6,22 +6,24 @@ MAINTAINER supermy <springclick@gmail.com>
 #RUN sed -i '1,3d'   /etc/apt/sources.list
 
 #RUN sed -i '4a \
-#    deb http://mirrors.163.com/debian/ wheezy main non-free contrib \n \
-#    deb http://mirrors.163.com/debian/ wheezy-proposed-updates main contrib non-free \n \
-#    deb http://mirrors.163.com/debian-security/ wheezy/updates main contrib non-free \n \
-#    deb-src http://mirrors.163.com/debian/ wheezy main non-free contrib \n \
-#    deb-src http://mirrors.163.com/debian/ wheezy-proposed-updates main contrib non-free \n \
-#    deb-src http://mirrors.163.com/debian-security/ wheezy/updates main contrib non-free \n \
-#	\
+#    deb http://mirrors.163.com/debian/ jessie main non-free contrib \n \
+#    deb http://mirrors.163.com/debian/ jessie-proposed-updates main contrib non-free \n \
+#    deb http://mirrors.163.com/debian-security/ jessie/updates main contrib non-free \n \
+#    deb-src http://mirrors.163.com/debian/ jessie main non-free contrib \n \
+#    deb-src http://mirrors.163.com/debian/ jessie-proposed-updates main contrib non-free \n \
+#    deb-src http://mirrors.163.com/debian-security/ jessie/updates main contrib non-free \n \
+#	deb http://security.debian.org jessie/updates main contrib non-free \n \
 #    ' /etc/apt/sources.list
 
+
+
 # 慢
-#    deb http://ftp.sjtu.edu.cn/debian/ wheezy main non-free contrib \n \
-#    deb http://ftp.sjtu.edu.cn/debian/ wheezy-proposed-updates main contrib non-free \n \
-#    deb http://ftp.sjtu.edu.cn/debian-security/ wheezy/updates main contrib non-free \n \
-#    deb-src http://ftp.sjtu.edu.cn/debian/ wheezy main non-free contrib \n \
-#    deb-src http://ftp.sjtu.edu.cn/debian/ wheezy-proposed-updates main contrib non-free \n \
-#    deb-src http://ftp.sjtu.edu.cn/debian-security/ wheezy/updates main contrib non-free \n \
+#    deb http://ftp.sjtu.edu.cn/debian/ jessie main non-free contrib \n \
+#    deb http://ftp.sjtu.edu.cn/debian/ jessie-proposed-updates main contrib non-free \n \
+#    deb http://ftp.sjtu.edu.cn/debian-security/ jessie/updates main contrib non-free \n \
+#    deb-src http://ftp.sjtu.edu.cn/debian/ jessie main non-free contrib \n \
+#    deb-src http://ftp.sjtu.edu.cn/debian/ jessie-proposed-updates main contrib non-free \n \
+#    deb-src http://ftp.sjtu.edu.cn/debian-security/ jessie/updates main contrib non-free \n \
 
 #RUN cat /etc/apt/sources.list
 

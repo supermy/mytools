@@ -1,0 +1,10 @@
+#需要升级到docker-compose.yml  todo
+cron:
+  image: eeacms/reportek-cron
+#  links:
+#  - webapp
+  env_file:
+  - cron.env
+
+#webapp:
+#  image: razvan3895/nodeserver

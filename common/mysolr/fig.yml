@@ -6,6 +6,7 @@ base:
   volumes_from:
     - data
 
+
 #常用工具集合
 data:
   image: busybox
@@ -14,3 +15,15 @@ data:
       - /Users/moyong/docker-share/logs/solr/:/opt/solr/example/logs/
 
 #http://192.168.59.103:8983/solr/#/collection1/analysis
+
+
+dns:
+  image: phensley/docker-dns:latest
+  volumes_from:
+    - datadns
+
+datadns:
+  image: busybox
+  command: /bin/true
+  volumes:
+      - /var/run/docker.sock:/docker.sock
