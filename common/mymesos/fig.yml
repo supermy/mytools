@@ -1,0 +1,76 @@
+#docker pull supermy/docker-myredis:3.5
+
+c1:
+  image: supermy/docker-mycodis
+  links:
+      - zk:myzk
+  volumes_from:
+      - config
+  ports:
+      - "19000"
+      - "11000"
+      - "18087"
+#  hostname: c1
+
+
+zk:
+  image: jplock/zookeeper:latest
+  ports:
+    - "2181"
+    - "2888"
+    - "3888"
+
+
+##常用工具集合
+config:
+  image: busybox
+  command: /bin/true
+  volumes:
+      - /Users/moyong/project/env-myopensource/3-tools/mytools/common/mycodis/config/config.ini:/go/src/github.com/wandoulabs/codis/sample/config.ini
+      - /Users/moyong/project/env-myopensource/3-tools/mytools/common/mycodis/config/add_group.sh:/go/src/github.com/wandoulabs/codis/sample/add_group.sh
+      #- /home/yuan/docker/mycodis/config/config.ini:/go/src/github.com/wandoulabs/codis/sample/config.ini
+      #- /home/yuan/docker/mycodis/config/add_group.sh:/go/src/github.com/wandoulabs/codis/sample/add_group.sh
+
+
+
+#独立
+c2:
+  image: supermy/docker-mycodis
+  links:
+      - zk:myzk
+  volumes_from:
+      - config2
+  ports:
+      - "19000"
+      - "11000"
+      - "18087"
+#  hostname: c2
+
+config2:
+  image: busybox
+  command: /bin/true
+  volumes:
+      - /Users/moyong/project/env-myopensource/3-tools/mytools/common/mycodis/config/config2.ini:/go/src/github.com/wandoulabs/codis/sample/config.ini
+      - /Users/moyong/project/env-myopensource/3-tools/mytools/common/mycodis/config/add_group2.sh:/go/src/github.com/wandoulabs/codis/sample/add_group.sh
+      #- /home/yuan/docker/mycodis/config/config2.ini:/go/src/github.com/wandoulabs/codis/sample/config.ini
+      #- /home/yuan/docker/mycodis/config/add_group2.sh:/go/src/github.com/wandoulabs/codis/sample/add_group.sh
+
+
+#单独存储
+r1:
+  image: supermy/docker-mycodis
+  volumes_from:
+      - redisrun
+  ports:
+      - "6381"
+      - "6382"
+  hostname: r1
+
+
+redisrun:
+  image: busybox
+  command: /bin/true
+  volumes:
+      #- /home/yuan/docker/mycodis/config/start_redis.sh:/go/src/github.com/wandoulabs/codis/sample/startall.sh
+      - /Users/moyong/project/env-myopensource/3-tools/mytools/common/mycodis/config/start_redis.sh:/go/src/github.com/wandoulabs/codis/sample/startall.sh
+
