@@ -1,0 +1,14 @@
+version: '2'
+
+services:
+
+  standalone:
+    image: athlinks/hadoop:2.7
+    hostname: hadoop-standalone
+    environment:
+      - "SERVICE_NAME=hadoop-standalone"
+      - "HADOOP_ROLE=STANDALONE"
+    ports:
+      - "8088:8088"
+      - "50070:50070"
+      - "14000:14000"

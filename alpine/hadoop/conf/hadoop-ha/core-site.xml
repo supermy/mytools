@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+   <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://@HADOOP_CLUSTERNAME@</value>
+        <description>NameNode URI</description>
+    </property>
+    <property>
+      <name>hadoop.proxyuser.hduser.hosts</name>
+      <value>*</value>
+    </property>
+    <property>
+      <name>hadoop.proxyuser.hduser.groups</name>
+      <value>*</value>
+    </property>
+    <property>
+      <name>ha.zookeeper.quorum</name>
+      <value>@HADOOP_ZOOKEEPER_CONNECT@</value>
+    </property>
+</configuration>

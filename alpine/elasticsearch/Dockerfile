@@ -1,4 +1,5 @@
-FROM supermy/docker-jre:ap
+FROM supermy/ap-jre
+
 MAINTAINER JamesMo <springclick@gmail.com>
 
 ENV ELASTICSEARCH_MAJOR 2.2
@@ -6,9 +7,9 @@ ENV ELASTICSEARCH_VERSION 2.2.0
 ENV ELASTICSEARCH_URL_BASE https://download.elasticsearch.org/elasticsearch/elasticsearch
 ENV PATH /opt/elasticsearch/bin:$PATH
 
-RUN set -ex \
-	&& apk --update add bash curl \
-	&& rm -rf /var/cache/apk/*
+#RUN set -ex \
+#	&& apk --update add bash curl \
+#	&& rm -rf /var/cache/apk/*
 #RUN curl -fsSL -o /usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.0.0/dumb-init_1.0.0_amd64 \
 #	&& chmod 0755 /usr/bin/dumb-init
 #RUN set -x \
@@ -20,9 +21,9 @@ RUN chmod a+x /usr/local/bin/gosu
 COPY dumb-init_1.0.0_amd64 /usr/bin/dumb-init
 RUN chmod 0755 /usr/bin/dumb-init
 
+RUN apk add --no-cache   bash  curl  wget
 
-RUN set -ex \
-	&& mkdir -p /opt \
+RUN  mkdir -p /opt \
 	&& curl -fsSL -o /tmp/elasticsearch.tar.gz $ELASTICSEARCH_URL_BASE/elasticsearch-$ELASTICSEARCH_VERSION.tar.gz \
 	&& tar -xzf /tmp/elasticsearch.tar.gz -C /opt \
 	&& rm -f /tmp/elasticsearch.tar.gz \

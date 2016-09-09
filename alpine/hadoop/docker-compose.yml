@@ -1,0 +1,341 @@
+version: '2'
+
+services:
+  zookeeper1:
+    image: athlinks/confluent-zookeeper
+    hostname: zookeeper1
+    mem_limit: 1024m
+    memswap_limit: 0m
+    environment:
+      - "SERVICE_NAME=zookeeper"
+      - "MYID=1"
+      - "OTHER_NODES=3=zookeeper3,2=zookeeper2"
+    ports:
+      - "2181"
+      - "2888"
+      - "3888"
+
+  zookeeper2:
+    image: athlinks/confluent-zookeeper
+    hostname: zookeeper2
+    mem_limit: 1024m
+    memswap_limit: 0m
+    environment:
+      - "SERVICE_NAME=zookeeper"
+      - "MYID=2"
+      - "OTHER_NODES=1=zookeeper1,3=zookeeper3"
+    ports:
+      - "2181"
+      - "2888"
+      - "3888"
+
+  zookeeper3:
+    image: athlinks/confluent-zookeeper
+    hostname: zookeeper3
+    mem_limit: 1024m
+    memswap_limit: 0m
+    environment:
+      - "SERVICE_NAME=zookeeper"
+      - "MYID=3"
+      - "OTHER_NODES=1=zookeeper1,2=zookeeper2"
+    ports:
+      - "2181"
+      - "2888"
+      - "3888"
+
+  journalnode1:
+    image: athlinks/hadoop:2.7
+    hostname: journalnode1
+    environment:
+      - "SERVICE_NAME=hadoop-journalnode"
+      - "HADOOP_ROLE=JOURNALNODE"
+      - "HADOOP_JOURNALNODE1=journalnode1"
+      - "HADOOP_JOURNALNODE2=journalnode2"
+      - "HADOOP_JOURNALNODE3=journalnode3"
+      - "HADOOP_NAMENODE1=namenode1"
+      - "HADOOP_NAMENODE2=namenode2"
+      - "HADOOP_RESOURCEMANAGER1=resourcemanager1"
+      - "HADOOP_RESOURCEMANAGER2=resourcemanager2"
+      - "HADOOP_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181"
+    ports:
+      - "8485:8485"
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+
+  journalnode2:
+    image: athlinks/hadoop:2.7
+    hostname: journalnode2
+    environment:
+      - "SERVICE_NAME=hadoop-journalnode"
+      - "HADOOP_ROLE=JOURNALNODE"
+      - "HADOOP_JOURNALNODE1=journalnode1"
+      - "HADOOP_JOURNALNODE2=journalnode2"
+      - "HADOOP_JOURNALNODE3=journalnode3"
+      - "HADOOP_NAMENODE1=namenode1"
+      - "HADOOP_NAMENODE2=namenode2"
+      - "HADOOP_RESOURCEMANAGER1=resourcemanager1"
+      - "HADOOP_RESOURCEMANAGER2=resourcemanager2"
+      - "HADOOP_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181"
+    ports:
+      - "8485"
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+
+  journalnode3:
+    image: athlinks/hadoop:2.7
+    hostname: journalnode3
+    environment:
+      - "SERVICE_NAME=hadoop-journalnode"
+      - "HADOOP_ROLE=JOURNALNODE"
+      - "HADOOP_JOURNALNODE1=journalnode1"
+      - "HADOOP_JOURNALNODE2=journalnode2"
+      - "HADOOP_JOURNALNODE3=journalnode3"
+      - "HADOOP_NAMENODE1=namenode1"
+      - "HADOOP_NAMENODE2=namenode2"
+      - "HADOOP_RESOURCEMANAGER1=resourcemanager1"
+      - "HADOOP_RESOURCEMANAGER2=resourcemanager2"
+      - "HADOOP_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181"
+    ports:
+      - "8485"
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+
+  namenode1:
+    image: athlinks/hadoop:2.7
+    hostname: namenode1
+    environment:
+      - "SERVICE_NAME=hadoop-namenode"
+      - "HADOOP_ROLE=NAMENODE1"
+      - "HADOOP_JOURNALNODE1=journalnode1"
+      - "HADOOP_JOURNALNODE2=journalnode2"
+      - "HADOOP_JOURNALNODE3=journalnode3"
+      - "HADOOP_NAMENODE1=namenode1"
+      - "HADOOP_NAMENODE2=namenode2"
+      - "HADOOP_RESOURCEMANAGER1=resourcemanager1"
+      - "HADOOP_RESOURCEMANAGER2=resourcemanager2"
+      - "HADOOP_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181"
+    ports:
+      - "50070:50070"
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+      - journalnode1
+      - journalnode2
+      - journalnode3
+
+  namenode2:
+    image: athlinks/hadoop:2.7
+    hostname: namenode2
+    environment:
+      - "SERVICE_NAME=hadoop-namenode"
+      - "HADOOP_ROLE=NAMENODE2"
+      - "HADOOP_JOURNALNODE1=journalnode1"
+      - "HADOOP_JOURNALNODE2=journalnode2"
+      - "HADOOP_JOURNALNODE3=journalnode3"
+      - "HADOOP_NAMENODE1=namenode1"
+      - "HADOOP_NAMENODE2=namenode2"
+      - "HADOOP_RESOURCEMANAGER1=resourcemanager1"
+      - "HADOOP_RESOURCEMANAGER2=resourcemanager2"
+      - "HADOOP_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181"
+    ports:
+      - "50071:50070"
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+      - journalnode1
+      - journalnode2
+      - journalnode3
+
+  resourcemanager1:
+    image: athlinks/hadoop:2.7
+    hostname: resourcemanager1
+    environment:
+      - "SERVICE_NAME=hadoop-resourcemanager"
+      - "HADOOP_ROLE=RESOURCEMANAGER"
+      - "HADOOP_JOURNALNODE1=journalnode1"
+      - "HADOOP_JOURNALNODE2=journalnode2"
+      - "HADOOP_JOURNALNODE3=journalnode3"
+      - "HADOOP_NAMENODE1=namenode1"
+      - "HADOOP_NAMENODE2=namenode2"
+      - "HADOOP_RESOURCEMANAGER1=resourcemanager1"
+      - "HADOOP_RESOURCEMANAGER2=resourcemanager2"
+      - "HADOOP_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181"
+    ports:
+      - "8088:8088"
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+      - namenode1
+      - namenode2
+
+  resourcemanager2:
+    image: athlinks/hadoop:2.7
+    hostname: resourcemanager2
+    environment:
+      - "SERVICE_NAME=hadoop-resourcemanager"
+      - "HADOOP_ROLE=RESOURCEMANAGER"
+      - "HADOOP_JOURNALNODE1=journalnode1"
+      - "HADOOP_JOURNALNODE2=journalnode2"
+      - "HADOOP_JOURNALNODE3=journalnode3"
+      - "HADOOP_NAMENODE1=namenode1"
+      - "HADOOP_NAMENODE2=namenode2"
+      - "HADOOP_RESOURCEMANAGER1=resourcemanager1"
+      - "HADOOP_RESOURCEMANAGER2=resourcemanager2"
+      - "HADOOP_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181"
+    ports:
+      - "8088"
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+      - namenode1
+      - namenode2
+
+  datanode1:
+    image: athlinks/hadoop:2.7
+    hostname: datanode1
+    environment:
+      - "SERVICE_NAME=hadoop-datanode"
+      - "HADOOP_ROLE=DATANODE"
+      - "HADOOP_JOURNALNODE1=journalnode1"
+      - "HADOOP_JOURNALNODE2=journalnode2"
+      - "HADOOP_JOURNALNODE3=journalnode3"
+      - "HADOOP_NAMENODE1=namenode1"
+      - "HADOOP_NAMENODE2=namenode2"
+      - "HADOOP_RESOURCEMANAGER1=resourcemanager1"
+      - "HADOOP_RESOURCEMANAGER2=resourcemanager2"
+      - "HADOOP_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181"
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+      - namenode1
+      - namenode2
+
+  datanode2:
+    image: athlinks/hadoop:2.7
+    hostname: datanode2
+    environment:
+      - "SERVICE_NAME=hadoop-datanode"
+      - "HADOOP_ROLE=DATANODE"
+      - "HADOOP_JOURNALNODE1=journalnode1"
+      - "HADOOP_JOURNALNODE2=journalnode2"
+      - "HADOOP_JOURNALNODE3=journalnode3"
+      - "HADOOP_NAMENODE1=namenode1"
+      - "HADOOP_NAMENODE2=namenode2"
+      - "HADOOP_RESOURCEMANAGER1=resourcemanager1"
+      - "HADOOP_RESOURCEMANAGER2=resourcemanager2"
+      - "HADOOP_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181"
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+      - namenode1
+      - namenode2
+
+  nodemanager1:
+    image: athlinks/hadoop:2.7
+    hostname: nodemanager1
+    environment:
+      - "SERVICE_NAME=hadoop-nodemanager"
+      - "HADOOP_ROLE=NODEMANAGER"
+      - "HADOOP_JOURNALNODE1=journalnode1"
+      - "HADOOP_JOURNALNODE2=journalnode2"
+      - "HADOOP_JOURNALNODE3=journalnode3"
+      - "HADOOP_NAMENODE1=namenode1"
+      - "HADOOP_NAMENODE2=namenode2"
+      - "HADOOP_RESOURCEMANAGER1=resourcemanager1"
+      - "HADOOP_RESOURCEMANAGER2=resourcemanager2"
+      - "HADOOP_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181"
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+      - namenode1
+      - namenode2
+      - resourcemanager1
+      - resourcemanager2
+
+  nodemanager2:
+    image: athlinks/hadoop:2.7
+    hostname: nodemanager2
+    environment:
+      - "SERVICE_NAME=hadoop-nodemanager"
+      - "HADOOP_ROLE=NODEMANAGER"
+      - "HADOOP_JOURNALNODE1=journalnode1"
+      - "HADOOP_JOURNALNODE2=journalnode2"
+      - "HADOOP_JOURNALNODE3=journalnode3"
+      - "HADOOP_NAMENODE1=namenode1"
+      - "HADOOP_NAMENODE2=namenode2"
+      - "HADOOP_RESOURCEMANAGER1=resourcemanager1"
+      - "HADOOP_RESOURCEMANAGER2=resourcemanager2"
+      - "HADOOP_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181"
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+      - namenode1
+      - namenode2
+      - resourcemanager1
+      - resourcemanager2
+
+  httpfs:
+    image: athlinks/hadoop:2.7
+    hostname: httpfs
+    environment:
+      - "SERVICE_NAME=hadoop-httpfs"
+      - "HADOOP_ROLE=HTTPFS"
+      - "HADOOP_JOURNALNODE1=journalnode1"
+      - "HADOOP_JOURNALNODE2=journalnode2"
+      - "HADOOP_JOURNALNODE3=journalnode3"
+      - "HADOOP_NAMENODE1=namenode1"
+      - "HADOOP_NAMENODE2=namenode2"
+      - "HADOOP_RESOURCEMANAGER1=resourcemanager1"
+      - "HADOOP_RESOURCEMANAGER2=resourcemanager2"
+      - "HADOOP_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181"
+    ports:
+      - "14000:14000"
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+      - namenode1
+      - namenode2
+      - datanode1
+      - datanode2
+
+  client:
+    image: athlinks/hadoop:2.7
+    hostname: client
+    environment:
+      - "SERVICE_NAME=hadoop-client"
+      - "HADOOP_ROLE=CLIENT"
+      - "HADOOP_JOURNALNODE1=journalnode1"
+      - "HADOOP_JOURNALNODE2=journalnode2"
+      - "HADOOP_JOURNALNODE3=journalnode3"
+      - "HADOOP_NAMENODE1=namenode1"
+      - "HADOOP_NAMENODE2=namenode2"
+      - "HADOOP_RESOURCEMANAGER1=resourcemanager1"
+      - "HADOOP_RESOURCEMANAGER2=resourcemanager2"
+      - "HADOOP_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181"
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+      - namenode1
+      - namenode2
+      - datanode1
+      - datanode2
+      - resourcemanager1
+      - resourcemanager2
+      - nodemanager1
+      - nodemanager2

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+TARGET_HOST=$1
+
+ssh $TARGET_HOST '/usr/bin/supervisorctl stop namenode || echo "SERVICE ALREADY STOPPED"'
