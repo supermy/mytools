@@ -8,10 +8,9 @@ ENV LANGUAGE   zh_CN:zh
 
 #RUN apk add --no-cache --update-cache bash
 
-RUN \
-    apk add --no-cache --virtual .build-deps \
+RUN apk add --no-cache --virtual .build-deps \
         build-base
-#wget
+RUN apk add --no-cache libstdc++
 
 RUN echo "Asia/Shanghai" > /etc/timezone
 ADD localtime /etc/localtime

@@ -1,3 +1,14 @@
+##2016-09-10
+-   增加https://github.com/bungle/lua-resty-session/tree/master/lib/resty
+-   防火墙测试
+    ``` 
+    run -it -p 80:80 supermy/ap-waf
+    正常访问    http://127.0.0.1/
+    模仿攻击，被禁止访问    
+        http://127.0.0.1/?a=/etc/passwd
+        http://127.0.0.1/vaf?id=1 select * from admin
+    ```
+
 ##20160824
 -   debian 是最好的系统。
 -   基于alpine 构建，用小的镜像包。
