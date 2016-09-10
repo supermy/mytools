@@ -1,0 +1,119 @@
+#启动web,启动较慢，需要耐心等待一会儿
+##刷新：http://192.168.59.103/java/manager/status?org.apache.catalina.filters.CSRF_NONCE=66179530393A7744F81BD1EDAE5E6DF2
+##观察：Hostname的值与IP每次刷新都变动，说明集群成功。
+#http://127.0.0.1/java/myweb/
+#http://127.0.0.1/java/dbtest/
+#http://127.0.0.1/java/dbtest/token.jsp
+#http://127.0.0.1:8080/java/myweb/
+#http://127.0.0.1:8080/java/dbtest/
+#http://127.0.0.1:8080/manager/html  admin/admin
+#http://127.0.0.1/java/myweb/webjars/bootstrap/3.3.4/css/bootstrap.min.css
+
+# redis-cli -h 127.0.0.1  / keys *
+# mysql -ujava -pjava -h127.0.0.1 javatest /show tables;
+
+
+
+web:
+  image: supermy/ap-waf
+  links:
+    #- springboot
+    - app1
+    - app2
+    - myredis:myredis
+  ports:
+    - "80:80"
+  volumes_from:
+    - dataWeb
+
+#常用工具集合
+dataWeb:
+  image: busybox
+  command: /bin/true
+  volumes:
+#      - ./conf/nginx/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf #设置有效，更改全局配置文件
+      - ./conf/nginx/http.d/:/usr/local/openresty/nginx/conf/http.d/ #绑定新增的http服务目录
+      - ./conf/nginx/server.d/:/usr/local/openresty/nginx/conf/server.d/ #绑定新增的location服务目录
+      - ./logs/web/:/usr/local/openresty/nginx/logs/
+
+
+#启动tomcat
+app1:
+  image: supermy/ap-tomcat-cluster
+  environment:
+    TOMCAT_PASS: admin
+  links:
+    - dbinit
+    - db:mysql
+    - myredis:myredis
+  ports:
+    - "8081:8080"
+  volumes_from:
+    - dataApp1
+
+#启动tomcat
+app2:
+  image: supermy/ap-tomcat-cluster
+  environment:
+    TOMCAT_PASS: admin
+  links:
+    - dbinit
+    - db:mysql
+    - myredis:myredis
+  ports:
+    - "8082:8080"
+  volumes_from:
+    - dataApp2
+
+#/Users/moyong/docker-share/app/ 覆盖了管理目录导致，导致管理功能不可用
+dataApp1:
+  image: busybox
+  command: /bin/true
+  volumes:
+      #- ./apps/:/opt/tomcat/webapps/ #应用发布目录
+      - ../tomcat-cluster/app/dbtest/:/home/dbtest/
+      - logs/app1/:/logs/
+dataApp2:
+  image: busybox
+  command: /bin/true
+  volumes:
+      #- ./apps/:/opt/tomcat/webapps/ #应用发布目录
+      - ../tomcat-cluster/app/dbtest/:/home/dbtest/
+      - logs/app2/:/logs/
+
+
+
+
+
+myredis:
+  image: supermy/ap-redis
+  ports:
+      - "6379"
+  environment:
+    ulimit: nofile=20480:40960
+
+db:
+  image: supermy/docker-mysql:latest
+  environment:
+    MYSQL_USER: java
+    MYSQL_PASSWORD: java
+    MYSQL_DATABASE: javatest
+    MYSQL_ROOT_PASSWORD: mysql
+  ports:
+    - "3306"
+
+dbinit:
+  image: supermy/docker-mysql:latest
+  volumes:
+    - .:/host
+  command: /bin/bash -c "sleep 8; mysql -u java --password=java -h mysql javatest < /host/conf/mysql/init.sql; exit 0"
+  links:
+    - db:mysql
+
+
+#springboot:
+#  image: supermy/docker-springboot:latest
+#  links:
+#      - db:mysql
+#  ports:
+#      - "8080"

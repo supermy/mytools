@@ -1,0 +1,42 @@
+#集群的单节点可用，spring-boot+redis+mysql
+
+#java -jar app.war 启动集群节点
+
+docker run -it supermy/ap-jre java -version
+app1:
+  #image: supermy/docker-myredis:3.5
+  image: supermy/ap-redis
+
+
+myredis:
+  #image: supermy/docker-myredis:3.5
+  image: supermy/ap-redis
+
+  ports:
+      - "6379:6379"
+  environment:
+    ulimit: nofile=20480:40960
+
+#数据库
+db:
+  image: supermy/docker-mysql:latest
+  #image: supermy/ap-mysql
+  environment:
+    MYSQL_USER: java
+    MYSQL_PASSWORD: java
+    MYSQL_DATABASE: javatest
+    MYSQL_ROOT_PASSWORD: mysql
+  ports:
+    - "3306"
+#    - "3306:3306"
+
+
+#数据初始化
+dbinit:
+  image: supermy/docker-mysql:latest
+  #image: supermy/ap-mysql
+  volumes:
+    - .:/host
+  command: /bin/bash -c "sleep 18; mysql -u java --password=java -h mysql javatest < /host/init.sql; exit 0"
+  links:
+    - db:mysql
