@@ -1,4 +1,4 @@
-#集群的单节点可用，tomcat+redis+mysql
+集群的单节点可用，tomcat+redis+mysql
 
 #应用实例1
 app1:

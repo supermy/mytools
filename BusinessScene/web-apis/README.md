@@ -89,7 +89,7 @@ lua 应用目录
 
 ##测试
 ###测试
-启动rest-api，为应用提供[api数据源](http://127.0.0.1:9006/form/rest/user)；
+[启动rest-api]((https://github.com/supermy/rest-api))，为应用提供[api数据源](http://127.0.0.1:9006/form/rest/user)；
 进入到fig.xml 目录执行以下命令进行测试,使用浏览器访问；
 
     fig up -d && fig ps

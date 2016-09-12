@@ -2,7 +2,7 @@
 
 #java -jar app.war 启动集群节点
 
-docker run -it supermy/ap-jre java -version
+#docker run -it supermy/ap-jre java -version
 app1:
   #image: supermy/docker-myredis:3.5
   image: supermy/ap-redis
