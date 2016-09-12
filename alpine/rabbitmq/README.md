@@ -3,64 +3,23 @@ rabbitmq
 
 介绍
 ---------------------
-### 有api 接口，可以前置nginx。
-> start.sh
+### 有api 接口，可以前置WAF进行负载均衡和安全防护。
+> test.sh
 >> fig up -d && fig ps
 >> ######http://127.0.0.1:15672/#/  guest/guest
->> java -jar gs-messaging-rabbitmq-0.1.0.jar
 
-##实现一个topic 的路由，实现消息的自动匹配
+##业务场景1-数据同步
+*   实现一个topic 的路由，实现消息的自动匹配
+*   详见test-mq.sh
 
-### 创建路由 持久化
+##业务场景2-日志记录
+*   定义日志的路由与消息队列
+*   lua 调用 rabbitmq-插入日志数据；
 
-curl -i -u guest:bonc1qazse4 -H "content-type:application/json" \
-    -XPUT -d'{"type":"topic","durable":true}' \
-    http://192.168.6.53:15672/api/exchanges/%2f/my-new-exchange  
-
-### 创建queue 持久化
-curl -i -u guest:bonc1qazse4 -H "content-type:application/json" \
-  -XPUT -d'{"auto_delete":false,"durable":true,"arguments":{}}' \
-  http://192.168.6.53:15672/api/queues/%2f/test1
-  
-curl -i -u guest:bonc1qazse4 -H "content-type:application/json" \
-  -XPUT -d'{"auto_delete":false,"durable":true,"arguments":{}}' \
-  http://192.168.6.53:15672/api/queues/%2f/test2
-
-### 绑定路由与消息
-
-
-curl -i -u guest:bonc1qazse4 -H "content-type:application/json" \
-  -XPOST -d'{"routing_key":"aa.#","arguments":{}}' \
-  http://192.168.6.53:15672/api/bindings/%2f/e/my-new-exchange/q/test1
-  
-curl -i -u guest:bonc1qazse4 -H "content-type:application/json" \
-  -XPOST -d'{"routing_key":"#.cc","arguments":{}}' \
-  http://192.168.6.53:15672/api/bindings/%2f/e/my-new-exchange/q/test2
-
-	
-### 发布信息
-
-curl -i -u guest:bonc1qazse4 -H "content-type:application/json" \
-  -XPOST -d'{"properties":{},"routing_key":"test","payload":"my body","payload_encoding":"string"}' \
-  http://192.168.6.53:15672/api/exchanges/%2f/amq.default/publish
-  
-  
-curl -i -u guest:bonc1qazse4 -H "content-type:application/json" \
-  -XPOST -d'{"properties":{},"routing_key":"bb.cc","payload":"my body","payload_encoding":"string"}' \
-  http://192.168.6.53:15672/api/exchanges/%2F/my-new-exchange/publish
-
-  
-curl -i -u guest:bonc1qazse4 -H "content-type:application/json" \
-  -XPOST -d'{"properties":{},"routing_key":"aa.bb.cc","payload":"my body","payload_encoding":"string"}' \
-  http://192.168.6.53:15672/api/exchanges/%2f/my-new-exchange/publish
-  
-
-### 获取信息
-curl -XPOST -d'{"count":5,"requeue":true,"encoding":"auto","truncate":50000}' -i -u guest:bonc1qazse4 http://192.168.6.53:15672/api/queues/%2f/test1/get               
-curl -XPOST -d'{"count":5,"requeue":true,"encoding":"auto","truncate":50000}' -i -u guest:bonc1qazse4 http://192.168.6.53:15672/api/queues/%2f/test2/get
-
-curl -XPOST -d'{"count":5,"requeue":true,"encoding":"auto","truncate":50000}' -i -u guest:bonc1qazse4 http://192.168.6.53:15672/api/queues/%2f/test/get
-
+##业务场景3-消息事件触发
+*   定义消息时间路由与队列
+*   消息推送消费API的绑定；
+*   非阻塞消息推送
 
 ###RabbitMQ
 + RabbitMQ是实现AMQP（高级消息队列协议）的消息中间件的一种，最初起源于金融系统，用于在分布式系统中存储转发消息，在易用性、扩展性、高可用
