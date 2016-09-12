@@ -24,10 +24,12 @@ lua 进行A/B测试配置；
 -   全局的nginx配置文件
 -   如果没有特殊需求，可依据模板变动并且启用
 -   主要是通过include整合其他文件
+
 #### conf/nginx/http.d
 -   http 通用设置：1-http-ext-common.conf
 -   redis通用设置：2-upstream-common.conf
 -   lua配置文件，waf配置；lua缓存是否生效;配置文件字典；常用lualib；lua global 函数与变量;lua worker心跳：http-lua.conf
+
 #### conf/nginx/server.d
 -   http 访问路径配置：
 -   route-form.conf rails风格引擎；
@@ -39,8 +41,10 @@ lua 进行A/B测试配置；
     ```
 -   lua-proxy-extjs.conf  增删改api提交的反向代理；
 -   lua-template.conf 模板引擎的配置
+
 ###配置文件 conf/lua.app
 lua 应用目录
+
 ####配置文件 conf/lua.app/lua.d
 -   lua 引擎文件
 -   全局变量、全局函数 0-global-init.lua
@@ -49,19 +53,24 @@ lua 应用目录
 -   elasticsearch查询filter支持 4-extjs4.lua
 -   输出内容加工 6-body-filter-extjs.lua
 -   rails风格引擎 route-form.lua
+
 ####配置文件 conf/lua.app/query.d
 -   API查询配置文件 0-config-db-query.json
 -   权限配置文件  0-config-db-acl.json
+
 ####配置文件 conf/lua.app/third.lua.lib
 -   cjson lua 库
 -   httpc   lua 库
 -   template lua 库
+
 ####配置文件 conf/lua.app/templates
 -   布局文件目录 layouts
 -   管理平台模板文件 manage
 -   前端暂时页面模板文件 web
+
 ####配置文件 logs
 -   日志文件目录
+
 ####配置文件 www
 -   管理平台资源文件
 -   展示平台资源文件
@@ -69,17 +78,21 @@ lua 应用目录
 
 
 ###运行环境 fig.yml
+
 ####web
 -   采用alpine for waf 镜像，尺寸小，时区与中文支持环境支持；
 -   设置80端口提供访问，如果本机已被占用，可更改为别的端口；
 -   绑定运行环境目录volumes_from，使得运行环境可配置；
 -   链接app 与 redis , 使得配置文件对于app与redis的引用营销；
 -   www/manage/js/plugins/datatables/editor 需要自行下载
+
 ####dataWeb
 -   进行日志路径配置链接到本地路径，使得容器日志可查看，方便调试；
 -   进行运行参数文件链接到本地文件，使得同一个镜像文件可以应用于不同的业务应用；
+
 ####app
 -   spring-boot 单个实例；可配置为集群再使用；
+
 ####redis
 -   使用ap-redis,尺寸较小；
 -   提供tomcat session 共享存储；
@@ -90,6 +103,7 @@ lua 应用目录
 
 ##测试
 ###测试
+
 [启动rest-api]((https://github.com/supermy/rest-api))，为应用提供[api数据源](http://127.0.0.1:9006/form/rest/user)；
 进入到fig.xml 目录执行以下命令进行测试,使用浏览器访问；
 
