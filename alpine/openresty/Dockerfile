@@ -7,7 +7,7 @@ FROM supermy/alpine:build
 MAINTAINER JamesMo <springclick@gmail.com>
 
 # Docker Build Arguments
-ARG RESTY_VERSION="1.9.15.1"
+ARG RESTY_VERSION="1.11.2.1"
 ARG RESTY_OPENSSL_VERSION="1.0.2h"
 ARG RESTY_PCRE_VERSION="8.38"
 ARG RESTY_NAXSI_VERSION="master"

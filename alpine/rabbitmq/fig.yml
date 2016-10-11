@@ -1,5 +1,5 @@
 #源和中文环境配置
-base:
+rabbitmq:
   image: supermy/ap-rabbitmq
   ports:
     - "5672:5672"

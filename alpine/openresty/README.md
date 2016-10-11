@@ -1,3 +1,7 @@
+##2016-09-14
+-   升级到ap-openresty 1.11.2.1
+-   同步升级ap-waf,测试ok http://127.0.0.1/myweb/token.jsp
+
 ##2016-09-10
 -   增加https://github.com/bungle/lua-resty-session/tree/master/lib/resty
 -   防火墙测试

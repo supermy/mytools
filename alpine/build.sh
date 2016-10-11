@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-docker build -t supermy/alpine:build base/build
 docker build -t supermy/alpine base
+docker build -t supermy/alpine:build base/build
 
 docker build --build-arg RESTY_J=4  -t supermy/ap-openresty openresty
 docker build -t supermy/ap-redis redis

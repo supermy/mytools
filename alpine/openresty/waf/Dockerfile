@@ -4,7 +4,7 @@ FROM supermy/ap-openresty
 
 MAINTAINER JamesMo <springclick@gmail.com>
 
-ARG RESTY_WAF_VERSION="master"
+ARG RESTY_WAF_VERSION="0.8"
 ARG RESTY_NAME_VERSION="lua-resty-waf"
 
 ARG RESTY_SESSION_VERSION="master"
@@ -18,10 +18,10 @@ ARG LUA_LIB_DIR="/usr/local/openresty/lualib"
 RUN apk add --no-cache libstdc++
 
 #https://github.com/bungle/lua-resty-session/archive/master.zip
+#https://github.com/p0pr0ck5/lua-resty-waf/archive/v0.8.tar.gz
 
-RUN curl --insecure -fSL https://github.com/p0pr0ck5/lua-resty-waf/archive/${RESTY_WAF_VERSION}.tar.gz -o ${RESTY_NAME_VERSION}.tar.gz \
+RUN curl --insecure -fSL https://github.com/p0pr0ck5/lua-resty-waf/archive/v${RESTY_WAF_VERSION}.tar.gz -o ${RESTY_NAME_VERSION}.tar.gz \
     && tar xzf ${RESTY_NAME_VERSION}.tar.gz \
-    && ls lua-resty-waf-master \
     && cp -r ${RESTY_NAME_VERSION}-${RESTY_WAF_VERSION}/lib/resty/* ${LUA_LIB_DIR}/resty/  \
     && cp -r ${RESTY_NAME_VERSION}-${RESTY_WAF_VERSION}/lib/*.so ${LUA_LIB_DIR} \
     && cp -r ${RESTY_NAME_VERSION}-${RESTY_WAF_VERSION}/rules/ ${LUA_LIB_DIR} \
