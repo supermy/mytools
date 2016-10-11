@@ -1,0 +1,70 @@
+flume:
+  image: supermy/ap-flume
+  environment:
+    FLUME_AGENT_NAME: a1
+    FLUME_CONF_DIR: /opt/flume/conf
+    #端口采集数据，输出到控制台
+    #FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2log.conf
+    #采集mysql 的数据输出到控制台
+    #FLUME_CONF_FILE: /etc/flume/conf/flume-mysql2log.conf
+    #采集netcat 的数据输出到mq
+    #FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2rabbitmq.conf
+    #采集mysql 的数据输出到mq
+    FLUME_CONF_FILE: /etc/flume/conf/flume-mysql2rabbitmq.conf
+
+  ports:
+    - "44446:44444"
+  volumes_from:
+    - data
+  links:
+    - mq
+#    - mqinit
+    - db:mysql
+    - dbinit
+
+
+#常用工具集合
+data:
+  image: busybox
+  command: /bin/true
+  volumes:
+      - ./conf:/etc/flume/conf/
+      - ./plugins.d:/opt/flume/plugins.d/
+      - ./plugins.d/rabbitmq-flume-plugin/rabbitmq-flume-plugin-standalone-1.1.0.jar:/opt/flume/lib/rabbitmq-flume-plugin-standalone-1.1.0.jar
+
+db:
+  image: supermy/docker-mysql:latest
+  environment:
+    MYSQL_USER: java
+    MYSQL_PASSWORD: java
+    MYSQL_DATABASE: javatest
+    MYSQL_ROOT_PASSWORD: mysql
+  ports:
+    - "3306:3306"
+
+#数据初始化
+dbinit:
+  image: supermy/docker-mysql:latest
+  volumes:
+    - .:/host
+  command: /bin/bash -c "sleep 18; mysql -u java --password=java -h mysql javatest < /host/conf/init.sql; exit 0"
+  links:
+    - db:mysql
+
+mq:
+  image: supermy/ap-rabbitmq
+  ports:
+    - "5672:5672"
+    - "15672:15672"
+#  volumes:
+#    - .:/host
+#  command: /bin/bash -c "sleep 18; sh /host/conf/docker-sync-flume.sh; exit 0"
+
+#
+#mqinit:
+#  image: supermy/ap-rabbitmq
+#  volumes:
+#    - .:/host
+#  command: /bin/bash -c "sleep 18; sh /host/conf/docker-sync-flume.sh; exit 0"
+#  links:
+#    - mq

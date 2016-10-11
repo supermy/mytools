@@ -13,15 +13,15 @@ RUN wget http://www-us.apache.org/dist/flume/1.6.0/apache-flume-1.6.0-bin.tar.gz
     && rm  apache-flume-1.6.0-bin.tar.gz
 
 
-COPY conf /var/tmp/
-COPY lib/* /opt/flume/lib/
+#COPY conf /var/tmp/
+#COPY lib/* /opt/flume/lib/
 
 RUN sed  -i '/log4j.logger.org.apache.flume.lifecycle/a log4j.logger.org.apache.flume.interceptor = DEBUG'  /opt/flume/conf/log4j.properties
 
 
-RUN cat /etc/hosts
+#RUN cat /etc/hosts
 
-RUN  echo "192.168.99.101 hbasemasteripc" >> /etc/hosts
+#RUN  echo "192.168.99.101 hbasemasteripc" >> /etc/hosts
 
 EXPOSE 44444
 
