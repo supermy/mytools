@@ -23,7 +23,7 @@ curl -i -u guest:guest -H "content-type:application/json" \
   http://127.0.0.1:15672/api/bindings/%2f/e/ex-sync-logs/q/queue-b-log
 
 #### 生产测试数据
-curl -i -u guest:guest -H "content-type:application/json" \
+curl -i -u guest:bonc1q2w3e -H "content-type:application/json" \
   -XPOST -d'{"properties":{},"routing_key":"a.aa","payload":"172.17.0.1 - - [12/Sep/2016:22:57:28 +0800] \"GET /dbtest/token.jsp HTTP/1.1\" 200 317 \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36\" \"-\"","payload_encoding":"string"}' \
   http://127.0.0.1:15672/api/exchanges/%2f/ex-sync-logs/publish
 

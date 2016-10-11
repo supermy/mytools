@@ -1,6 +1,7 @@
 WEB+MQ
 =========================
 
+curl -i -X POST -H "Content-Type:application/json" -d '{"touser":"oio3NwbS8BVVWltnFr7lAeCf2dIw","msgtype":"text","text":{"content":"<a href='https://www.baidu.com'>这是在做测试，hjl。</a>"}}’  'http://133.160.92.53/wechat/message/send.do?json&publicId=gh_ac6502e35283'
 
 [TOC]
 

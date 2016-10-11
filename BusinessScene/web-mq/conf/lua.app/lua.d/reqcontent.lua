@@ -44,7 +44,7 @@ local pass = 'guest'
 local authorization = 'Basic ' .. ngx.encode_base64(user .. ':' .. pass)
 
 
-local mqurl = "http://172.16.71.14:15672/api/exchanges/%2f/ex-sync-logs/publish"
+local mqurl = "http://172.16.71.20:15672/api/exchanges/%2f/ex-sync-logs/publish"
 local res, err = httpc:request_uri(mqurl, {
     method = "POST",
     body = cjson.encode(data),
