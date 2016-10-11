@@ -8,7 +8,8 @@ myredis4master:
     ulimit: nofile=20480:40960
   net: "host"
 #走的是虚拟机的网络效率提升不会很快.
-
+#docker exec -it 5aced4a8eff8 bash
+#redis-ben 进行压力测试达到10WQPS
 #
 #myredis4slave1:
 #  image: supermy/docker-myredis:3.5
