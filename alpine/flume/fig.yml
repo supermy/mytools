@@ -10,7 +10,10 @@ flume:
     #采集netcat 的数据输出到mq
     #FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2rabbitmq.conf
     #采集mysql 的数据输出到mq
-    FLUME_CONF_FILE: /etc/flume/conf/flume-mysql2rabbitmq.conf
+    #FLUME_CONF_FILE: /etc/flume/conf/flume-mysql2rabbitmq.conf
+    #采集oracle 的数据输出到mq
+    FLUME_CONF_FILE: /etc/flume/conf/flume-oracle2rabbitmq.conf
+
 
   ports:
     - "44446:44444"
