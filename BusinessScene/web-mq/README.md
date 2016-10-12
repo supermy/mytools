@@ -9,6 +9,9 @@ curl -i -X POST -H "Content-Type:application/json" -d '{"touser":"oio3NwbS8BVVWl
 提取日志信息push 到MQ；url 作为route key。
 
 ##变更日志
+###2016-10-12
+*  测试nginx 进行 rabbitmq 5672代理
+
 ###2016-09-13
 *  初始化项目 
 

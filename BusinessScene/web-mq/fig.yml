@@ -3,10 +3,12 @@
 #启动web
 web:
   image: supermy/ap-waf
-#  links:
-#    - myredis:redis
+  links:
+    - mq
   ports:
     - "80:80"
+    - "5672:5672"
+
   volumes_from:
     - data
 
@@ -16,6 +18,7 @@ data:
   command: /bin/true
   volumes:
       - ./conf/nginx/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+      - ./conf/nginx/stream.conf:/usr/local/openresty/nginx/conf/stream.conf
       - ./conf/nginx/http.d/:/usr/local/openresty/nginx/conf/http.d/
       - ./conf/nginx/server.d/:/usr/local/openresty/nginx/conf/server.d/
       - ./conf/lua.app/:/usr/local/openresty/lua.app/
@@ -25,7 +28,7 @@ data:
 mq:
   image: supermy/ap-rabbitmq
   ports:
-    - "5672:5672"
+#    - "5672:5672"
     - "15672:15672"
 
 #redis:
