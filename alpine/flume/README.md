@@ -1,3 +1,9 @@
+2016-10-17
+    csv2json 增加正则表达式拦截器；
+    但morphline还是不可多得的文本ETL利器，无论你是在采集的时候直接用morphline 做ETL还是在服务端做，flume+morphline加起来带来的灵活性也不输Logstash。
+    在线调试：https://grokconstructor.appspot.com/do/match?example=1
+    已有gork 库：https://github.com/logstash-plugins/logstash-patterns-core/tree/master/patterns
+    
 2016-10-10
     命令行示例
     bin/flume-ng agent --plugins-path plugins.d --conf conf --conf-file conf/flume-mysql2rabbitmq.conf --name a1 -Dflume.root.logger=INFO,console
