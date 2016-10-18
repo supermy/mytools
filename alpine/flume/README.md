@@ -1,8 +1,47 @@
+2016-10-18
+    morphline 拦截器 text etl 环境准备完成；
+    
 2016-10-17
     csv2json 增加正则表达式拦截器；
+    
+    ################示例################
+    文本：2011-0101
+    h1,h2,h3,h4
+    v1,v2,v3,v4
+    正则：(\d{4})-(\d{2})(\d{2})
+    (.+),(.+),(.+),(.+)\n(.+),(.+),(.+),(.+)
+    替换文档：$1-$2-$3
+    { "$1" : "$5", "$2" : "$6", "$3" : "$7", "$4" : "$8" }
+    结果：2011-01-01
+    { "h1" : "v1", "h2" : "v2", "h3" : "v3", "h4" : "v4" }
+    
+    a1.sources.r1.custom.query = select id,foo,bar  from testdata where id > $@$ order by id asc
+    
+    ## source 拦截器
+    ###########sql source  csv to json ################
+    a1.sources.r1.interceptors = i1
+    a1.sources.r1.interceptors.i1.type = search_replace
+    a1.sources.r1.interceptors.i1.searchPattern = (.+),(.+),(.+)
+    a1.sources.r1.interceptors.i1.replaceString = { "id" : $1, "foo" : $2, "bar" : $3 }
+    a1.sources.r1.interceptors.i1.charset = UTF-8
+    ###########interceptors################
+    ---------------------------------------
+    
     但morphline还是不可多得的文本ETL利器，无论你是在采集的时候直接用morphline 做ETL还是在服务端做，flume+morphline加起来带来的灵活性也不输Logstash。
     在线调试：https://grokconstructor.appspot.com/do/match?example=1
     已有gork 库：https://github.com/logstash-plugins/logstash-patterns-core/tree/master/patterns
+        
+    见配置文件 flume-netcat2morphline2log.conf
+    
+    接下来启动agent。
+    
+    然后telnet localhost 9999,输入hello world回车。
+    
+    在agent的日志文件中就可以看到如下日志信息：
+    
+    Event: { headers:{message=hello world} body: }
+    注意这个message属性是添加到了event的headers当中了。
+    
     
 2016-10-10
     命令行示例
