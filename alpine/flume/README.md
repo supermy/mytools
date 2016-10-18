@@ -1,5 +1,9 @@
 2016-10-18
+    flume 前端数据处理利器 morphline-gork
+
     morphline 拦截器 text etl 环境准备完成；
+    
+    morphline syslog 日志etl
     priority : 164
     timestamp : Feb  4 10:46:14
     hostname : syslog
@@ -7,6 +11,8 @@
     pid : 607
     msg : listening on 0.0.0.0 port 22.
     message : Feb  4 10:46:14 syslog sshd[607]: listening on 0.0.0.0 port 22.
+    nc -v 127.0.0.1 44446
+    >Feb  4 10:46:14 syslog sshd[607]: listening on 0.0.0.0 port 22.
     
     morphline json etl:
     nc -v 127.0.0.1 44446

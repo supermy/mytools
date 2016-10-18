@@ -16,7 +16,9 @@ flume:
     #morphline etl 拦截器
     #FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2morphline2log.conf
     #morphline-json- etl 拦截器
-    FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2morphline-json2log.conf
+    #FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2morphline-json2log.conf
+    #morphline-json- etl 拦截器
+    FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2morphline-syslog2log.conf
 
 
   ports:
