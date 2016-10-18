@@ -14,7 +14,9 @@ flume:
     #采集oracle 的数据输出到mq
     #FLUME_CONF_FILE: /etc/flume/conf/flume-oracle2rabbitmq.conf
     #morphline etl 拦截器
-    FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2morphline2log.conf
+    #FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2morphline2log.conf
+    #morphline-json- etl 拦截器
+    FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2morphline-json2log.conf
 
 
   ports:

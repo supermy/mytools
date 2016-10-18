@@ -1,5 +1,21 @@
 2016-10-18
     morphline 拦截器 text etl 环境准备完成；
+    priority : 164
+    timestamp : Feb  4 10:46:14
+    hostname : syslog
+    program : sshd
+    pid : 607
+    msg : listening on 0.0.0.0 port 22.
+    message : Feb  4 10:46:14 syslog sshd[607]: listening on 0.0.0.0 port 22.
+    
+    morphline json etl:
+    nc -v 127.0.0.1 44446
+    Connection to quickstart.cloudera 41415 port [tcp/*] succeeded!
+    {"username": "blue", "color": "green"}
+    OK
+    {"username": "tom", "color": "red"}
+    OK
+    
     
 2016-10-17
     csv2json 增加正则表达式拦截器；
