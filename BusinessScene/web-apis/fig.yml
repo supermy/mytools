@@ -14,6 +14,9 @@ data:
   image: busybox
   command: /bin/true
   volumes:
+        #extjs4spring-rest 页面路径配置
+      - /Users/moyong/project/env-myopensource/1-spring/12-spring/rest-api/src/main/webapp/:/usr/local/openresty/nginx/html/webapp/:rw
+
       - ./conf/nginx/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
       - ./conf/nginx/http.d/:/usr/local/openresty/nginx/conf/http.d/
       - ./conf/nginx/server.d/:/usr/local/openresty/nginx/conf/server.d/
@@ -30,5 +33,5 @@ data:
 myredis:
   image: supermy/ap-redis
   ports:
-      - "6379:6379"
+      - "6379"
 

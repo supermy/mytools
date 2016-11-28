@@ -40,7 +40,7 @@ data:
   volumes:
       - ./conf:/etc/flume/conf/
       - ./plugins.d:/opt/flume/plugins.d/
-      - ./plugins.d/rabbitmq-flume-plugin/rabbitmq-flume-plugin-standalone-1.1.0.jar:/opt/flume/lib/rabbitmq-flume-plugin-standalone-1.1.0.jar
+      #- ./plugins.d/rabbitmq-flume-plugin/rabbitmq-flume-plugin-standalone-1.1.0.jar:/opt/flume/lib/rabbitmq-flume-plugin-standalone-1.1.0.jar
 
 db:
   image: supermy/docker-mysql:latest

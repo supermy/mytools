@@ -5,9 +5,11 @@ Docker 的常见应用场景
 [TOC]
 
 #应用场景
-tomcat+redis+mysql集群；
-spring-boot+redis+mysql集群；
+最新alipine镜像包项目
+进入https://hub.docker.com/search/?isAutomated=0&isOfficial=0&page=1&pullCount=0&q=supermy%2Fap-&starCount0
 
+最新alpine业务场景项目
+进入https://github.com/supermy?tab=repositories  搜索 bs-
 
 ##变更日志
 ###2016-09-10
@@ -17,7 +19,6 @@ spring-boot+redis+mysql集群；
 *   tomcat-cluster 完成
 *   waf-proxy  完成
 *   web-apis 完成
-
 
 
 ##主要功能

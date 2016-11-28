@@ -153,7 +153,8 @@ function set_settings(theme_settings,option){
     
     /* Start Sidebar Fixed */
     if(theme_settings.st_sb_scroll == 1){          
-        $(".page-sidebar").addClass("scroll").mCustomScrollbar("update");        
+        $(".page-sidebar").addClass("scroll").mCustomScrollbar("update");
+
     }else
         $(".page-sidebar").removeClass("scroll").css("height","").mCustomScrollbar("disable",true);
     

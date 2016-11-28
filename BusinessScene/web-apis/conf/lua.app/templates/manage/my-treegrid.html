@@ -1,0 +1,590 @@
+{% layout = "layouts/mylayout.html" %}
+
+
+{-sidebar-}
+
+{-sidebar-}
+
+
+{-content-}
+<!-- START BREADCRUMB -->
+<ul class="breadcrumb">
+    <li><a href="#">首页</a></li>
+    <li class="active">门户左侧菜单编辑</li>
+</ul>
+<!-- END BREADCRUMB -->
+
+
+<!-- PAGE CONTENT WRAPPER -->
+<div class="page-content-wrap">
+
+    <div id="div1" class="content scroll">
+    </div>
+
+</div>>
+<!-- END PAGE CONTENT WRAPPER -->
+{-content-}
+
+
+
+{-page_css-}
+<link rel="stylesheet" type="text/css" href="/form/rest/webjars/extjs/4.2.1.883/resources/css/ext-all.css"/>
+<link href="/form/rest/webjars/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+
+{-page_css-}
+
+{-page_js-}
+
+    <script src="/form/rest/webjars/extjs/4.2.1.883/bootstrap.js"></script>
+
+    <script type="text/javascript" src="/form/rest/public/rowedit-fix.js"></script>
+
+
+    <SCRIPT type="text/javascript">
+    <!--
+//    var zNodes ={*cjson.encode(formvalue[formvalue.params.query]._embedded.resource)*};
+
+    Ext.require(['Ext.data.*', 'Ext.form.*', 'Ext.tree.*', 'Ext.grid.*']);
+
+    function newGuid() {
+        var guid = "";
+        for (var i = 1; i <= 32; i++) {
+            var n = Math.floor(Math.random() * 16.0).toString(16);
+            guid += n;
+            if ((i == 8) || (i == 12) || (i == 16) || (i == 20))
+                guid += "-";
+        }
+        return guid;
+    }
+
+
+    function doRequest (operation, callback, scope) {
+        console.log("do request:", operation);
+
+        var writer = this.getWriter(),
+                request = this.buildRequest(operation);
+        if (operation.allowWrite()) {
+            request = writer.write(request);
+        }
+
+
+        Ext.apply(request, {
+            async: this.async,
+            binary: this.binary,
+            headers: this.headers,
+            timeout: this.timeout,
+            scope: this,
+            callback: this.createRequestCallback(request, operation, callback, scope),
+            method: this.getMethod(request),
+            disableCaching: false
+        });
+
+
+        /*
+         * do anything needed with the request object
+         */
+        //console.log('request', request);
+        console.log('request.params', request.params);
+        //对filter 参数进行加工处理  fixme 或者后台处理
+        //var filterstr = new Array();
+        //function filterArrayElements(element, index, array) {
+        //    console.log("filter element:"+element.field);
+        //    filterstr[index] = element.field + "=" + element.value;
+        //}
+        //request.params.filter.forEach(filterArrayElements);
+        //
+        //var params = {
+        //    filter: filterstr
+        //};
+        //Ext.apply(operation.getstore().proxy.extraParams, params);
+
+
+        Ext.Ajax.request(request);
+        return request;
+    }
+
+    //查询参数预处理
+    function beforeload (store, operation, eOpts) {
+        console.log(store);
+        console.log(operation);
+
+        //排序参数预处理
+        var sortstr = new Array();
+        function sortArrayElements(element, index, array) {
+            sortstr[index] = element.property + "," + element.direction;
+        }
+        operation.sorters.forEach(sortArrayElements);
+
+
+        //将搜索条件放在store的baseParams中，每次加载都赋值
+        //var new_params = { name: Ext.getCmp('search').getValue() };
+        //Ext.apply(store.proxy.extraParams, "searchkeyword");
+        //var params = {sthecstr:conditionstr};
+        //Ext.apply(options.params, params);
+        //store.baseParams = {limit: gridPageSize, filter: $('#txtFilter').val()};
+
+
+        //翻页参数预处理，以及排序参数更新
+        var params = {
+            sort: sortstr,
+            page: store.currentPage - 1
+        };
+        Ext.apply(store.proxy.extraParams, params);
+
+
+
+    }
+
+    //对后端返回的json 进行标准化处理和封装；
+    function processResponse(success, operation, request, response, callback, scope) {
+
+        // console.log("process responseText:......" ,response.responseText);
+
+        //var mystrjson = response.responseText;
+        var myobjson = Ext.decode("{}");
+        if (!Ext.isEmpty(response.responseText)){
+            var myobjson = Ext.decode(response.responseText);//将json字符串转换为对象
+        }
+
+        //后台请求成功,处理返回数据
+        if (success) {
+
+            //var mystrjson2;
+            var myobjson2 = Ext.decode("{}");
+            myobjson2["DATA"] = myobjson;
+
+            var page;
+            //对后端返回的json 进行标准化处理和封装；
+            if (request.action == 'read') {
+
+                myobjson2["DATA"] = {};
+                if (!Ext.isEmpty(myobjson._embedded)) {
+                    //方法2:获取json key;利用json的数据层次获取数据
+                    for(var key in myobjson._embedded) {
+                        console.log(key);
+                        //console.log(myobjson._embedded[key]);
+//                        myobjson2["DATA"]=myobjson._embedded[key];
+                        myobjson2[key]=myobjson._embedded[key];
+//                        myobjson2=myobjson._embedded[key];
+
+                    }
+                }
+                page = myobjson.page;
+            }
+
+            console.info("result response:......" + Ext.encode(myobjson2));//使用json对象属性
+
+            response.responseText = Ext.encode(myobjson2);//将json对象转换为json字符串 其中Mystrjson=Mystrjson2
+
+        }
+
+        //自定义--end
+
+
+        //以下代码 必不可少 ，加载重新定义的responseText
+
+        var me = this,
+                reader,
+                result;
+
+        if (success === true) {
+            reader = me.getReader();
+
+            // Apply defaults to incoming data only for read operations.
+            // For create and update, there will already be a client-side record
+            // to match with which will contain any defaulted in values.
+            reader.applyDefaults = operation.action === 'read';
+
+            result = reader.read(me.extractResponseData(response));
+
+
+            if (result.success !== false) {
+                //see comment in buildRequest for why we include the response object here
+                Ext.apply(operation, {
+                    response: response,
+                    resultSet: result
+                });
+
+                operation.commitRecords(result.records);
+                operation.setCompleted();
+                operation.setSuccessful();
+            } else {
+                operation.setException(result.message);
+                me.fireEvent('exception', this, response, operation);
+            }
+        } else {
+            me.setException(operation, response);
+            me.fireEvent('exception', this, response, operation);
+        }
+
+        //this callback is the one that was passed to the 'read' or 'write' function above
+        if (typeof callback == 'function') {
+            callback.call(scope || me, operation);
+        }
+
+        me.afterRequest(request, success);
+
+    }
+
+    Ext.define('Resource', {
+        extend: 'Ext.data.Model',
+        idProperty      :   'module',
+        fields: [{
+            name: 'module',
+            type: 'string'
+        }, {
+            name: 'name',
+            type: 'string'
+        }, {
+            name: 'pid',
+            type: 'string'
+        }, {
+            name: 'remark',
+            type: 'string'
+        }, {
+            name: 'url',
+            type: 'string'
+        }, {
+            name: 'enabled',
+            type: 'boolean'
+        }, {
+            name: 'leaf',
+            type: 'boolean'
+        }]
+    });
+
+    Ext.onReady(function () {
+//        var store = new Ext.data.TreeStore({
+//            autoDestroy: true,
+//            autoLoad: true,
+//            autoSync: true,
+//            model: Resource,
+////            sorters: [{
+////                property: 'name',
+////                direction: 'ASC'
+////            }],
+//            // 根节点的参数是parentId
+//            nodeParam: "pid",
+//            // 根节点的参数值是0
+//            defaultRootId: 'resource',
+////            defaultRootText: 'module',
+//            proxy: {
+//                type: 'ajax',
+//
+//                actionMethods: {
+//                    create: "POST",
+//                    read: "GET",
+//                    update: "PATCH",
+//                    destroy: "POST"
+//                },
+//
+//                reader : {
+//                    type : 'json',
+//                    root : 'resource'
+//                },
+//                processResponse: processResponse,//针对spring-data-rest 的返回值统一预处理为DATA
+//                url: '/form/rest/resource/search/findAllByPidOrderByModuleAsc',
+//                //url: '/form/rest/public/data/resource.json',
+//
+//                extraParams: {
+//                    path: 'jsontree'
+//                }
+//            },
+//
+//
+//            listeners: {
+//                load: function (self, records) {
+////                    // Filling Array of messages
+//                    console.log(records);
+////                    var arr = [];
+////                    console.log(records);
+////                    console.log(records.rawData);
+////                    console.log(records[0].raw._embedded.resource);
+////
+////                    for(m in records[0].raw._embedded.resource){
+////                        var message = {
+////                            message: records[0].raw._embedded.resource[m].resource,
+////                            href:records[0].raw._embedded.resource[m]._links.self.href
+////                        };
+////                        arr.push(message);
+////                    }
+////                    view.setData(arr[0]);
+//                }
+//            },
+//            folderSort: false  //获取数据的时候所有字段都产生排序
+////            ,
+////            listeners: {
+////
+////                // Each demo.UserModel instance will be automatically
+////                // decorated with methods/properties of Ext.data.NodeInterface
+////                // (i.e., a "node"). Whenever a UserModel node is appended
+////                // to the tree, this TreeStore will fire an "append" event.
+////                append: function( thisNode, newChildNode, index, eOpts ) {
+////
+////                    // If the node that's being appended isn't a root node, then we can
+////                    // assume it's one of our UserModel instances that's been "dressed
+////                    // up" as a node
+////                    if( !newChildNode.isRoot() ) {
+////                        newChildNode.set('leaf', true);
+////
+////                        newChildNode.set('text', newChildNode.get('name'));
+////                        newChildNode.set('icon', newChildNode.get('profile_image_url'));
+////                    }
+////                }
+////            }
+//        });
+
+        var store = Ext.create('Ext.data.TreeStore', {
+            autoDestroy: true,
+            autoLoad: true,
+            autoSync: true,
+            nodeParam: "pid",
+            defaultRootId: 'resource',
+            model: 'Person',
+//            appendId: false,
+            proxy: {
+                type: 'ajax',
+//                url: '/form/rest/resource/search/findAllByPidOrderByModuleAsc',
+                api: {
+                    create  : '/form/rest',
+                    read    : '/form/rest/resource/search/findAllByPidOrderByModuleAsc',
+                    update  : '/form/rest',
+                    destroy : '/form/rest'
+                },
+                processResponse: processResponse,//针对spring-data-rest 的返回值统一预处理为DATA
+                doRequest: doRequest,//
+                reader: {
+                    type: 'json',
+                    //name: "/",
+                    root: 'resource'
+                },
+                writer: {
+                    type: 'json'
+                }
+            },
+            listeners: {
+//                beforeload: beforeload  //提交参数预处理
+
+//                write: function(store, operation){
+//                    var record = operation.getRecords()[0],
+//                            name = Ext.String.capitalize(operation.action),
+//                            verb;
+//
+//
+//                    if (name == 'Destroy') {
+//                        record = operation.records[0];
+//                        verb = 'Destroyed';
+//                    } else {
+//                        verb = name + 'd';
+//                    }
+//                    Ext.example.msg(name, Ext.String.format("{0} user: {1}", verb, record.getId()));
+//
+//                }
+            }
+        });
+
+        var rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
+            listeners: {
+                cancelEdit: function (rowEditing, context) {
+                    // Canceling editing of a locally added, unsaved record: remove it
+                    if (context.record.phantom) {
+                        store.remove(context.record);
+                    }
+                }
+            }
+        });
+
+        var grid = Ext.create('Ext.tree.Panel', {
+            renderTo: 'div1',
+            plugins: [rowEditing],
+            width: 600,
+            height: 500,
+            frame: true,
+//            title: 'Users',
+            title: 'Core Team Projects',
+//        height: 300,
+            useArrows: true,
+            rootVisible: false,
+            multiSelect: true,
+            singleExpand: true,
+
+            store: store,
+            viewConfig: {
+                plugins: {
+                    ptype: 'treeviewdragdrop',
+                    containerScroll: true
+                }
+            },
+            iconCls: 'icon-user',
+            columns: [{
+                xtype: 'treecolumn', //this is so we know which column will show the tree
+                text: '名称',
+                flex: 2,
+                sortable: true,
+                dataIndex: 'name',
+                editor: {
+                    allowBlank: false
+                }
+            },
+                {
+                    //we must use the templateheader component so we can use a custom tpl
+                    //xtype: 'templatecolumn',
+                    //xtype: 'treecolumn',
+                    text: '资源类型',
+                    flex: 1,
+                    sortable: true,
+                    dataIndex: 'remark',
+                    align: 'center',
+                    editor: {
+                        allowBlank: false
+                    }
+//                ,
+//                //add in the custom tpl for the rows
+//                tpl: Ext.create('Ext.XTemplate', '{duration:this.formatHours}', {
+//                    formatHours: function (v) {
+//                        if (v < 1) {
+//                            return Math.round(v * 60) + ' mins';
+//                        } else if (Math.floor(v) !== v) {
+//                            var min = v - Math.floor(v);
+//                            return Math.floor(v) + 'h ' + Math.round(min * 60) + 'm';
+//                        } else {
+//                            return v + ' hour' + (v === 1 ? '' : 's');
+//                        }
+//                    }
+//                })
+                }
+                ,
+                {
+                    text: '链接地址',
+                    flex: 1,
+                    dataIndex: 'url',
+                    sortable: true,
+                    editor: {
+                        allowBlank: false
+                    }
+                }, {
+                    xtype: 'checkcolumn',
+                    header: '是否有效',
+                    dataIndex: 'enabled',
+                    width: 55,
+                    stopSelection: false,
+                    menuDisabled: true
+                },
+                {
+                    text: 'Delete',
+                    width: 55,
+                    menuDisabled: true,
+                    xtype: 'actioncolumn',
+                    tooltip: 'Edit task',
+                    align: 'center',
+                    icon: '../resources/images/icons/delete.png',
+                    handler: function (grid, rowIndex, colIndex, actionItem, event, record, row) {
+                        // Ext.Msg.alert('Delete' + (record.get('done') ? ' completed task' : ''), record.get('task'));
+                        record.remove(true);
+                        store.sync();
+
+
+                    },
+                    // Only leaf level tasks may be edited
+                    isDisabled: function (view, rowIdx, colIdx, item, record) {
+                        return !record.data.leaf;
+                    }
+                }],
+
+            addNode: function (node, leaf) {
+                if (node && !node.leaf) {
+                    var random = Ext.id();
+                    node.expand();
+
+
+                    var newList = Ext.create('Resource', {
+                        pdId: random,
+                        name: 'New Task',
+                        type: 'yy',
+                        url: 'test.com/test',
+                        enabled: true,
+                        leaf: leaf,
+                        loaded: true
+                    });
+
+                    node.appendChild(newList);
+                    selectionModel = grid.getSelectionModel();
+                    selectionModel.select(newList);
+                    rowEditing.startEdit(newList, 0);
+                } else {
+
+                    Ext.Msg.alert('请选择一个父节点');
+
+                }
+            },
+            dockedItems: [{
+                xtype: 'toolbar',
+                items: [{
+                    text: 'Add叶节点',
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        // empty record
+                        var node = grid.getSelectionModel().getSelection()[0] || grid.getRootNode();
+                        grid.addNode(node, true);
+
+
+                    }
+                }, {
+                    text: 'Add支节点',
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        // empty record
+                        var node = grid.getSelectionModel().getSelection()[0] || grid.getRootNode();
+                        grid.addNode(node, false);
+
+
+                    }
+                }, '-', {
+                    itemId: 'delete',
+                    text: 'Delete',
+                    iconCls: 'icon-delete',
+                    disabled: true,
+                    handler: function () {
+                        var selection = grid.getView().getSelectionModel().getSelection()[0];
+                        if (selection) {
+                            selection.remove(true);
+                            store.sync();
+//                            store.remove(selection);
+                        }
+                    }
+                }]
+            }]
+        });
+
+
+        //增加叶节点或者支节点
+
+
+        grid.getSelectionModel().on('selectionchange', function (selModel, selections) {
+            console.log(selModel);
+            console.log(selections);//选中多条记录
+            console.log(selections[0].data.leaf);
+            var node = selections[0]
+
+            if (node.leaf || node.childNodes.length == 0) {
+                grid.down('#delete').setDisabled(false);
+            } else {
+                grid.down('#delete').setDisabled(true);
+            }
+
+
+//            return !record.data.leaf;
+
+
+        });
+
+    });
+
+    //-->
+
+</SCRIPT>
+{-page_js-}
+
+{-page_demo_js-}
+
+{-page_demo_js-}

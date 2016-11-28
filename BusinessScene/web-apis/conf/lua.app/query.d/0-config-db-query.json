@@ -1,8 +1,8 @@
 {
   "name": "表单查询路由列表",
   "desc": "query 传入查询语句的id,结果返回到key;参数全部收集到param;",
-  "url":"http://192.168.0.118/formroutequery",
-  "urlrest":"http://192.168.0.118:9006/form/rest/",
+  "url":"http://192.168.1.183/formroutequery",
+  "urlrest":"http://192.168.1.183:9006/form/rest/",
   "webbase":{
     "url":"http://127.0.0.1",
     "desc":"页面的base url,方便动态页面的静态资源统一定位。"
@@ -10,16 +10,25 @@
   "es": {
     "desc":"es-engine 查询设置",
     "htmles":"route-json",
-    "htmlrest":"route-json-rest",
     "esquery":"q6",
-    "restquery":"q7",
-    "entrykey": "pkId"
+    "entrykey": "pkId",
+    "htmlrest":"route-json-rest",
+    "restquery":"q7"
   },
+
   "list": {
+    "menures": {
+      "desc": "管理左侧菜单",
+      "url": "http://192.168.1.183:9006/form/rest/resource/search/findAllByPidOrderByModuleAsc",
+      "param": {
+        "pid" : "pid"
+      },
+      "method": "GET"
+    },
 
     "avatar": {
       "desc": "图片信息查询",
-      "url": "http://192.168.0.118:9006/form/rest/avatar",
+      "url": "http://192.168.1.183:9006/form/rest/avatar",
       "param": {
       },
       "method": "GET"
@@ -27,7 +36,7 @@
 
     "users": {
       "desc": "用户信息查询",
-      "url": "http://192.168.0.118:9006/form/rest/user",
+      "url": "http://192.168.1.183:9006/form/rest/user",
       "param": {
         "page": "page",
         "size": "size"
@@ -88,7 +97,7 @@
     },
     "q5": {
       "desc": "es-query dsl 查询语句 ",
-      "url": "http://192.168.0.118:9200/channel/_search",
+      "url": "http://192.168.1.183:9200/channel/_search",
       "param": {
         "query": {
           "bool": {
@@ -121,7 +130,7 @@
     },
     "q6": {
       "desc": "extjs 生成的查询通用语句for es-query，q6与q7查询语句一起使用......",
-      "url": "http://192.168.0.118:9200/channel/_search",
+      "url": "http://192.168.1.183:9200/channel/_search",
       "param": {
         "query": {
           "bool": {
@@ -136,7 +145,7 @@
     },
     "q7": {
       "desc": "extjs filter 查询，es 完成实际的查询返回实体id,spring-data 再根据实体id 查询返回数据",
-      "url": "http://192.168.0.118:9006/form/rest/channel_auth/search/findByIdList",
+      "url": "http://192.168.1.183:9006/form/rest/channel_auth/search/findByIdList",
       "param": {
         "pkId": "pkId"
       },

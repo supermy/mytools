@@ -12,8 +12,67 @@ lua 进行A/B测试配置；
 
 
 ##变更日志
+
+###2016-11-15
+*
+
+###2016-11-14
+* apk add --no-cache   bash  curl  wget openssl
+
+
+###2016-11-12
+* 提供ssl 服务
+# 生成一个RSA密钥 
+$ openssl genrsa -des3 -out mo.key 1024
+# 拷贝一个不需要输入密码的密钥文件
+$ openssl rsa -in mo.key -out mo_nopass.key
+# 生成一个证书请求
+$ openssl req -new -key mo.key -out mo.csr
+# 自己签发证书
+$ openssl x509 -req -days 365 -in mo.csr -signkey mo.key -out mo.crt
+
+
+###2016-10-30
+*   extjs treegrid spring-data-rest 整合；
+*   一是整合127.0.0.1:9006；
+'
+upstream spring_rest {
+    server 192.168.1.183:9006;
+      ip_hash;
+}
+location /form {
+  proxy_pass http://spring_rest/form;
+}
+'
+*   二是引入routeform：解决query 路径与返回json问题；
+
+
+
+###2016-10-14
+*   门户菜单功能
+*   http://127.0.0.1/manage/portal/drag.html
+*   http://127.0.0.1/manage/portal/ResourceTree.html
+*   http://127.0.0.1/formroutequery?html=manage/my-ztree&query=menures&page=0&size=3
+        data: {
+            simpleData: {
+                enable: true,
+//                idKey: "module",
+//                pIdKey: "pid",
+                rootPId: 0
+            }
+        },
+        
+            var zNodes =
+                    //{*cjson.encode(formvalue[formvalue.params.query]._embedded.resource)*};
+*       //编辑状态不能点击链接跳转
+                    
+
 ###2016-09-10
 *   优化整理web-apis架构
+*   http://127.0.0.1/formroutequery?html=web/web-index&query=users&page=0&size=3
+*   http://127.0.0.1/formroutequery?html=manage/my-users&query=users&query=avatar&page=0&size=3
+*   http://127.0.0.1:9006/form/rest/user
+
 
 
 ##主要功能
