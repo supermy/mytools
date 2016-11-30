@@ -26,5 +26,6 @@ docker build -t supermy/ap-es elasticsearch
 docker build -t supermy/ap-nodejs nodejs
 -------------------------------------------
 docker build -t supermy/ap-jdk jdk
+docker build -t supermy/ap-zabbix zabbix
 
 

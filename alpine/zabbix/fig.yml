@@ -1,0 +1,34 @@
+zabbix:
+  image: supermy/ap-zabbix
+#  links:
+#    - zabbixdb:zabbixdb
+  ports:
+      - "80"
+      - "10051:10051"
+  environment:
+    #ZS_DBHost: 192.168.3.13
+    DB_SERVER_HOST: 172.16.63.7
+    DB_SERVER_PORT: 3306
+    MYSQL_USER: root
+    MYSQL_PASSWORD: 123456
+    MYSQL_DATABASE: zabbix
+#  volumes_from:
+#    - data
+#zabbixdb:
+#  image: mysql:5.6
+#  #command: /bin/bash -c "mysql_upgrade -u root -p --force; exit 0"
+#  environment:
+#    MYSQL_USER: java
+#    MYSQL_PASSWORD: java
+#    MYSQL_DATABASE: zabbix
+#    MYSQL_ROOT_PASSWORD: mysql
+#  ports:
+#    - "3306:3306"
+
+
+#
+#data:
+#  image: busybox
+#  command: /bin/true
+#  volumes:
+#      - /etc/localtime:/etc/localtime:ro #影响内置的应用程序，去掉可以恢复
