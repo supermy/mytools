@@ -3,7 +3,7 @@ zabbix:
 #  links:
 #    - zabbixdb:zabbixdb
   ports:
-      - "80"
+      - "80:80"
       - "10051:10051"
   environment:
     #ZS_DBHost: 192.168.3.13

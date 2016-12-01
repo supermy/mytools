@@ -1,0 +1,10 @@
+jenkins:
+  image: jenkins:alpine
+  ports:
+  - "8080:8080"
+  - "50000:50000"
+  volumes:
+  - data:/var/jenkins_home
+
+  #https://hub.docker.com/_/jenkins/
+  #http://127.0.0.1:8080/

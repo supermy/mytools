@@ -1,0 +1,14 @@
+#docker run --name some-zabbix-agent -e ZBX_HOSTNAME="some-hostname" -e ZBX_SERVER_HOST="some-zabbix-server" -d zabbix/zabbix-agent:tag
+
+zabbix:
+  image: supermy/ap-zabbix-agent
+  environment:
+    ZBX_HOSTNAME: 172.16.63.7
+    ZBX_SERVER_HOST: 172.16.63.7
+
+#
+#data:
+#  image: busybox
+#  command: /bin/true
+#  volumes:
+#      - /etc/localtime:/etc/localtime:ro #影响内置的应用程序，去掉可以恢复
