@@ -28,5 +28,7 @@ docker build -t supermy/ap-nodejs nodejs
 docker build -t supermy/ap-jdk jdk
 docker build -t supermy/ap-zabbix zabbix
 docker build -t supermy/ap-zabbix-agent zabbix/agent
+docker build -t supermy/ap-mvn maven
+docker build --build-arg JENKINS_VERSION=2.9 -t supermy/ap-jenkins jenkins
 
 

@@ -13,8 +13,8 @@ lua 进行A/B测试配置；
 
 ##变更日志
 
-###2016-11-15
-*
+###2016-11-29
+*增加ssl 访问端口 curl https://127.0.0.1/
 
 ###2016-11-14
 * apk add --no-cache   bash  curl  wget openssl

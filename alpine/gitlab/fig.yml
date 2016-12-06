@@ -6,6 +6,8 @@
     - "10022:22"
     volumes:
     - data:/home/git/data
+    - locales:/home/git/gitlab/config/locales
+
     environment:
     - DEBUG=false
 

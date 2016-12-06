@@ -6,6 +6,7 @@ web:
 #    - mydb:mydb
   ports:
     - "80:80"
+    - "443:443"
   volumes_from:
     - data
 
@@ -23,6 +24,11 @@ data:
       - ./conf/lua.app/:/usr/local/openresty/lua.app/
       - ./logs:/usr/local/openresty/nginx/logs/
       - ./www:/usr/local/openresty/nginx/html/
+      #配置ssl https://127.0.0.1/
+      - ./conf/nginx/nginx-ssl.conf:/usr/local/openresty/nginx/conf/nginx-ssl.conf
+      - ./conf/sslkey/mo.crt:/usr/local/openresty/nginx/conf/mo.crt
+      - ./conf/sslkey/mo.key:/usr/local/openresty/nginx/conf/mo.key
+
 
 #      - ./lua.d/:/usr/local/nginx/conf/lua.d/ #配置文件,fix.me
 #      - ./naxsi.d/:/usr/local/nginx/conf/naxsi.d/ #配置文件,fix.me

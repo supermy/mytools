@@ -1,0 +1,48 @@
+#bin/flume-ng agent --conf-file example.conf --name myname -Dflume.monitoring.type=ganglia -Dflume.monitoring.hosts=myhost:8649
+#docker run -d --name ganglia -h $HOSTNAME -v /tmp/docker/ganglia/etc:/etc/ganglia -v /tmp/docker/ganglia/var:/var/lib/ganglia -p 81:80 -p 8649:8649 -p 8649:8649/udp wookietreiber/ganglia --with-gmond
+#docker run -d --name ganglia -p 81:80 -p 8649:8649 -p 8649:8649/udp wookietreiber/ganglia --with-gmond
+#/Users/moyong/project/bonc-project/31-mobile-order/05-deploy/apache-flume-1.6.0-bin
+#bin/flume-ng agent -c conf -f conf/flume-netcat2log.conf  -n a1 -Dflume.monitoring.type=ganglia -Dflume.monitoring.hosts=127.0.0.1:8649
+
+
+
+#ganglia:
+#  image: wookietreiber/ganglia
+#  ports:
+#    - "80:80"
+#    - "8649:8649"
+
+flume:
+  image: supermy/ap-flume
+  environment:
+    FLUME_AGENT_NAME: a1
+    FLUME_CONF_DIR: /opt/flume/conf
+#    #端口采集数据，输出到控制台
+    FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2log.conf
+    FLUME_MONITORING_TYPE: ganglia
+    FLUME_MONITORING_HOSTS: 172.17.0.2:8649
+#    FLUME_MONITORING_TYPE: http
+#    FLUME_MONITORING_PORT: 12345
+
+
+  ports:
+    - "44446:44444"
+    - "12345"
+  volumes_from:
+    - data
+##  links:
+##    - mq
+#
+#
+#
+##常用工具集合
+data:
+  image: busybox
+  command: /bin/true
+  volumes:
+      - ./conf:/etc/flume/conf/
+      #- ./plugins.d:/opt/flume/plugins.d/
+      #- ./plugins.d/rabbitmq-flume-plugin/rabbitmq-flume-plugin-standalone-1.1.0.jar:/opt/flume/lib/rabbitmq-flume-plugin-standalone-1.1.0.jar
+
+#http://127.0.0.1:8649/metrics
+#http://127.0.0.1:32775/metrics
