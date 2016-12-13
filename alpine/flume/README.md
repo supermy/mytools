@@ -1,3 +1,7 @@
+2016-12-13
+    flume 同步数据测试；
+    本地压力测试ok;本地docker 压力测试ok;
+    
 2016-10-18
     flume 前端数据处理利器 morphline-gork
 

@@ -6,7 +6,7 @@ flume:
     #端口采集数据，输出到控制台
     #FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2log.conf
     #采集mysql 的数据输出到控制台
-    FLUME_CONF_FILE: /etc/flume/conf/flume-mysql2log.conf
+    #FLUME_CONF_FILE: /etc/flume/conf/flume-mysql2log.conf
     #采集netcat 的数据输出到mq
     #FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2rabbitmq.conf
     #采集mysql 的数据输出到mq
@@ -19,10 +19,12 @@ flume:
     #FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2morphline-json2log.conf
     #morphline-json- etl 拦截器
     #FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2morphline-syslog2log.conf
+    FLUME_CONF_FILE: /etc/flume/conf/flume-tasktable.conf
 
 
   ports:
-    - "44446:44444"
+    - "44444:44444"
+    - "54321:54321"
   volumes_from:
     - data
   links:
@@ -50,7 +52,8 @@ db:
     MYSQL_DATABASE: javatest
     MYSQL_ROOT_PASSWORD: mysql
   ports:
-    - "3306:3306"
+    - "3306"
+
 
 #数据初始化
 dbinit:

@@ -18,6 +18,9 @@ RUN wget http://www-us.apache.org/dist/flume/1.6.0/apache-flume-1.6.0-bin.tar.gz
 
 RUN sed  -i '/log4j.logger.org.apache.flume.lifecycle/a log4j.logger.org.apache.flume.interceptor = DEBUG'  /opt/flume/conf/log4j.properties
 
+RUN sed  -i 's/JAVA_OPTS="-Xmx20m"/JAVA_OPTS="-Xmx256m -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=54321 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"/g'  /opt/flume/bin/flume-ng
+
+
 
 #RUN cat /etc/hosts
 
