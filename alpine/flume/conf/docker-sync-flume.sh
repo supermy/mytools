@@ -3,7 +3,7 @@
 /usr/bin/wrapper
 
 rabbitmqctl  add_vhost statuscheckvhost
-rabbitmqctl add_user heartbeat alive
+rabbitmqctl  add_user heartbeat alive
 rabbitmqctl  set_permissions -p statuscheckvhost heartbeat ".*" ".*" ".*"
 rabbitmqctl set_user_tags heartbeat management
 curl -i -u heartbeat:alive http://127.0.0.1:15672/api/aliveness-test/statuscheckvhost

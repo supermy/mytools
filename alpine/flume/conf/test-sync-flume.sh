@@ -20,6 +20,13 @@ curl -i -u heartbeat:alive -H "content-type:application/json" \
   -XPUT -d'{"auto_delete":false,"durable":true,"arguments":{}}' \
   http://127.0.0.1:15672/api/queues/statuscheckvhost/queue-b-log
 
+curl -i -u heartbeat:alive -H "content-type:application/json" \
+  -XPUT -d'{"auto_delete":false,"durable":true,"arguments":{}}' \
+  http://127.0.0.1:15672/api/queues/statuscheckvhost/queue-aa-log
+curl -i -u heartbeat:alive -H "content-type:application/json" \
+  -XPUT -d'{"auto_delete":false,"durable":true,"arguments":{}}' \
+  http://127.0.0.1:15672/api/queues/statuscheckvhost/queue-bb-log
+
 #### 绑定路由与消息队列
 curl -i -u heartbeat:alive -H "content-type:application/json" \
   -XPOST -d'{"routing_key":"flume.event","arguments":{}}' \
@@ -28,6 +35,12 @@ curl -i -u heartbeat:alive -H "content-type:application/json" \
   -XPOST -d'{"routing_key":"#","arguments":{}}' \
   http://127.0.0.1:15672/api/bindings/statuscheckvhost/e/ex-sync-logs/q/queue-b-log
 
+curl -i -u heartbeat:alive -H "content-type:application/json" \
+  -XPOST -d'{"routing_key":"aa","arguments":{}}' \
+  http://127.0.0.1:15672/api/bindings/statuscheckvhost/e/ex-sync-logs/q/queue-aa-log
+curl -i -u heartbeat:alive -H "content-type:application/json" \
+  -XPOST -d'{"routing_key":"bb","arguments":{}}' \
+  http://127.0.0.1:15672/api/bindings/statuscheckvhost/e/ex-sync-logs/q/queue-bb-log
 #### 生产测试数据
 curl -i -u heartbeat:alive -H "content-type:application/json" \
   -XPOST -d'{"properties":{},"routing_key":"a.aa","payload":"172.17.0.1 - - [12/Sep/2016:22:57:28 +0800] \"GET /dbtest/token.jsp HTTP/1.1\" 200 317 \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36\" \"-\"","payload_encoding":"string"}' \
