@@ -1,0 +1,29 @@
+#源和中文环境配置
+
+#启动web
+web:
+  image: supermy/ap-waf
+  links:
+    - redis
+  ports:
+    - "80:80"
+    - "6379:6379"
+
+  volumes_from:
+    - data
+
+#常用工具集合
+data:
+  image: busybox
+  command: /bin/true
+  volumes:
+      - ./conf/nginx/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+      - ./conf/nginx/stream.conf:/usr/local/openresty/nginx/conf/stream.conf
+      - ./logs:/usr/local/openresty/nginx/logs/
+
+#可以换成redis cluster
+redis:
+  image: supermy/ap-redis
+  volumes:
+    - conf/redis/:/usr/local/etc/redis/
+    - redis-data/:/data
