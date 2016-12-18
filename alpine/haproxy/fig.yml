@@ -1,0 +1,29 @@
+haproxy:
+  image: supermy/ap-haproxy
+  #image:  haproxy:alpine
+  ports:
+    - "6379:6379"
+    - "1080:1080"
+    - "1099:1099"
+  links:
+    - redis1
+    - redis2
+  environment:
+    ulimit: nofile=20480:40960
+  volumes:
+    - ./conf/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    #- data/d1:/data
+#tochange redis cluster 6 node 集群；
+redis1:
+  image: redis:alpine
+  ports:
+    - "6381:6379"
+  environment:
+    ulimit: nofile=20480:40960
+
+redis2:
+  image: redis:alpine
+  ports:
+    - "6382:6379"
+  environment:
+    ulimit: nofile=20480:40960
