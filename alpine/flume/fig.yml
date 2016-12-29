@@ -8,7 +8,7 @@ flume:
     #采集mysql 的数据输出到控制台
     #FLUME_CONF_FILE: /etc/flume/conf/flume-mysql2log.conf
     #采集netcat 的数据输出到mq
-    FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2rabbitmq.conf
+    #FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2rabbitmq.conf
     #采集mysql 的数据输出到mq
     #FLUME_CONF_FILE: /etc/flume/conf/flume-mysql2rabbitmq.conf
     #采集oracle 的数据输出到mq
@@ -20,7 +20,7 @@ flume:
     #morphline-json- etl 拦截器
     #FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2morphline-syslog2log.conf
     #同步数据压力测试
-    #FLUME_CONF_FILE: /etc/flume/conf/flume-tasktable.conf
+    FLUME_CONF_FILE: /etc/flume/conf/flume-tasktable.conf
 
 
   ports:

@@ -51,8 +51,8 @@ ARG JENKINS_URL=https://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-w
 # see https://github.com/docker/docker/issues/8331
 RUN echo ${JENKINS_URL}
 #RUN curl -fsSL ${JENKINS_URL} -o /usr/share/jenkins/jenkins.war \
-
-COPY jenkins-war-2.9.war /usr/share/jenkins/jenkins.war
+#todo 网络问题
+COPY jenkins.war /usr/share/jenkins/jenkins.war
 #RUN  echo "${JENKINS_SHA}  /usr/share/jenkins/jenkins.war" | sha1sum -c -
 
 #RUN curl  ${JENKINS_URL} -o /usr/share/jenkins/jenkins.war \

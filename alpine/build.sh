@@ -29,8 +29,11 @@ docker build -t supermy/ap-jdk jdk
 docker build -t supermy/ap-zabbix zabbix
 docker build -t supermy/ap-zabbix-agent zabbix/agent
 docker build -t supermy/ap-mvn maven
-docker build --build-arg JENKINS_VERSION=2.9 -t supermy/ap-jenkins jenkins
+docker build --build-arg JENKINS_VERSION=2.19.4 -t supermy/ap-jenkins jenkins
 
-docker build -t supermy/ap-redis-new -f redis/Dockerfile-new  redis
+docker build -t supermy/ap-redis-cs -f redis/Dockerfile-cluster  redis
 
+docker build -t supermy/ap-haproxy  haproxy
+
+docker build -t supermy/ap-netdata  netdata
 

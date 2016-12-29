@@ -1,10 +1,24 @@
 jenkins:
   image: supermy/ap-jenkins
+  #image: jenkinsci/jenkins
   ports:
   - "8080:8080"
   - "50000:50000"
   volumes:
   - data:/var/jenkins_home
+#  - /var/run/docker.sock:/var/run/docker.sock
+#  - $(which docker):/usr/bin/docker
+#  - $(which git):/usr/bin/git
+#  - ~/.ssh:/var/jenkins_home/.ssh
 
   #https://hub.docker.com/_/jenkins/
   #http://127.0.0.1:8080/
+
+#  docker run \
+#      -d -p 8080:8080 -p 50000:50000 \
+#      -v /home/docker/jenkins_home/:/var/jenkins_home \
+#      -v /var/run/docker.sock:/var/run/docker.sock \
+#      -v $(which docker):/usr/bin/docker \
+#      -v $(which git):/usr/bin/git \
+#      -v ~/.ssh:/var/jenkins_home/.ssh \
+#      --name=jenkins jenkins

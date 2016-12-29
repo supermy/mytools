@@ -1,5 +1,5 @@
 # AlpineLinux with a glibc-2.23 and Oracle Java 7
-FROM supermy/ap-jre
+FROM supermy/ap-jdk
 
 MAINTAINER JamesMo <springclick@gmail.com>
 
