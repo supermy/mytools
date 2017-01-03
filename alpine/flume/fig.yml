@@ -20,8 +20,13 @@ flume:
     #morphline-json- etl 拦截器
     #FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2morphline-syslog2log.conf
     #同步数据压力测试
-    FLUME_CONF_FILE: /etc/flume/conf/flume-tasktable.conf
-
+    #FLUME_CONF_FILE: /etc/flume/conf/flume-tasktable.conf
+    #redis 数据生产
+    #FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2redis.conf
+    #redis 数据消费
+    #FLUME_CONF_FILE: /etc/flume/conf/flume-redis2log.conf
+    #redis 数据生产与消费
+    FLUME_CONF_FILE: /etc/flume/conf/flume-redis2redis.conf
 
   ports:
     - "44444:44444"
