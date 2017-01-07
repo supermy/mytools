@@ -1,0 +1,22 @@
+web:
+  #image: 'beginor/gitlab-ce:8.15.1-ce.0'
+  image: 'gitlab/gitlab-ce:latest'
+  restart: always
+  #hostname: '192.168.1.133'
+#  environment:
+#    GITLAB_OMNIBUS_CONFIG: |
+#      external_url 'https://192.168.1.133'
+  ports:
+    - '10080:80'
+    - '443:443'
+    - '22:22'
+  volumes:
+    - ./ce-etc:/etc/gitlab
+    - ./ce-log:/var/log/gitlab
+    - ./ce-data:/var/opt/gitlab
+
+#docker exec -it gitlab_web_1 vim /etc/gitlab/gitlab.rb
+#docker restart gitlab_web_1
+
+#    docker exec -it gitlab_web_1 update-permissions
+#    docker restart gitlab_web_1
