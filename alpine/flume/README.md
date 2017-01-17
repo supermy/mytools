@@ -1,3 +1,10 @@
+2017-01-17
+    export JAVA_OPTS="-Xms100m -Xmx2000m -Dcom.sun.management.jmxremote -Dflume.monitoring.type=ganglia -Dflume.monitoring.hosts=192.168.150.140:8650"
+    
+2017-01-04
+    连接器进行数据的加密解密，适用于在互联网上传递数据的安全防护。
+    
+
 2017-01-03
     redis-source [flume-redis2log.conf]消费数据的使用的测试数据
     127.0.0.1:6379> LPUSH jplist '{"message":1}'
@@ -5,9 +12,7 @@
     127.0.0.1:6379> LPUSH jplist '{"message":2,"tags":["xyz"],"type":"abc"}'
     redis-sink [flume-netcat2redis.conf]生产数据
     telnet 44444  //生成数据
-    127.0.0.1:6379>  rpop jplist //消费数据    
-
-
+    127.0.0.1:6379>  rpop jplist //消费数据
 
 2016-12-13
     flume 同步数据测试；

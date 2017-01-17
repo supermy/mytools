@@ -5,9 +5,11 @@ ganglia:
   ports:
     - "80:80"
     - "8649:8649"
-#    - "8649:8649/udp"
-#  volumes_from:
-#    - data
+    - "8650:8650"
+    - "8651:8651"
+    - "8652:8652"
+  volumes:
+    - ./conf:/etc/ganglia
 
 #常用工具集合
 #data:

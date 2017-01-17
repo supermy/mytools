@@ -3,12 +3,14 @@ flume:
   environment:
     FLUME_AGENT_NAME: a1
     FLUME_CONF_DIR: /opt/flume/conf
-    #端口采集数据，输出到控制台
-    #FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2log.conf
+    #端口采集数据，输出到控制台,走docker 的内网地址可通
+    FLUME_MONITORING_HOSTS: 172.17.0.2:8649
+    FLUME_MONITORING_TYPE: ganglia
+    FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2log.conf
     #采集mysql 的数据输出到控制台
     #FLUME_CONF_FILE: /etc/flume/conf/flume-mysql2log.conf
     #采集netcat 的数据输出到mq 拦截器 groovy
-    FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2rabbitmq.conf
+    #FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2rabbitmq.conf
     #采集mysql 的数据输出到mq
     #FLUME_CONF_FILE: /etc/flume/conf/flume-mysql2rabbitmq.conf
     #采集oracle 的数据输出到mq
