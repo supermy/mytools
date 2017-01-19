@@ -1,0 +1,15 @@
+db:
+    image: neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - data/:/data/
+      - logs:/logs/
+
+#docker run \
+#     --publish=7474:7474 --publish=7687:7687 \
+#     --volume=$HOME/neo4j/data:/data \
+#     --volume=$HOME/neo4j/logs:/logs \
+#     --ulimit=nofile=40000:40000 \
+#     neo4j
