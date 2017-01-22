@@ -1,0 +1,6 @@
+sq:
+  image: sonarqube:alpine
+  ports:
+    - "9000:9000"
+  volumes:
+    - ext/:/opt/sonarqube/extensions/
