@@ -66,7 +66,7 @@ local function split(szFullString, szSeparator)
 end
 
 --转换extjs-sort to es-sort ES能够识别的查询json
-function _M.sorttojson(sortVal)
+function sorttojson(sortVal)
 
     if (not isempty(sortVal)) then
         local sortKeys = {}
@@ -97,7 +97,7 @@ function _M.sorttojson(sortVal)
 end
 
 --转换extjs-filter to es-filter 参数， es能够识别的查询json
-function _M.filtertoJson(filtervalue)
+function filtertoJson(filtervalue)
     local filterjson = ""
     if (not (isempty(filtervalue))) then
         local filterjsontmp = cjson.decode(filtervalue)
@@ -155,7 +155,7 @@ end
 --cfgDbQuery  配置的查询规则
 --queryKeys 查询参数
 --args url 参数数组
-function _M.genQueryRules(cfgDbQuery, queryList, args, filterjson, sortjson)
+function _M.genQueryRules(args)
     --构造查询语句
     local querys = {}
     --参数
@@ -165,6 +165,26 @@ function _M.genQueryRules(cfgDbQuery, queryList, args, filterjson, sortjson)
     --服务类型
     local servers = {} --SB-springboot/ES-elasticsearch/NEO4j-图计算
 
+
+    --查询id q1,q2,q3
+    local queryKey = args["query"]
+    if (isempty(queryKey)) then
+        ngx.say("query 查询id参数必须赋值");
+        ngx.exit(ngx.HTTP_OK);
+    end
+    --查询语句key列表
+    local queryList = {}
+    if (type(queryKey) == 'string') then
+        --ngx.say("query 查询id参数必须赋值,必须是数组.自动转换为数组");
+        queryList['1'] = queryKey
+    else
+        queryList = queryKey
+    end
+
+
+    --获取查询参数 query=q1&query=q2&query=q4&PK=abc&BK=123&XXX=电路&PId=dllx0000
+    local myconfig = ngx.shared.myconfig;
+    local cfgDbQuery = cjson.decode(myconfig:get("cfgDbQuery"))
 
     local dckey = args["_dc"]
 
@@ -199,6 +219,21 @@ function _M.genQueryRules(cfgDbQuery, queryList, args, filterjson, sortjson)
             -- 替换filter sort 字符串
             --es过滤处理
             if (servertype == 'ES') then
+
+                --sort
+                local sortKey = args["sort"]
+                --filter
+                local filtervalue = args["filter"]
+
+                local sortjson = sorttojson(sortKey)
+                log.debug(sortKey)
+                log.debug(sortjson)
+
+                local filterjson = filtertoJson(filtervalue)
+                log.debug(filtervalue)
+                log.debug(filterjson)
+
+
                 local argsptext = ''
                 if (not isempty(filterjson)) then
                     argsptext = str_gsub(cjson.encode(argsp), '"filterkey"', filterjson)
@@ -211,10 +246,9 @@ function _M.genQueryRules(cfgDbQuery, queryList, args, filterjson, sortjson)
                 params[val] = argsp
             end
         end
-
     end
 
-    return querys, params, mtds,servers
+    return querys, params, mtds, servers
 end
 
 -- 执行查询
@@ -222,14 +256,13 @@ end
 -- params 查询数据；
 -- mtds 查询
 -- auth 认证
-function _M.doQuery(queryList, params, mtds,servertypes, authorization)
+function _M.doQuery(queryList, params, mtds, servertypes)
     local result = {}
 
     local headers = {}
-    --是否进行认证
-    if (not isempty(authorization)) then
-        headers["Authorization"] = authorization
-    end
+
+    local myconfig = ngx.shared.myconfig;
+    local cfgDbQuery = cjson.decode(myconfig:get("cfgDbQuery"))
 
     --- 查询设置查询变量
     local http = require "resty.http"
@@ -246,15 +279,29 @@ function _M.doQuery(queryList, params, mtds,servertypes, authorization)
         end
 
         if (servertypes[keyq] == 'ES') then
+            --TODO 认证
+
             headers["Content-Type"] = "application/x-www-form-urlencoded"
         end
+
         if (servertypes[keyq] == 'NEO4J') then
+
+            local user = cfgDbQuery["neo4j"]['username']
+            local pass = cfgDbQuery["neo4j"]['password']
+            --是否进行认证
+            if (not isempty(user) and not isempty(pass)) then
+                --    local user = 'neo4j'
+                --    local pass = '123456'
+                local authorization = 'Basic ' .. ngx.encode_base64(user .. ':' .. pass)
+                log.debug(authorization);
+                headers["Authorization"] = authorization
+            end
+
             headers["Content-Type"] = "application/json; charset=UTF-8; stream=true"
         end
 
         --TODO 定制查询 请求头进行处理
 
---        ngx.say(cjson.encode(headers));
         log.debug(cjson.encode(headers));
 
 
@@ -280,6 +327,8 @@ function _M.doQuery(queryList, params, mtds,servertypes, authorization)
         --返回查询结果List-json
         local jsonvalue = cjson.decode(res.body);
         result[keyq] = jsonvalue
+
+
     end
 
     return result
@@ -288,11 +337,21 @@ end
 --渲染指定的模板
 --htmlname 模板uri
 --result 模板变量 json 格式
-function _M.render(htmlname, result)
+function _M.render(args, bodyvalue)
+
+    --获取模板名称
+    local htmlname = args['html']
+    if isempty(htmlname) then
+        ngx.say("html 模板引擎参数必须赋值");
+        ngx.exit(ngx.HTTP_OK);
+    end
+
+    bodyvalue['params'] = args;
+
     local template = require "resty.template"
 
     template.render("/" .. htmlname .. ".html", {
-        formvalue = result
+        formvalue = bodyvalue
     })
 end
 

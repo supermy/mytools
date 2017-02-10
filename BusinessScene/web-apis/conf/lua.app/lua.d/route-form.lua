@@ -278,6 +278,11 @@ result["queryParam"] = params;
 --- 查询设置查询变量
 local http = require "resty.http"
 local httpc = http.new()
+
+local user = 'neo4j'
+local pass = '123456'
+local authorization = 'Basic ' .. ngx.encode_base64(user .. ':' .. pass)
+
 for keyq, valq in pairs(queryList) do
 
 
@@ -296,19 +301,21 @@ for keyq, valq in pairs(queryList) do
             method = "POST",
             body = cjson.encode(params[keyq]),
             headers = {
+                ["Authorization"] = authorization,
                 ["Content-Type"] = "application/x-www-form-urlencoded",
             }
         })
+
     end
 
 
-    --    ngx.say(valq);
-    --    ngx.say(mtds[keyq]);
-    --    ngx.say(params[keyq]);
-    --    ngx.say(err);
-    --    ngx.say(res.body);
-    --
-    --    ngx.exit(ngx.HTTP_OK);
+--        ngx.say(valq);
+--        ngx.say(mtds[keyq]);
+--        ngx.say(params[keyq]);
+--        ngx.say(err);
+--        ngx.say(res.body);
+--
+        ngx.exit(ngx.HTTP_OK);
 
     local jsonvalue = cjson.decode(res.body);
     result[keyq] = jsonvalue
