@@ -5,7 +5,10 @@ db:
       - "7687:7687"
     volumes:
       - data/:/data/
-      - logs:/logs/
+      - logs/:/logs/
+      - csvs/:/csvs/
+      - conf/:/var/lib/neo4j/conf/
+      - plugins/:/var/lib/neo4j/plugins/
 
 #docker run \
 #     --publish=7474:7474 --publish=7687:7687 \
@@ -13,3 +16,7 @@ db:
 #     --volume=$HOME/neo4j/logs:/logs \
 #     --ulimit=nofile=40000:40000 \
 #     neo4j
+
+#docker exec -it neo4j_db_1 bash -c "/var/lib/neo4j/bin/neo4j"
+#docker exec -it neo4j_db_1 bash -c "/var/lib/neo4j/bin/neo4j-import"
+

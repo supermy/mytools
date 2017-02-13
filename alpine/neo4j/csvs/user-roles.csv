@@ -1,0 +1,4 @@
+:START_ID(User),:END_ID(Role),user_role_id
+1,ROLE_USER,1
+1,ROLE_ADMIN,2
+2,ROLE_USER,3
