@@ -13,9 +13,13 @@ local str_lower = string.lower
 
 local _M = {} -- 局部的变量
 _M.__index = _M
+--_M.__call = function(t, param)
+--    ngx.say("Start")
+--    t.Func(param)
+--    ngx.say("End")
+--end
 _M._VERSION = '1.0' -- 模块版本
 
---local mt = { __index = _M }
 
 
 function _M:new(args)
@@ -165,7 +169,6 @@ end
 --queryKeys 查询参数
 --args url 参数数组
 function _M:genQueryRules()
-    print('-----------------------gen query rules')
     print_r(self.args)
 
     local args = self.args
