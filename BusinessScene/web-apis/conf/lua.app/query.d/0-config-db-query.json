@@ -1,7 +1,7 @@
 {
   "name": "表单查询路由列表",
   "desc": "query 传入查询语句的id,结果返回到key;参数全部收集到param;",
-  "url":"http://172.16.63.88 /formroutequery",
+  "url":"http://172.16.63.88/formroutequery",
   "urlrest":"http://172.16.63.88:9006/form/rest/",
   "webbase":{
     "url":"http://127.0.0.1",

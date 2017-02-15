@@ -1,6 +1,10 @@
 -- 重构之后的route-form 引擎，支持各种中间件rest 查询
 -- 总体分为 输入-输入参数处理 规则处理 输出-输出结果处理
 
+-- 用lua进行面向对象的编程,声明方法和调用方法统一用冒号,对于属性的调用全部用点号
+
+
+require "print_r"
 local log = require "log"
 
 local str_gsub = string.gsub
@@ -8,13 +12,18 @@ local str_lower = string.lower
 
 
 local _M = {} -- 局部的变量
+_M.__index = _M
 _M._VERSION = '1.0' -- 模块版本
 
-local mt = { __index = _M }
+--local mt = { __index = _M }
 
 
-function _M.new(self)
-    return setmetatable({}, mt)
+function _M:new(args)
+    local temp = {}
+    setmetatable(temp, _M)   --必须要有
+    temp.args = args
+    return temp
+--    return setmetatable({}, mt)
 end
 
 
@@ -155,7 +164,12 @@ end
 --cfgDbQuery  配置的查询规则
 --queryKeys 查询参数
 --args url 参数数组
-function _M.genQueryRules(args)
+function _M:genQueryRules()
+    print('-----------------------gen query rules')
+    print_r(self.args)
+
+    local args = self.args
+
     --构造查询语句
     local querys = {}
     --参数
@@ -247,7 +261,10 @@ function _M.genQueryRules(args)
             end
         end
     end
-
+        self.queryList = querys
+        self.params = params
+        self.mtds = mtds
+        self.servertypes = servers
     return querys, params, mtds, servers
 end
 
@@ -256,7 +273,7 @@ end
 -- params 查询数据；
 -- mtds 查询
 -- auth 认证
-function _M.doQuery(queryList, params, mtds, servertypes)
+function _M:doQuery()
     local result = {}
 
     local headers = {}
@@ -268,23 +285,23 @@ function _M.doQuery(queryList, params, mtds, servertypes)
     local http = require "resty.http"
     local httpc = http.new()
 
-    for keyq, valq in pairs(queryList) do
+    for keyq, valq in pairs(self.queryList) do
 
         --每个查询谁请求头进行处理
-        if (mtds[keyq] == 'GET') then
+        if (self.mtds[keyq] == 'GET') then
             headers["Content-Type"] = "application/json"
         end
-        if (mtds[keyq] == 'POST') then
+        if (self.mtds[keyq] == 'POST') then
             headers["Content-Type"] = "application/json; charset=UTF-8;"
         end
 
-        if (servertypes[keyq] == 'ES') then
+        if (self.servertypes[keyq] == 'ES') then
             --TODO 认证
 
             headers["Content-Type"] = "application/x-www-form-urlencoded"
         end
 
-        if (servertypes[keyq] == 'NEO4J') then
+        if (self.servertypes[keyq] == 'NEO4J') then
 
             local user = cfgDbQuery["neo4j"]['username']
             local pass = cfgDbQuery["neo4j"]['password']
@@ -306,7 +323,7 @@ function _M.doQuery(queryList, params, mtds, servertypes)
 
 
         local res, err
-        if (mtds[keyq] == 'GET') then
+        if (self.mtds[keyq] == 'GET') then
             res, err = httpc:request_uri(valq, {
                 method = "GET",
                 headers = headers
@@ -314,7 +331,7 @@ function _M.doQuery(queryList, params, mtds, servertypes)
         else
             res, err = httpc:request_uri(valq, {
                 method = "POST",
-                body = cjson.encode(params[keyq]),
+                body = cjson.encode(self.params[keyq]),
                 headers = headers
             })
         end
@@ -330,28 +347,29 @@ function _M.doQuery(queryList, params, mtds, servertypes)
 
 
     end
-
+        self.bodyvalue = result
     return result
 end
 
 --渲染指定的模板
 --htmlname 模板uri
 --result 模板变量 json 格式
-function _M.render(args, bodyvalue)
+--通过内置变量 self.args and self.bodyvalue 进行参数传递
+function _M:render()
 
     --获取模板名称
-    local htmlname = args['html']
+    local htmlname = self.args['html']
     if isempty(htmlname) then
         ngx.say("html 模板引擎参数必须赋值");
         ngx.exit(ngx.HTTP_OK);
     end
 
-    bodyvalue['params'] = args;
+    self.bodyvalue['params'] = self.args;
 
     local template = require "resty.template"
 
     template.render("/" .. htmlname .. ".html", {
-        formvalue = bodyvalue
+        formvalue = self.bodyvalue
     })
 end
 
