@@ -1,26 +1,65 @@
 {
   "name": "表单查询路由列表",
   "desc": "query 传入查询语句的id,结果返回到key;参数全部收集到param;",
-  "url":"http://172.16.63.88/formroutequery",
-  "urlrest":"http://172.16.63.88:9006/form/rest/",
-  "webbase":{
-    "url":"http://127.0.0.1",
-    "desc":"页面的base url,方便动态页面的静态资源统一定位。"
+  "url": "http://172.16.63.88/formroutequery",
+  "urlrest": "http://172.16.63.88:9006/form/rest/",
+  "webbase": {
+    "url": "http://127.0.0.1",
+    "desc": "页面的base url,方便动态页面的静态资源统一定位。"
   },
   "es": {
-    "desc":"es-engine 查询设置",
-    "htmles":"route-json",
-    "esquery":"q6",
+    "desc": "es-engine 查询设置",
+    "htmles": "route-json",
+    "esquery": "q6",
     "entrykey": "pkId",
-    "htmlrest":"route-json-rest",
-    "restquery":"q7"
+    "htmlrest": "route-json-rest",
+    "restquery": "q7"
   },
   "neo4j": {
-    "desc":"neo4j-engine 查询设置",
-    "username":"neo4j",
-    "password":"123456"
+    "desc": "neo4j-engine 查询设置",
+    "username": "neo4j",
+    "password": "123456"
   },
   "list": {
+    "graphuserlist": {
+      "desc": "NEO4J  使用 SKIP LIMIT 进行 分页查询 ；EasyUI分页参数是 page and rows ,三元表达式增加默认数据 ,计算开始记录 (toInt({page})-1)*toInt({rows}),每页记录数 ；支持 lua-template 模板引擎，灵活的组织查询语句，{% if not (searchvalue == nil or searchvalue == '') then %} WHERE n.username=~{searchvalue} AND n.namecn=~{searchvalue} {% end %};",
+      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": "MATCH  (n:User) {% if not (searchvalue == nil or searchvalue == '') then %} WHERE n.username=~{searchvalue} OR n.namecn=~{searchvalue} {% end %}    WITH count(*) AS cnt  MATCH  (n:User)  {% if not (searchvalue == nil or searchvalue == '') then %} WHERE n.username=~{searchvalue} OR n.namecn=~{searchvalue} {% end %}   WITH   n, cnt SKIP (toInt({page})-1)*toInt({rows}) LIMIT toInt({rows})   RETURN   { total: cnt, rows:collect(n) } AS molecules",
+            "parameters": {
+              "searchvalue":"{{(searchvalue==nil or searchvalue=='') and '\".*\"' or searchvalue}}",
+              "page": "{{(page==nil or page=='') and 1 or page}}",
+              "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
+            }
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+    "graphusercrud": {
+      "desc": "NEO4J  进行 crud 数量处理，支持 EasyUI 的acceptChanges特性，增加删除修改都支持批量数据;{{ inserted }} 自动由字符串处理成为 JSON 对象！; [{{inserted}}]数组格式兼容数据为空的场景！",
+      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": "WITH {p1: {inserted} } AS events   FOREACH (u1 IN events.p1[0] | CREATE (n:User) SET n = u1)       {%  if updated~=nil then %}  WITH {p2: {updated} } AS events      FOREACH (u2 IN events.p2[0] |   MERGE (n:User {username:u2.username}) SET n.namecn = u2.namecn,  n.createDate = u2.createDate    )   {% end %}       WITH {p3: {deleted} } AS events  UNWIND events.p3[0]  AS u3  MATCH (n:User{username:u3.username}) OPTIONAL MATCH (n)-[r]-() DELETE n,r ",
+            "parameters": {
+              "inserted":["{{inserted}}"],
+              "updated":["{{updated}}"],
+              "deleted":["{{deleted}}"],
+              "page": "{{(page==nil or page=='') and 1 or page}}",
+              "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
+            }
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+
     "neo4jres": {
       "desc": "NEO4J 查询，参数传递到namevalue ,要求唯一且与url 的参数名称一致",
       "url": "http://172.16.63.88:7474/db/data/transaction/commit",
@@ -52,16 +91,14 @@
       "servertype": "NEO4J",
       "method": "POST"
     },
-
     "menures": {
       "desc": "管理左侧菜单",
       "url": "http://172.16.63.88:9006/form/rest/resource/search/findAllByPidOrderByModuleAsc",
       "param": {
-        "pid" : "pid"
+        "pid": "pid"
       },
       "method": "GET"
     },
-
     "avatar": {
       "desc": "图片信息查询",
       "url": "http://172.16.63.88:9006/form/rest/avatar",
@@ -69,7 +106,6 @@
       },
       "method": "GET"
     },
-
     "users": {
       "desc": "用户信息查询",
       "url": "http://172.16.63.88:9006/form/rest/user",
@@ -79,14 +115,12 @@
       },
       "method": "GET"
     },
-
     "q0": {
       "desc": "也适用于没有参数的查询语句",
       "url": "http://127.0.0.1/data/test.json",
       "param": {},
       "method": "GET"
     },
-
     "q1": {
       "desc": "两个参数spring-data 查询语句；PK/BK 会被对应的同名参数值替换",
       "url": "http://133.224.220.66/formapi/rest/pro",

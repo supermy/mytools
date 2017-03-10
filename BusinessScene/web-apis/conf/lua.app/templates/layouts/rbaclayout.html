@@ -1,0 +1,27 @@
+{% layout = "layouts/rbacbase.html" %}
+
+
+{-head_base-}
+{%
+local myconfig = ngx.shared.myconfig;
+local cfgDbQuery = cjson.decode(myconfig:get("cfgDbQuery"));
+local baseurl = cfgDbQuery.webbase.url;
+%}
+
+<!--<base href="{* baseurl *}/web/" />-->
+
+<base href="{* baseurl *}/resources/" />
+
+<title>RBAC可视化-用户列表</title>
+{-head_base-}
+
+{-main-}
+
+
+    {* blocks.content *}
+
+
+{-main-}
+
+
+

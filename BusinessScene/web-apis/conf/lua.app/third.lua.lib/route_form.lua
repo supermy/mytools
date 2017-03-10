@@ -228,7 +228,42 @@ function _M:genQueryRules()
 
         if (mtd == 'POST') then
             -- method = POST 主要是支持es查询
+
+            -- 采用模板引擎对参数进行处理
+            local template = require "resty.template"
+            local argstring = "";
+            local c = 1
+            for k, v in pairs(args) do
+                if c > 1 then
+                    argstring=argstring..","
+                end
+                c = c + 1
+                argstring =argstring.. k .. "=" .. v
+            end
+
+            local tempargs=string.gsub(cjson.encode(argsp), "\"{{", "{*")
+            tempargs=string.gsub(tempargs, "}}\"", "*}")
+
+
+            log.debug(type(args["updated"]))
+            log.debug(args["updated"])
+
+
+            local func     = template.compile(tempargs)
+            local realargs = func(args)
+--          local realargs = template.render(cjson.encode(argsp), args)
+
+--            ngx.say(realargs);
+--            ngx.exit(ngx.HTTP_OK);
+
+            argsp = cjson.decode(realargs);
+            log.debug(realargs)
+
+--            ngx.say(cjson.encode(realargs));
+--            ngx.exit(ngx.HTTP_OK);
+
             setattr(argsp, args) --递归更新参数数据
+
             params[val] = argsp
             querys[val] = url
 
@@ -264,7 +299,10 @@ function _M:genQueryRules()
             end
         end
     end
-        self.queryList = querys
+
+
+
+    self.queryList = querys
         self.params = params
         self.mtds = mtds
         self.servertypes = servers
@@ -324,6 +362,8 @@ function _M:doQuery()
 
         log.debug(cjson.encode(headers));
 
+        log.debug(valq);
+        log.debug(cjson.encode(self.params[keyq]));
 
         local res, err
         if (self.mtds[keyq] == 'GET') then
@@ -370,6 +410,8 @@ function _M:render()
     self.bodyvalue['params'] = self.args;
 
     local template = require "resty.template"
+
+    log.debug(cjson.encode(self.bodyvalue))
 
     template.render("/" .. htmlname .. ".html", {
         formvalue = self.bodyvalue

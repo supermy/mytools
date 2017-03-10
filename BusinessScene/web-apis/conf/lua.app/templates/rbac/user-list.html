@@ -1,0 +1,372 @@
+{% layout = "layouts/rbaclayout.html" %}
+
+
+
+{-content-}
+
+
+<div data-options="region:'west',split:true,title:'人才库',collapsed:true" style="width:46%;">
+
+    <div id="companylibtb" style="padding:5px;height:auto">
+        <input class="easyui-searchbox" data-options="prompt:'请输入查询条件',menu:'#searcheTool',searcher:doSearch" style="width:200px"></input>
+        <div id="searcheTool">
+            <div data-options="name:'人才名称'">人才名称</div>
+            <div data-options="name:'UID',iconCls:'icon-ok'">UID</div>
+            <div data-options="name:'标签名'">标签名</div>
+        </div>
+        <a href="javascript:;" onClick="addcompany();" class="easyui-linkbutton" iconCls="icon-add" plain="true">新增选中人员</a>
+    </div>
+
+    <table id="companylib">
+    </table>
+
+</div>
+
+
+
+<div id="log" data-options="region:'south',title:'操作日志',collapsed:true" style="height:80px;">1</div>
+
+
+
+<div data-options="region:'center',title:'当前标签所包含的用户'">
+
+    <div id="detailTabtb" style="padding:5px;height:auto">
+
+        <input class="easyui-searchbox" data-options="prompt:'请输入查询条件',menu:'#searcheTool',searcher:doSearch" style="width:200px"></input>
+        <div id="searcheTool">
+            <div data-options="name:'searchvalue'">用户名称</div>
+            <div data-options="name:'searchvalue',iconCls:'icon-ok'">UID</div>
+            <div data-options="name:'searchvalue'">标签名</div>
+        </div>
+
+        <a href="javascript:;" onClick="$('body').layout('expand','west');" class="easyui-linkbutton" iconCls="icon-add" plain="true">从人才库新增人员</a>
+
+
+        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="append()">增加</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="removeit()">删除</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="accept()">保存</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:true" onclick="reject()">取消</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true" onclick="getChanges()">数据变更</a>
+
+    </div>
+
+    <table id="detailTab" class="easyui-datagrid" style="width:700px;height:auto" idField="username" singleSelect="true"
+
+           data-options="
+                idField:'username',
+                rownumbers:true,
+                checkbox:true,
+                fitColumns:true,
+                fit:true,
+                pagination:true,
+                pageSize: pagesize1,
+                pageList: [pagesize1, pagesize1*2, pagesize1*3, pagesize1*4],
+                ctrlSelect:true,
+                onBeforeDrop:moveMonitor,
+
+                autoSave:true,
+                data:dataJson1,
+                url:url,
+
+                destroyMsg:{
+                    norecord:{	// when no record is selected
+                        title:'Warning',
+                        msg:'No record is selected.'
+                    },
+                    confirm:{	// when select a row
+                        title:'Confirm',
+                        msg:'Are you sure you want to delete?'
+                    }
+                },
+
+                iconCls: 'icon-edit',
+                singleSelect: true,
+                toolbar: '#detailTabtb',
+                onClickCell: onClickCell,
+                onEndEdit: onEndEdit
+            ">
+
+        <thead>
+        <tr>
+            <th data-options="field:'username',width:80,editor:'textbox'">UID编号</th>
+            <th data-options="field:'namecn',width:250,editor:'textbox'">用户名称</th>
+            <th data-options="field:'createDate',width:250,editor:'textbox'">创建日期</th>
+        </tr>
+        </thead>
+    </table>
+
+</div>
+
+
+{-content-}
+
+
+
+{-page_css-}
+
+{-page_css-}
+
+{-page_js-}
+<script src="easyui/json2.js"  type="text/javascript"></script>
+
+<script type="text/javascript">
+
+    {% if #(formvalue[formvalue.params.query].results[1].data) == 0 then %}
+        var dataJson1={};
+    {% end%}
+    {% if #(formvalue[formvalue.params.query].results[1].data) ~= 0 then %}
+    var dataJson1={*cjson.encode(formvalue[formvalue.params.query].results[1].data[1].row[1]) *};
+    {% end%}
+
+    var pagesize1={*formvalue.params.rows *};
+
+    var url="http://127.0.0.1/formroutenew?html=route-neo4j-json&query=graphuserlist";
+    var crudurl="http://127.0.0.1/formroutenew?html=route-neo4j-json&query=graphusercrud";
+
+
+    var editIndex = undefined;
+    function endEditing(){
+        if (editIndex == undefined){return true}
+        if ($('#detailTab').datagrid('validateRow', editIndex)){
+            $('#detailTab').datagrid('endEdit', editIndex);
+            editIndex = undefined;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function onClickCell(index, field){
+        if (editIndex != index){
+            if (endEditing()){
+                $('#detailTab').datagrid('selectRow', index)
+                        .datagrid('beginEdit', index);
+                var ed = $('#detailTab').datagrid('getEditor', {index:index,field:field});
+                if (ed){
+                    ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
+                }
+                editIndex = index;
+            } else {
+                setTimeout(function(){
+                    $('#detailTab').datagrid('selectRow', editIndex);
+                },0);
+            }
+        }
+    }
+    function onEndEdit(index, row){
+        //对于下拉框进行处理
+//        var ed = $(this).datagrid('getEditor', {
+//            index: index,
+//            field: 'productid'
+//        });
+//        row.productname = $(ed.target).combobox('getText');
+
+    }
+    function append(){
+        console.log(endEditing)
+        if (endEditing()){
+            $('#detailTab').datagrid('appendRow',{status:'P'});
+            editIndex = $('#detailTab').datagrid('getRows').length-1;
+            $('#detailTab').datagrid('selectRow', editIndex)
+                    .datagrid('beginEdit', editIndex);
+        }
+    }
+
+    function removeit(){
+        if (editIndex == undefined){return}
+        $('#detailTab').datagrid('cancelEdit', editIndex)
+                .datagrid('deleteRow', editIndex);
+        editIndex = undefined;
+    }
+
+    function accept(){
+        if (endEditing()){
+            var inserted = $('#detailTab').datagrid('getChanges', "inserted");
+            var deleted = $('#detailTab').datagrid('getChanges', "deleted");
+            var updated = $('#detailTab').datagrid('getChanges', "updated");
+
+            var effectRow = new Object();
+            if (inserted.length) {
+                effectRow["inserted"] = JSON.stringify(inserted);
+            }
+
+            if (deleted.length) {
+                effectRow["deleted"] = JSON.stringify(deleted);
+            }
+            if (updated.length) {
+                effectRow["updated"] = JSON.stringify(updated);
+            }
+
+            console.log(effectRow);
+
+            $.post(crudurl, effectRow, function(response) {
+                console.log(response)
+                if(response.status){
+                    $("#detailTab").datagrid('acceptChanges');
+                }
+            }, "JSON");
+
+
+//            $('#detailTab').datagrid('acceptChanges');
+        }
+    }
+    function reject(){
+        $('#detailTab').datagrid('rejectChanges');
+        editIndex = undefined;
+    }
+    function getChanges(){
+        var rows = $('#detailTab').datagrid('getChanges');
+        alert(rows.length+' rows are changed!');
+    }
+
+    function doSearch(value,searchkey){
+        console.log(searchkey,value);
+        var detail = $('#detailTab');
+        //alert('您查询的条件是: ' + value+'('+searchkey+')');
+        detail.datagrid('load',{
+            searchvalue:'.*'+value+'.*'
+        });
+    }
+
+</script>
+
+<script type="text/javascript">
+//    var dataJson1={"total":20,"rows":[
+//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司1','labers':'教育','targettable':'lib'},
+//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司2','labers':'教育','targettable':'lib'},
+//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司3','labers':'教育','targettable':'lib'},
+//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司4','labers':'教育','targettable':'lib'},
+//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司5','labers':'教育','targettable':'lib'},
+//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司6','labers':'教育','targettable':'lib'},
+//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司7','labers':'教育','targettable':'lib'},
+//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司8','labers':'教育','targettable':'lib'},
+//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司9','labers':'教育','targettable':'lib'},
+//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司10','labers':'教育','targettable':'lib'},
+//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司11','labers':'教育','targettable':'lib'},
+//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司12','labers':'教育','targettable':'lib'},
+//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司13','labers':'教育','targettable':'lib'},
+//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司14','labers':'教育','targettable':'lib'},
+//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司15','labers':'教育','targettable':'lib'},
+//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司16','labers':'教育','targettable':'lib'},
+//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司17','labers':'教育','targettable':'lib'},
+//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司18','labers':'教育','targettable':'lib'},
+//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司19','labers':'教育','targettable':'lib'},
+//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司20','labers':'教育','targettable':'lib'}
+//    ]};
+
+
+
+    var dataJson2={"total":20,"rows":[
+        {'code':'2176234-72341-392871-dwnsd','name':'昆泰房产1','labers':'房产','targettable':'labers'},
+        {'code':'2176234-72341-392871-dwnsd','name':'昆泰房产2','labers':'房产','targettable':'labers'},
+        {'code':'2176234-72341-392871-dwnsd','name':'昆泰房产3','labers':'房产','targettable':'labers'},
+        {'code':'2176234-72341-392871-dwnsd','name':'昆泰房产4','labers':'房产','targettable':'labers'},
+        {'code':'2176234-72341-392871-dwnsd','name':'昆泰房产5','labers':'房产','targettable':'labers'},
+        {'code':'2176234-72341-392871-dwnsd','name':'昆泰房产6','labers':'房产','targettable':'labers'},
+        {'code':'2176234-72341-392871-dwnsd','name':'珠海朝阳房产7','labers':'房产','targettable':'labers'},
+        {'code':'2176234-72341-392871-dwnsd','name':'珠海朝阳房产8','labers':'房产','targettable':'labers'},
+        {'code':'2176234-72341-392871-dwnsd','name':'珠海朝阳房产9','labers':'房产','targettable':'labers'},
+        {'code':'2176234-72341-392871-dwnsd','name':'珠海朝阳房产10','labers':'房产','targettable':'labers'},
+        {'code':'2176234-72341-392871-dwnsd','name':'珠海朝阳房产11','labers':'房产','targettable':'labers'},
+        {'code':'2176234-72341-392871-dwnsd','name':'珠海朝阳房产12','labers':'房产','targettable':'labers'},
+        {'code':'2176234-72341-392871-dwnsd','name':'速7快捷酒店13','labers':'住宿业','targettable':'labers'},
+        {'code':'2176234-72341-392871-dwnsd','name':'速7快捷酒店14','labers':'住宿业','targettable':'labers'},
+        {'code':'2176234-72341-392871-dwnsd','name':'速7快捷酒店15','labers':'住宿业','targettable':'labers'},
+        {'code':'2176234-72341-392871-dwnsd','name':'速7快捷酒店16','labers':'住宿业','targettable':'labers'},
+        {'code':'2176234-72341-392871-dwnsd','name':'速7快捷酒店17','labers':'住宿业','targettable':'labers'},
+        {'code':'2176234-72341-392871-dwnsd','name':'速7快捷酒店18','labers':'住宿业','targettable':'labers'},
+        {'code':'2176234-72341-392871-dwnsd','name':'速7快捷酒店19','labers':'住宿业','targettable':'labers'},
+        {'code':'2176234-72341-392871-dwnsd','name':'速7快捷酒店20','labers':'住宿业','targettable':'labers'}
+    ]};
+
+
+
+    $(function(){
+//        var detail = $('#detailTab');
+////        pagesize:pagesize1,
+//        detail.datagrid({
+//            data:dataJson1,
+//            url:url,
+//            //toolbar:"#detailTabtb",
+//            rownumbers:true,rownumbers:true,checkbox:true,fitColumns:true,fit:true,pagination:true,ctrlSelect:true,onBeforeDrop:moveMonitor,
+//
+//            pageSize:pagesize1,
+//            pageList: [pagesize1, pagesize1*2, pagesize1*3, pagesize1*4],
+//           // method: 'get',
+//
+////            columns:[[
+////                {field:'username',title:'UID编号',width:100,editor:'text'},
+////                {field:'namecn',title:'用户名称',width:100,editor:'text'},
+////                {field:'createDate',title:'标签',width:100,align:'center',editor:'text'}
+////            ]],
+//            onLoadSuccess:function(){
+//                $(this).datagrid('enableDnd');
+//
+//            }
+//
+//
+//        });
+//
+////        detail.datagrid('loadData',[]);
+////        detail.datagrid({pagePosition:$('#p-pos').val()});
+//        detail.datagrid('getPager').pagination({
+//            //layout:['list','sep','first','prev','sep',$('#p-style').val(),'sep','next','last','sep','refresh']
+//            layout:['list','sep','first','prev','links','next','last','sep','refresh']
+//        });
+
+
+
+        $('#companylib').datagrid({
+            data:dataJson2,
+            toolbar:"#companylibtb",
+            fitColumns:true,fit:true,pagination:true,ctrlSelect:true,onBeforeDrop:moveMonitor,
+            columns:[[
+                {field:'checkboxs',title:'UID编号',checkbox:true},
+                {field:'code',title:'UID编号',width:100},
+                {field:'name',title:'用户名称',width:100},
+                {field:'labers',title:'标签',width:100,align:'center'}
+            ]],
+            onLoadSuccess:function(){
+                $(this).datagrid('enableDnd');
+            }
+        })
+    })
+
+
+
+    function addcompany(){
+        var data = $("#companylib").datagrid("getSelections");
+        append(data)
+        $.messager.alert('温馨提示','本标签新增加用户'+data.length+'人\r\n');
+        console.debug(data);
+    }
+
+//    function append(line){
+//        if (line){
+//            $('#detailTab').datagrid('appendRow',line);
+////			editIndex = $('#dg').datagrid('getRows').length-1;
+////			$('#detailTab').datagrid('selectRow', editIndex)
+////					.datagrid('beginEdit', editIndex);
+//        }
+//    }
+
+//    function removeit(line){
+//        var editIndex = line;
+//        if (editIndex == undefined){return}
+//        $('#companylib').datagrid('cancelEdit', editIndex)
+//                .datagrid('deleteRow', editIndex);
+//        editIndex = undefined;
+//    }
+
+
+    function moveMonitor(targetRow,sourceRow,point){
+        var myDate = new Date();
+        if(targetRow.targettable=='lib' && sourceRow.targettable=='labers'){
+            $('#log').prepend(myDate.toLocaleString()+': 新增了一个人到本标签库，用户名称：'+targetRow.name+'<br/>');
+        }
+        if(targetRow.targettable=='labers' && sourceRow.targettable=='lib'){
+            $('#log').prepend(myDate.toLocaleString()+': 删除了一个人，用户名称：'+targetRow.name+'<br/>');
+        }
+    }
+</script>
+
+{-page_js-}

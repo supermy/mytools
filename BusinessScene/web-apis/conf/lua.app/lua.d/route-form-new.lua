@@ -4,8 +4,14 @@ require "switch"
 local log = require "log"
 local routeEngine = require "route_form"
 
---获取参数
+--获取参数 合并 post 参数
 local args = ngx.req.get_uri_args()
+ngx.req.read_body()
+local postargs = ngx.req.get_post_args();
+log.debug(cjson.encode(postargs))
+for k,v in pairs(postargs) do args[k] = v end
+log.debug(cjson.encode(args))
+
 
 local re = routeEngine:new(args)
 

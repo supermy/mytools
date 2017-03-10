@@ -1,3 +1,66 @@
+2017-03-10
+    CRUD参数数据为空的兼容处理；
+    难点在于模板是 Lua语法，查询是 neo4j 语法，配置文件是 Json 语法。
+    
+    
+2017-03-09
+    及时编辑存储：
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="javascript:$('#detailTab').edatagrid('addRow')">New</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="javascript:$('#detailTab').edatagrid('destroyRow')">Destroy</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="javascript:$('#detailTab').edatagrid('saveRow')">Save</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="javascript:$('#detailTab').edatagrid('cancelRow')">Cancel</a>
+
+
+        <script src="easyui/jquery.edatagrid.js"  type="text/javascript"></script>
+
+        $(function(){
+            $('#detailTab').edatagrid({
+                url: 'get_users.php',
+                saveUrl: 'save_user.php',
+                updateUrl: 'update_user.php',
+                destroyUrl: 'destroy_user.php'
+            });
+        });
+        
+2017-03-08
+    在三个层面应用了模板引擎：查询参数处理、输出结果处理、页面渲染处理
+    使用模板lu引擎对查询参数进行处理；可以灵活的构建参数；（查询模板，获取的 get+post 参数）
+    之前对输出结果进行模板参数处理；可以灵活进行结果处理；（输出结果，组装成需要的格式）
+    对页面渲染进行模板处理；可以提取框架以及组件；（公用框架及组件）
+    
+    http://127.0.0.1/formroutenew?html=route-neo4j-debug&query=graphuserlist&searchvalue=&page=1&rows=8
+    
+    
+    
+2017-03-07
+    需要支持 post,安全规范需要
+            http://127.0.0.1/formroutenew?html=route-neo4j-json&query=graphuserlist
+            数据在 body  page=1&rows=8
+
+    合并 get 与 post 请求的参数
+    local args = ngx.req.get_uri_args()
+    ngx.req.read_body()
+    local postargs = ngx.req.get_post_args();
+    log.debug(cjson.encode(postargs))
+    for k,v in pairs(postargs) do args[k] = v end    
+    
+    组合查询支撑？
+
+2017-03-06
+    调试用户页面json
+    http://127.0.0.1/formroutenew?html=route-neo4j-debug&query=graphuserlist&&page=1&rows=8
+    http://127.0.0.1/formroutenew?html=route-neo4j-json&query=graphuserlist&page=1&rows=8
+    调试用户页面
+    easyui page 参数处理
+    http://127.0.0.1/formroutenew?html=rbac/user-list&query=graphuserlist&namevalue=%E5%9C%B0%E5%8C%BA&page=1&rows=8
+    
+2017-03-01
+    思维导图整合 rbac 完成页面的布局以及初步的页面框架。   
+    
+2017-02-15
+    route-form lua 的 oo优化；
+    http://127.0.0.1/formroutenew?html=route-neo4j-json&query=neo4jsimple&namevalue=%E5%9C%B0%E5%8C%BA&_dc=1467884593669&sort=name%2CASC&sort=code%2CDESC&page=0&filter=[{%22type%22:%22string%22,%22value%22:%22test%22,%22field%22:%22name%22},{%22type%22:%22string%22,%22value%22:%22test%22,%22field%22:%22code%22}]&start=0&size=23
+    
 2017-02-09
     route-form 支持 neo4j-rest
     增加lua log

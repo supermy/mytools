@@ -1,0 +1,24 @@
+{# 不转义变量输出
+{*cjson.encode(formvalue[formvalue.params.query].results[1].data) *}
+转换neo4j-rest 为标准的数据格式
+
+{"data":
+[
+{% for i, line in ipairs(formvalue[formvalue.params.query].results[1].data) do %}
+{*cjson.encode(line.row[1]) *}
+
+{% if i~=77 then %}
+,
+{% end%}
+
+{% end %}
+]
+}
+
+用户列表数据
+{*cjson.encode(formvalue[formvalue.params.query].results[1].data[1].row[1]) *}
+
+#}
+
+{*cjson.encode(formvalue) *}
+
