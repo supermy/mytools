@@ -22,25 +22,21 @@
 #}
 
 
-{
-
-{% if #(formvalue[formvalue.params.query].errors)~=0 then %}
-{*cjson.encode(formvalue[formvalue.params.query].errors) *},
-{% end %}
-
-{% if #(formvalue[formvalue.params.query].errors)==0 then %}
-"status":true,
-
-{% if #(formvalue[formvalue.params.query].results[1].data)~=0 then %}
-{*cjson.encode(formvalue[formvalue.params.query].results[1].data[1].row[1]) *},
-{% end %}
-
-{% if #(formvalue[formvalue.params.query].results[1].data)==0  then %}
-"total":20,"rows":[]
-{% end %}
-
-{% end %}
 
 
-}
+    {% if #(formvalue[formvalue.params.query].errors)~=0 then %}
+        {*cjson.encode(formvalue[formvalue.params.query].errors) *},
+    {% end %}
+
+
+    {% if #(formvalue[formvalue.params.query].results[1].data)~=0 then %}
+        {*cjson.encode(formvalue[formvalue.params.query].results[1].data[1].row[1]) *}
+    {% end %}
+
+    {% if #(formvalue[formvalue.params.query].results[1].data)==0  then %}
+    "total":20,"rows":[]
+    {% end %}
+
+
+
 

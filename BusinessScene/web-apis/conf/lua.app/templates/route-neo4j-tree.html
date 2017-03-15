@@ -1,0 +1,23 @@
+{# 不转义变量输出
+    {*cjson.encode(formvalue) *}
+#}
+
+
+
+
+    {% if #(formvalue[formvalue.params.query].errors)~=0 then %}
+        {*cjson.encode(formvalue[formvalue.params.query].errors) *},
+    {% end %}
+
+
+    {% if #(formvalue[formvalue.params.query].results[1].data)~=0 then %}
+        {* string.gsub(string.gsub(cjson.encode(formvalue[formvalue.params.query].results[1].data[1].row),"pcgroup","children"),"name","text") *}
+    {% end %}
+
+    {% if #(formvalue[formvalue.params.query].results[1].data)==0  then %}
+    "total":20,"rows":[]
+    {% end %}
+
+
+
+

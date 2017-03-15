@@ -256,8 +256,8 @@ function _M:genQueryRules()
 --            ngx.say(realargs);
 --            ngx.exit(ngx.HTTP_OK);
 
-            argsp = cjson.decode(realargs);
             log.debug(realargs)
+            argsp = cjson.decode(realargs);
 
 --            ngx.say(cjson.encode(realargs));
 --            ngx.exit(ngx.HTTP_OK);
@@ -411,7 +411,7 @@ function _M:render()
 
     local template = require "resty.template"
 
-    log.debug(cjson.encode(self.bodyvalue))
+--    log.debug(cjson.encode(self.bodyvalue))
 
     template.render("/" .. htmlname .. ".html", {
         formvalue = self.bodyvalue

@@ -21,15 +21,44 @@
     "password": "123456"
   },
   "list": {
-    "graphuserlist": {
-      "desc": "NEO4J  使用 SKIP LIMIT 进行 分页查询 ；EasyUI分页参数是 page and rows ,三元表达式增加默认数据 ,计算开始记录 (toInt({page})-1)*toInt({rows}),每页记录数 ；支持 lua-template 模板引擎，灵活的组织查询语句，{% if not (searchvalue == nil or searchvalue == '') then %} WHERE n.username=~{searchvalue} AND n.namecn=~{searchvalue} {% end %};",
+    "graphrolelist": {
+      "desc": "NEO4J  返回角色列表",
       "url": "http://172.16.63.88:7474/db/data/transaction/commit",
       "param": {
         "statements": [
           {
-            "statement": "MATCH  (n:User) {% if not (searchvalue == nil or searchvalue == '') then %} WHERE n.username=~{searchvalue} OR n.namecn=~{searchvalue} {% end %}    WITH count(*) AS cnt  MATCH  (n:User)  {% if not (searchvalue == nil or searchvalue == '') then %} WHERE n.username=~{searchvalue} OR n.namecn=~{searchvalue} {% end %}   WITH   n, cnt SKIP (toInt({page})-1)*toInt({rows}) LIMIT toInt({rows})   RETURN   { total: cnt, rows:collect(n) } AS molecules",
+            "statement": "MATCH (n:Role) return COLLECT(n)",
+            "parameters": {}
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+    "graphorgtree": {
+      "desc": "NEO4J  返回组织结构树",
+      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": "MATCH p=(n:Group {name:{rootname}})-[:PCGROUP*]-(m) WITH COLLECT(p) AS ps  CALL apoc.convert.toTree(ps) yield value   RETURN value;",
+            "parameters": {"rootname":"系统-sys","page":1}
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+
+    "graphhrllist": {
+      "desc": "HRL 人才资源库 使用 SKIP LIMIT 进行 分页查询 ；EasyUI分页参数是 page and rows ,三元表达式增加默认数据 ,计算开始记录 (toInt({page})-1)*toInt({rows}),每页记录数 ；支持 lua-template 模板引擎，灵活的组织查询语句，{% if not (searchvalue == nil or searchvalue == '') then %} WHERE n.username=~{searchvalue} AND n.namecn=~{searchvalue} {% end %};",
+      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": "MATCH  (n:HRL) {% if not (searchvalue == nil or searchvalue == '') then %} WHERE n.username=~{searchvalue} OR n.namecn=~{searchvalue} {% end %}    WITH count(*) AS cnt  MATCH  (n:HRL)  {% if not (searchvalue == nil or searchvalue == '') then %} WHERE n.username=~{searchvalue} OR n.namecn=~{searchvalue} {% end %}   WITH   n, cnt SKIP (toInt({page})-1)*toInt({rows}) LIMIT toInt({rows})   RETURN   { total: cnt, rows:collect(n) } AS molecules",
             "parameters": {
-              "searchvalue":"{{(searchvalue==nil or searchvalue=='') and '\".*\"' or searchvalue}}",
+              "searchvalue":"{{(searchvalue==nil or searchvalue=='') and '\".*\"' or '\"'..searchvalue..'\"'}}",
               "page": "{{(page==nil or page=='') and 1 or page}}",
               "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
             }
@@ -39,17 +68,108 @@
       "servertype": "NEO4J",
       "method": "POST"
     },
-    "graphusercrud": {
-      "desc": "NEO4J  进行 crud 数量处理，支持 EasyUI 的acceptChanges特性，增加删除修改都支持批量数据;{{ inserted }} 自动由字符串处理成为 JSON 对象！; [{{inserted}}]数组格式兼容数据为空的场景！",
+    "graphhrcu": {
+      "desc": "批量创建与更新 -NEO4J。清除掉所有的与组织机构和角色的关系",
       "url": "http://172.16.63.88:7474/db/data/transaction/commit",
       "param": {
         "statements": [
           {
-            "statement": "WITH {p1: {inserted} } AS events   FOREACH (u1 IN events.p1[0] | CREATE (n:User) SET n = u1)       {%  if updated~=nil then %}  WITH {p2: {updated} } AS events      FOREACH (u2 IN events.p2[0] |   MERGE (n:User {username:u2.username}) SET n.namecn = u2.namecn,  n.createDate = u2.createDate    )   {% end %}       WITH {p3: {deleted} } AS events  UNWIND events.p3[0]  AS u3  MATCH (n:User{username:u3.username}) OPTIONAL MATCH (n)-[r]-() DELETE n,r ",
+            "statement": "UNWIND {updated} AS line  MERGE (user:HRL {username:line.username}) SET user=line   MERGE (user)-[ur1:UR]->() delete ur1   MERGE (user)-[ug1:UG]->() delete ug1 ",
             "parameters": {
-              "inserted":["{{inserted}}"],
-              "updated":["{{updated}}"],
-              "deleted":["{{deleted}}"],
+              "updated":"{{updated}}",
+              "page": "{{(page==nil or page=='') and 1 or page}}",
+              "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
+            }
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+    "graphhrd": {
+      "desc": "批量删除 - 清除掉所有关系",
+      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": " UNWIND {deleted}  AS u3  MATCH (n:HRL{username:u3.username}) OPTIONAL MATCH (n)-[r]-() DELETE n,r",
+            "parameters": {
+              "deleted":"{{deleted}}",
+              "page": "{{(page==nil or page=='') and 1 or page}}",
+              "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
+            }
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+
+
+
+    "graphuserlist": {
+      "desc": "NEO4J  使用 SKIP LIMIT 进行 分页查询 ；EasyUI分页参数是 page and rows ,三元表达式增加默认数据 ,计算开始记录 (toInt({page})-1)*toInt({rows}),每页记录数 ；支持 lua-template 模板引擎，灵活的组织查询语句，{% if not (searchvalue == nil or searchvalue == '') then %} WHERE n.username=~{searchvalue} AND n.namecn=~{searchvalue} {% end %};",
+      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": "MATCH  (n:User) {% if not (searchvalue == nil or searchvalue == '') then %} WHERE n.username=~{searchvalue} OR n.namecn=~{searchvalue} {% end %}    WITH count(*) AS cnt  MATCH  (n:User)  {% if not (searchvalue == nil or searchvalue == '') then %} WHERE n.username=~{searchvalue} OR n.namecn=~{searchvalue} {% end %}   WITH   n, cnt SKIP (toInt({page})-1)*toInt({rows}) LIMIT toInt({rows})   RETURN   { total: cnt, rows:collect(n) } AS molecules",
+            "parameters": {
+              "searchvalue":"{{(searchvalue==nil or searchvalue=='') and '\".*\"' or '\"'..searchvalue..'\"'}}",
+              "page": "{{(page==nil or page=='') and 1 or page}}",
+              "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
+            }
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+    "graphuserc": {
+      "desc": "批量创建 -NEO4J  进行 crud 数量处理，支持 EasyUI 的acceptChanges特性，增加删除修改都支持批量数据;{{ inserted }} 自动由字符串处理成为 JSON 对象！; [{{inserted}}]数组格式兼容数据为空的场景！",
+      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": "UNWIND {inserted} AS line  CREATE (user:User {username:line.username}) SET user=line   MERGE (user)-[ur1:UR]->() delete ur1  FOREACH( roleline in  split(line.roles,\",\") |   MERGE(role:Role{role_id:roleline})  MERGE (user)-[ur:UR]->(role)  )  MERGE(group:Group{group_id:line.org})  MERGE (user)-[ug1:UG]->() delete ug1  MERGE (user)-[ug:UG]->(group)",
+            "parameters": {
+              "inserted":"{{inserted}}",
+              "page": "{{(page==nil or page=='') and 1 or page}}",
+              "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
+            }
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+    "graphuseru": {
+      "desc": "批量更新 -NEO4J  进行 crud 数量处理，支持 EasyUI 的acceptChanges特性，增加删除修改都支持批量数据;{{ updated }} 自动由字符串处理成为 JSON 对象！; [{{updated}}]数组格式兼容数据为空的场景！处理用户与组织机构，用户与角色的关联关系，要清除原有的关系。",
+      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": "UNWIND {updated} AS line  MERGE (user:User {username:line.username}) SET user=line   MERGE (user)-[ur1:UR]->() delete ur1  FOREACH( roleline in  split(line.roles,\",\") |   MERGE(role:Role{role_id:roleline})  MERGE (user)-[ur:UR]->(role)  )  MERGE(group:Group{group_id:line.org})  MERGE (user)-[ug1:UG]->() delete ug1  MERGE (user)-[ug:UG]->(group)",
+            "parameters": {
+              "updated":"{{updated}}",
+              "page": "{{(page==nil or page=='') and 1 or page}}",
+              "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
+            }
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+    "graphuserd": {
+      "desc": "批量删除 -NEO4J  进行 crud 数量处理，支持 EasyUI 的acceptChanges特性，增加删除修改都支持批量数据;{{ deleted }} 自动由字符串处理成为 JSON 对象！; [{{inserted}}]数组格式兼容数据为空的场景！",
+      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": " UNWIND {deleted}  AS u3  MATCH (n:User{username:u3.username}) OPTIONAL MATCH (n)-[r]-() DELETE n,r",
+            "parameters": {
+              "deleted":"{{deleted}}",
               "page": "{{(page==nil or page=='') and 1 or page}}",
               "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
             }

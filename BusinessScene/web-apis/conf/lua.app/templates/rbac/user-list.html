@@ -17,7 +17,50 @@
         <a href="javascript:;" onClick="addcompany();" class="easyui-linkbutton" iconCls="icon-add" plain="true">新增选中人员</a>
     </div>
 
-    <table id="companylib">
+    <table id="companylib" class="easyui-datagrid" style="width:700px;height:auto" idField="username" singleSelect="true"
+           data-options="
+                idField:'username',
+                rownumbers:true,
+                checkbox:true,
+                fitColumns:true,
+                fit:true,
+                pagination:true,
+                pageSize: pagesize1,
+                pageList: [pagesize1, pagesize1*2, pagesize1*3, pagesize1*4],
+                ctrlSelect:true,
+
+                data:dataJson2,
+                url:urlhrl,
+
+                iconCls: 'icon-edit',
+                singleSelect: true,
+                toolbar: '#companylibtb',
+                onLoadSuccess:function(){
+                     $(this).datagrid('enableDnd');
+                },
+                onBeforeDrop:moveMonitorToHRL
+    ">
+
+        <thead>
+
+
+
+        <tr>
+            <th data-options="field:'username',width:80">UID编号</th>
+            <th data-options="field:'namecn',width:250">用户名称</th>
+            <th data-options="field:'createDate',width:250">创建日期</th>
+            <th data-options="field:'org',width:250,
+                formatter:function(value,row){
+                            return row.orgname;
+                        }">组织机构</th>
+            <th data-options="field:'roles',width:250,
+                formatter:function(value,row){
+                            return row.rolelist;
+                        }
+                    ">角色</th>
+        </tr>
+        </thead>
+
     </table>
 
 </div>
@@ -62,10 +105,12 @@
                 pageSize: pagesize1,
                 pageList: [pagesize1, pagesize1*2, pagesize1*3, pagesize1*4],
                 ctrlSelect:true,
-                onBeforeDrop:moveMonitor,
+                onBeforeDrop:moveMonitorToUsers,
 
                 autoSave:true,
-                data:dataJson1,
+
+                //data:dataJson1,
+
                 url:url,
 
                 destroyMsg:{
@@ -82,15 +127,55 @@
                 iconCls: 'icon-edit',
                 singleSelect: true,
                 toolbar: '#detailTabtb',
+                enableDnd:true,
                 onClickCell: onClickCell,
-                onEndEdit: onEndEdit
-            ">
+                onEndEdit: onEndEdit,
+                onBeginEdit: onBeginEdit,
+                 onLoadSuccess:function(){
+                     $(this).datagrid('enableDnd');
+                }
+               ">
 
         <thead>
         <tr>
-            <th data-options="field:'username',width:80,editor:'textbox'">UID编号</th>
-            <th data-options="field:'namecn',width:250,editor:'textbox'">用户名称</th>
-            <th data-options="field:'createDate',width:250,editor:'textbox'">创建日期</th>
+            <th data-options="field:'username',width:80,
+                editor:{type:'validatebox',
+                    options:{required:true}}">UID编号</th>
+            <th data-options="field:'namecn',width:250,
+                editor:{type:'validatebox',
+                    options:{required:true}}">用户名称</th>
+            <th data-options="field:'createDate',width:250,
+                editor:{type:'datetimebox',
+                    options:{required:true}}">创建日期</th>
+            <th data-options="field:'org',width:250,
+                formatter:function(value,row){
+                            return row.orgname;
+                        },
+                editor:{type:'combotreegrid',
+                    options:{url:orgtree, multiple:false,required:true,
+                            idField: 'group_id',
+                            treeField: 'text',
+                            columns:[[
+                                {field:'text',title:'名称',width:200},
+                                {field:'remark',title:'备注',width:100}]]
+                            }}
+                    ">组织机构</th>
+            <th data-options="field:'roles',width:250,
+                formatter:function(value,row){
+                            return row.rolelist;
+                        },
+                editor:{type:'combobox',
+                    options:{url:rolelist, multiple:true,required:true,
+                            valueField: 'role_id',
+                            textField: 'name'
+                            //width:'100%',panelWidth:500,label:'Select Item:',labelPosition:'top',
+                            //idField:'id',textField:'text',
+
+                            //columns:[[
+                            //    {field:'text',title:'名称',width:200},
+                            //    {field:'remark',title:'备注',width:100}                    ]]
+                            }}
+                    ">角色</th>
         </tr>
         </thead>
     </table>
@@ -115,13 +200,18 @@
         var dataJson1={};
     {% end%}
     {% if #(formvalue[formvalue.params.query].results[1].data) ~= 0 then %}
-    var dataJson1={*cjson.encode(formvalue[formvalue.params.query].results[1].data[1].row[1]) *};
+        var dataJson1={*cjson.encode(formvalue[formvalue.params.query].results[1].data[1].row[1]) *};
     {% end%}
 
     var pagesize1={*formvalue.params.rows *};
 
     var url="http://127.0.0.1/formroutenew?html=route-neo4j-json&query=graphuserlist";
-    var crudurl="http://127.0.0.1/formroutenew?html=route-neo4j-json&query=graphusercrud";
+    var crudurlc="http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphuserc";
+    var crudurlu="http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphuseru";
+    var crudurld="http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphuserd";
+    var orgtree="http://127.0.0.1/formroutenew?html=route-neo4j-tree&query=graphorgtree";
+    var rolelist="http://127.0.0.1/formroutenew?html=route-neo4j-json&query=graphrolelist";
+
 
 
     var editIndex = undefined;
@@ -135,6 +225,7 @@
             return false;
         }
     }
+
     function onClickCell(index, field){
         if (editIndex != index){
             if (endEditing()){
@@ -152,6 +243,7 @@
             }
         }
     }
+
     function onEndEdit(index, row){
         //对于下拉框进行处理
 //        var ed = $(this).datagrid('getEditor', {
@@ -160,7 +252,23 @@
 //        });
 //        row.productname = $(ed.target).combobox('getText');
 
+        var edorg = $(this).datagrid('getEditor',{index:index,field:'org'});
+        row.orgname = $(edorg.target).combotree('getText');
+
+        var edrole = $(this).datagrid('getEditor',{index:index,field:'roles'});
+        row.rolelist = $(edrole.target).combotree('getText');
+
     }
+
+    function onBeginEdit(index,row){
+//        var ed = $(this).datagrid('getEditor',{index:index,field:'org'});
+//        $(ed.target).combotree({
+//            url: orgtree,
+//            value: row.org
+//        });
+    }
+
+
     function append(){
         console.log(endEditing)
         if (endEditing()){
@@ -196,17 +304,43 @@
                 effectRow["updated"] = JSON.stringify(updated);
             }
 
-            console.log(effectRow);
+            console.log(Object.keys(effectRow).length);
 
-            $.post(crudurl, effectRow, function(response) {
-                console.log(response)
-                if(response.status){
-                    $("#detailTab").datagrid('acceptChanges');
+            if(Object.keys(effectRow).length!=0){
+                console.log(effectRow["updated"]!=undefined);
+                console.log(effectRow["deleted"]!=undefined);
+                console.log(effectRow["inserted"]!=undefined);
+                console.log(effectRow["updated"]);
+                console.log(effectRow["deleted"]);
+                console.log(effectRow["inserted"]);
+
+                if(effectRow["inserted"]!=undefined) {
+
+                    $.post(crudurlc, effectRow, function (response) {
+                        console.log(response)
+                        if (response.status) {
+                            $("#detailTab").datagrid('acceptChanges');
+                        }
+                    }, "JSON");
                 }
-            }, "JSON");
+                if(effectRow["updated"]!=undefined) {
+                    $.post(crudurlu, effectRow, function (response) {
+                        console.log(response)
+                        if (response.status) {
+                            $("#detailTab").datagrid('acceptChanges');
+                        }
+                    }, "JSON");
+                }
+                if(effectRow["deleted"]!=undefined) {
 
-
-//            $('#detailTab').datagrid('acceptChanges');
+                    $.post(crudurld, effectRow, function (response) {
+                        console.log(response)
+                        if (response.status) {
+                            $("#detailTab").datagrid('acceptChanges');
+                        }
+                    }, "JSON");
+                }
+            }
         }
     }
     function reject(){
@@ -230,142 +364,139 @@
 </script>
 
 <script type="text/javascript">
-//    var dataJson1={"total":20,"rows":[
-//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司1','labers':'教育','targettable':'lib'},
-//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司2','labers':'教育','targettable':'lib'},
-//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司3','labers':'教育','targettable':'lib'},
-//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司4','labers':'教育','targettable':'lib'},
-//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司5','labers':'教育','targettable':'lib'},
-//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司6','labers':'教育','targettable':'lib'},
-//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司7','labers':'教育','targettable':'lib'},
-//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司8','labers':'教育','targettable':'lib'},
-//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司9','labers':'教育','targettable':'lib'},
-//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司10','labers':'教育','targettable':'lib'},
-//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司11','labers':'教育','targettable':'lib'},
-//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司12','labers':'教育','targettable':'lib'},
-//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司13','labers':'教育','targettable':'lib'},
-//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司14','labers':'教育','targettable':'lib'},
-//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司15','labers':'教育','targettable':'lib'},
-//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司16','labers':'教育','targettable':'lib'},
-//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司17','labers':'教育','targettable':'lib'},
-//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司18','labers':'教育','targettable':'lib'},
-//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司19','labers':'教育','targettable':'lib'},
-//        {'code':'2176234-72341-392871-dwnsd','name':'新东方教育股份有限公司20','labers':'教育','targettable':'lib'}
-//    ]};
 
 
+    var urlhrl="http://127.0.0.1/formroutenew?html=route-neo4j-json&query=graphhrllist";
+    var crudhrlurlcu="http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphhrcu";
+    var crudhrlurld="http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphhrd";
 
     var dataJson2={"total":20,"rows":[
-        {'code':'2176234-72341-392871-dwnsd','name':'昆泰房产1','labers':'房产','targettable':'labers'},
-        {'code':'2176234-72341-392871-dwnsd','name':'昆泰房产2','labers':'房产','targettable':'labers'},
-        {'code':'2176234-72341-392871-dwnsd','name':'昆泰房产3','labers':'房产','targettable':'labers'},
-        {'code':'2176234-72341-392871-dwnsd','name':'昆泰房产4','labers':'房产','targettable':'labers'},
-        {'code':'2176234-72341-392871-dwnsd','name':'昆泰房产5','labers':'房产','targettable':'labers'},
-        {'code':'2176234-72341-392871-dwnsd','name':'昆泰房产6','labers':'房产','targettable':'labers'},
-        {'code':'2176234-72341-392871-dwnsd','name':'珠海朝阳房产7','labers':'房产','targettable':'labers'},
-        {'code':'2176234-72341-392871-dwnsd','name':'珠海朝阳房产8','labers':'房产','targettable':'labers'},
-        {'code':'2176234-72341-392871-dwnsd','name':'珠海朝阳房产9','labers':'房产','targettable':'labers'},
-        {'code':'2176234-72341-392871-dwnsd','name':'珠海朝阳房产10','labers':'房产','targettable':'labers'},
-        {'code':'2176234-72341-392871-dwnsd','name':'珠海朝阳房产11','labers':'房产','targettable':'labers'},
-        {'code':'2176234-72341-392871-dwnsd','name':'珠海朝阳房产12','labers':'房产','targettable':'labers'},
-        {'code':'2176234-72341-392871-dwnsd','name':'速7快捷酒店13','labers':'住宿业','targettable':'labers'},
-        {'code':'2176234-72341-392871-dwnsd','name':'速7快捷酒店14','labers':'住宿业','targettable':'labers'},
-        {'code':'2176234-72341-392871-dwnsd','name':'速7快捷酒店15','labers':'住宿业','targettable':'labers'},
-        {'code':'2176234-72341-392871-dwnsd','name':'速7快捷酒店16','labers':'住宿业','targettable':'labers'},
-        {'code':'2176234-72341-392871-dwnsd','name':'速7快捷酒店17','labers':'住宿业','targettable':'labers'},
-        {'code':'2176234-72341-392871-dwnsd','name':'速7快捷酒店18','labers':'住宿业','targettable':'labers'},
-        {'code':'2176234-72341-392871-dwnsd','name':'速7快捷酒店19','labers':'住宿业','targettable':'labers'},
-        {'code':'2176234-72341-392871-dwnsd','name':'速7快捷酒店20','labers':'住宿业','targettable':'labers'}
+        {"createDate":"2016-12-24 22:42:00","orgname":"前端-web","org":"1","avatar_id":"1","username":"jamesmo","namecn":"张山","password":"$2a$10$04TVADrR6\/SPLBjsK0N30.Jf5fNjBugSACeGv1S69dZALR7lSov0y","id":"1","updateBy":"system2","updateDate":"2016-12-24 22:42","rolelist":"普通用户","enabled":"1","createBy":"system1","roles":"2"},
+        {"createDate":"2016-12-24 22:42:00","orgname":"前端-js","org":"3","avatar_id":"1","username":"alex3","namecn":"李四ccccc","password":"$2a$10$04TVADrR6\/SPLBjsK0N30.Jf5fNjBugSACeGv1S69dZALR7lSov0y","id":"3","updateBy":"system2","updateDate":"2016-12-24 22:42","rolelist":"普通用户,WEBJS开发","enabled":"1","createBy":"system1","roles":"ROLE_USER,ROLE_WEBJS"},
+        {"createDate":"2016-12-24 22:42:00","orgname":"前端-h5","org":"h5","avatar_id":"1","username":"alex9","namecn":"李四9","password":"$2a$10$04TVADrR6\/SPLBjsK0N30.Jf5fNjBugSACeGv1S69dZALR7lSov0y","id":"9","updateBy":"system2","updateDate":"2016-12-24 22:42","rolelist":"普通用户","enabled":"1","createBy":"system1","roles":"ROLE_USER"}
     ]};
 
 
 
     $(function(){
-//        var detail = $('#detailTab');
-////        pagesize:pagesize1,
-//        detail.datagrid({
-//            data:dataJson1,
-//            url:url,
-//            //toolbar:"#detailTabtb",
-//            rownumbers:true,rownumbers:true,checkbox:true,fitColumns:true,fit:true,pagination:true,ctrlSelect:true,onBeforeDrop:moveMonitor,
-//
-//            pageSize:pagesize1,
-//            pageList: [pagesize1, pagesize1*2, pagesize1*3, pagesize1*4],
-//           // method: 'get',
-//
-////            columns:[[
-////                {field:'username',title:'UID编号',width:100,editor:'text'},
-////                {field:'namecn',title:'用户名称',width:100,editor:'text'},
-////                {field:'createDate',title:'标签',width:100,align:'center',editor:'text'}
-////            ]],
-//            onLoadSuccess:function(){
-//                $(this).datagrid('enableDnd');
-//
-//            }
-//
-//
-//        });
-//
-////        detail.datagrid('loadData',[]);
-////        detail.datagrid({pagePosition:$('#p-pos').val()});
-//        detail.datagrid('getPager').pagination({
-//            //layout:['list','sep','first','prev','sep',$('#p-style').val(),'sep','next','last','sep','refresh']
-//            layout:['list','sep','first','prev','links','next','last','sep','refresh']
-//        });
-
-
-
-        $('#companylib').datagrid({
-            data:dataJson2,
-            toolbar:"#companylibtb",
-            fitColumns:true,fit:true,pagination:true,ctrlSelect:true,onBeforeDrop:moveMonitor,
-            columns:[[
-                {field:'checkboxs',title:'UID编号',checkbox:true},
-                {field:'code',title:'UID编号',width:100},
-                {field:'name',title:'用户名称',width:100},
-                {field:'labers',title:'标签',width:100,align:'center'}
-            ]],
-            onLoadSuccess:function(){
-                $(this).datagrid('enableDnd');
-            }
-        })
+            //初始化到 data-options 中配置完成
     })
 
 
-
+    /*
+        从人才库到添加到人员列表
+     */
     function addcompany(){
         var data = $("#companylib").datagrid("getSelections");
-        append(data)
+        //appendhrl(data)
         $.messager.alert('温馨提示','本标签新增加用户'+data.length+'人\r\n');
         console.debug(data);
     }
 
-//    function append(line){
-//        if (line){
-//            $('#detailTab').datagrid('appendRow',line);
-////			editIndex = $('#dg').datagrid('getRows').length-1;
-////			$('#detailTab').datagrid('selectRow', editIndex)
-////					.datagrid('beginEdit', editIndex);
-//        }
-//    }
+    function appendhrl(line){
+        if (line){
+            $('#detailTab').datagrid('appendRow',line);
+            accepthrl();
+//			editIndex = $('#dg').datagrid('getRows').length-1;
+//			$('#detailTab').datagrid('selectRow', editIndex)
+//					.datagrid('beginEdit', editIndex);
+        }
+    }
 
-//    function removeit(line){
-//        var editIndex = line;
-//        if (editIndex == undefined){return}
-//        $('#companylib').datagrid('cancelEdit', editIndex)
-//                .datagrid('deleteRow', editIndex);
-//        editIndex = undefined;
-//    }
+    /*
+        从人才库删除数据
+     */
+    function removeithrl(line){
+        var editIndex = line;
+        if (editIndex == undefined){return}
+        $('#companylib').datagrid('cancelEdit', editIndex)
+                .datagrid('deleteRow', editIndex);
+        accepthrl();
+        editIndex = undefined;
+    }
 
 
-    function moveMonitor(targetRow,sourceRow,point){
+    /*
+        人才库的增删改查
+    */
+    function accepthrl(){
+        if (endEditing()){
+            var inserted = $('#companylib').datagrid('getChanges', "inserted");
+            var deleted = $('#companylib').datagrid('getChanges', "deleted");
+            var updated = $('#companylib').datagrid('getChanges', "updated");
+
+            var effectRow = new Object();
+            if (inserted.length) {
+                effectRow["inserted"] = JSON.stringify(inserted);
+            }
+
+            if (deleted.length) {
+                effectRow["deleted"] = JSON.stringify(deleted);
+            }
+            if (updated.length) {
+                effectRow["updated"] = JSON.stringify(updated);
+            }
+
+            console.log(Object.keys(effectRow).length);
+
+            if(Object.keys(effectRow).length!=0){
+                console.log(effectRow["updated"]!=undefined);
+                console.log(effectRow["deleted"]!=undefined);
+                console.log(effectRow["inserted"]!=undefined);
+                console.log(effectRow["updated"]);
+                console.log(effectRow["deleted"]);
+                console.log(effectRow["inserted"]);
+
+                if(effectRow["inserted"]!=undefined) {
+
+                    $.post(crudhrlurlcu, effectRow, function (response) {
+                        console.log(response)
+                        if (response.status) {
+                            $("#companylib").datagrid('acceptChanges');
+                        }
+                    }, "JSON");
+                }
+                if(effectRow["updated"]!=undefined) {
+                    $.post(crudhrlurlcu, effectRow, function (response) {
+                        console.log(response)
+                        if (response.status) {
+                            $("#companylib").datagrid('acceptChanges');
+                        }
+                    }, "JSON");
+                }
+                if(effectRow["deleted"]!=undefined) {
+
+                    $.post(crudhrlurld, effectRow, function (response) {
+                        console.log(response)
+                        if (response.status) {
+                            $("#companylib").datagrid('acceptChanges');
+                        }
+                    }, "JSON");
+                }
+            }
+        }
+    }
+
+    /*
+        人员调动监控日志
+     */
+    function moveMonitorToHRL(targetRow,sourceRow,point){
         var myDate = new Date();
-        if(targetRow.targettable=='lib' && sourceRow.targettable=='labers'){
-            $('#log').prepend(myDate.toLocaleString()+': 新增了一个人到本标签库，用户名称：'+targetRow.name+'<br/>');
-        }
-        if(targetRow.targettable=='labers' && sourceRow.targettable=='lib'){
-            $('#log').prepend(myDate.toLocaleString()+': 删除了一个人，用户名称：'+targetRow.name+'<br/>');
-        }
+//        if(targetRow.targettable=='lib' && sourceRow.targettable=='labers'){
+//            $('#log').prepend(myDate.toLocaleString()+': 新增了一个人到本标签库，用户名称：'+targetRow.name+'<br/>');
+//        }
+//        if(targetRow.targettable=='labers' && sourceRow.targettable=='lib'){
+            $('#log').prepend(myDate.toLocaleString()+': 删除了一个人，用户名称：'+sourceRow.namecn+'<br/>');
+//        }
+    }
+    function moveMonitorToUsers(targetRow,sourceRow,point){
+        var myDate = new Date();
+//        if(targetRow.targettable=='lib' && sourceRow.targettable=='labers'){
+            $('#log').prepend(myDate.toLocaleString()+': 从本标签库新增了一个人，用户名称：'+sourceRow.namecn+'<br/>');
+//        }
+//        if(targetRow.targettable=='labers' && sourceRow.targettable=='lib'){
+//            $('#log').prepend(myDate.toLocaleString()+': 删除了一个人，用户名称：'+targetRow.name+'<br/>');
+//        }
     }
 </script>
 

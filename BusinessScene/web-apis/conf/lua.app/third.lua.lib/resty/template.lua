@@ -475,4 +475,9 @@ function template.render(view, context, key, plain)
     return template.print(template.compile(view, key, plain)(context))
 end
 
+function template.ouput(view, context, key, plain)
+    assert(view, "view was not provided for template.render(view, context, key, plain).")
+    return template.compile(view, key, plain)(context)
+end
+
 return template
