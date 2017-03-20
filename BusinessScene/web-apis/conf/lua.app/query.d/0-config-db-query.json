@@ -21,6 +21,25 @@
     "password": "123456"
   },
   "list": {
+    "graphorgu": {
+      "desc": "批量更新 -NEO4J  组织机构，需要处理组织机构的上下级关系。 CQL:更新组织机构信息；清除上级组织机构；查找上级组织机构；与上级组织机构建立关系",
+      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": "UNWIND {updated} AS line  MERGE ( group:Group {group_id:line.group_id}) SET group=line   MERGE ()-[pcg:PCGROUP]->(group) delete pcg  MERGE (groupparent:Group{id:line._parentId})  MERGE (groupparent)-[ug:PCGROUP]->(group)",
+            "parameters": {
+              "updated":"{{updated}}",
+              "page": "{{(page==nil or page=='') and 1 or page}}",
+              "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
+            }
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+
     "graphrolelist": {
       "desc": "NEO4J  返回角色列表",
       "url": "http://172.16.63.88:7474/db/data/transaction/commit",
@@ -49,6 +68,20 @@
       "servertype": "NEO4J",
       "method": "POST"
     },
+    "graphorglist": {
+      "desc": "NEO4J  返回组织结构树",
+      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": "MATCH (n:Group) WITH COLLECT(n) AS ps  RETURN ps;",
+            "parameters": {}
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
 
     "graphhrllist": {
       "desc": "HRL 人才资源库 使用 SKIP LIMIT 进行 分页查询 ；EasyUI分页参数是 page and rows ,三元表达式增加默认数据 ,计算开始记录 (toInt({page})-1)*toInt({rows}),每页记录数 ；支持 lua-template 模板引擎，灵活的组织查询语句，{% if not (searchvalue == nil or searchvalue == '') then %} WHERE n.username=~{searchvalue} AND n.namecn=~{searchvalue} {% end %};",
@@ -68,7 +101,25 @@
       "servertype": "NEO4J",
       "method": "POST"
     },
-    "graphhrcu": {
+    "graphhrc": {
+      "desc": "批量创建与更新 -NEO4J。清除掉所有的与组织机构和角色的关系",
+      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": "UNWIND {inserted} AS line  CREATE (user:HRL {username:line.username}) SET user=line   MERGE (user)-[ur1:UR]->() delete ur1   MERGE (user)-[ug1:UG]->() delete ug1 ",
+            "parameters": {
+              "inserted":"{{inserted}}",
+              "page": "{{(page==nil or page=='') and 1 or page}}",
+              "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
+            }
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+    "graphhru": {
       "desc": "批量创建与更新 -NEO4J。清除掉所有的与组织机构和角色的关系",
       "url": "http://172.16.63.88:7474/db/data/transaction/commit",
       "param": {
@@ -86,6 +137,7 @@
       "servertype": "NEO4J",
       "method": "POST"
     },
+
     "graphhrd": {
       "desc": "批量删除 - 清除掉所有关系",
       "url": "http://172.16.63.88:7474/db/data/transaction/commit",

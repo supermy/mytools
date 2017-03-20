@@ -1,25 +1,25 @@
 {% layout = "layouts/rbaclayout.html" %}
 
-{-title-}
-<title>RBAC可视化-用户列表</title>
-{-title-}
 
+{-title-}
+<title>RBAC可视化-组织机构维护</title>
+{-title-}
 
 {-content-}
 
 
-<div data-options="region:'west',split:true,title:'人才库',collapsed:true" style="width:46%;">
+<div data-options="region:'west',split:true,title:'机构备用库',collapsed:true" style="width:46%;">
 
     <div id="companylibtb" style="padding:5px;height:auto">
         <input class="easyui-searchbox" data-options="prompt:'请输入查询条件',menu:'#searcheTool',searcher:doSearch"
                style="width:200px"></input>
         <div id="searcheTool">
-            <div data-options="name:'人才名称'">人才名称</div>
+            <div data-options="name:'机构名称'">机构名称</div>
             <div data-options="name:'UID',iconCls:'icon-ok'">UID</div>
             <div data-options="name:'标签名'">标签名</div>
         </div>
         <a href="javascript:;" onClick="addcompany();" class="easyui-linkbutton" iconCls="icon-add"
-           plain="true">新增选中人员</a>
+           plain="true">新增选中机构</a>
         <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true"
            onclick="getChangesHRL()">数据变更</a>
 
@@ -43,25 +43,25 @@
 
                 iconCls: 'icon-edit',
                 singleSelect: true,
-                toolbar: '#companylibtb',
-                onLoadSuccess:function(){
-                     $(this).datagrid('enableDnd');
-                },
-                onBeforeDrop:moveMonitorToHRL,
-                onDrop:saveHRLUser
+                toolbar: '#companylibtb'
     ">
-
+        ,
+        onLoadSuccess:function(){
+        $(this).datagrid('enableDnd');
+        },
+        onBeforeDrop:moveMonitorToHRL,
+        onDrop:saveHRLUser
         <thead>
 
 
         <tr>
-            <th data-options="field:'username',width:80">UID编号</th>
-            <th data-options="field:'namecn',width:250">用户名称</th>
+            <th data-options="field:'group_id',width:80">UID编号</th>
+            <th data-options="field:'name',width:250">机构名称</th>
             <th data-options="field:'createDate',width:250">创建日期</th>
             <th data-options="field:'org',width:250,
                 formatter:function(value,row){
                             return row.orgname;
-                        }">组织机构
+                        }"> 用户列表
             </th>
             <th data-options="field:'roles',width:250,
                 formatter:function(value,row){
@@ -82,18 +82,18 @@
 
 
 
-<div data-options="region:'center',title:'当前标签所包含的用户'">
+<div data-options="region:'center',title:'当前标签所包含的机构'">
 
     <div id="detailTabtb" style="padding:5px;height:auto">
 
-        <input class="easyui-searchbox" data-options="prompt:'请输入查询条件',menu:'#searcheTool',searcher:doSearch" style="width:200px"></input>
-        <div id="searcheTool">
-            <div data-options="name:'searchvalue'">用户名称</div>
-            <div data-options="name:'searchvalue',iconCls:'icon-ok'">UID</div>
-            <div data-options="name:'searchvalue'">标签名</div>
-        </div>
+        <!--<input class="easyui-searchbox" data-options="prompt:'请输入查询条件',menu:'#searcheTool',searcher:doSearch" style="width:200px"></input>-->
+        <!--<div id="searcheTool">-->
+            <!--<div data-options="name:'searchvalue'">机构名称</div>-->
+            <!--<div data-options="name:'searchvalue',iconCls:'icon-ok'">UID</div>-->
+            <!--<div data-options="name:'searchvalue'">标签名</div>-->
+        <!--</div>-->
 
-        <a href="javascript:;" onClick="$('body').layout('expand','west');" class="easyui-linkbutton" iconCls="icon-add" plain="true">从人才库新增人员</a>
+        <a href="javascript:;" onClick="$('body').layout('expand','west');" class="easyui-linkbutton" iconCls="icon-add" plain="true">从机构备用库新增机构</a>
 
 
         <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="append()">增加</a>
@@ -102,84 +102,110 @@
         <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:true" onclick="reject()">取消</a>
         <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true" onclick="getChanges()">数据变更</a>
 
+        <!--<div style="margin:20px 0;">-->
+            <!--<a href="javascript:void(0)" class="easyui-linkbutton" onclick="edit()">Edit</a>-->
+            <!--<a href="javascript:void(0)" class="easyui-linkbutton" onclick="save()">Save</a>-->
+            <!--<a href="javascript:void(0)" class="easyui-linkbutton" onclick="cancel()">Cancel</a>-->
+        <!--</div>-->
     </div>
 
-    <table id="detailTab" class="easyui-datagrid" style="width:700px;height:auto" idField="username" singleSelect="true"
 
+
+    <table id="detailTab" class="easyui-treegrid" style="width:700px;height:auto"
            data-options="
-                idField:'username',
+                idField:'id',
+                treeField: 'name',
+                url:urllist,
+                toolbar: '#detailTabtb',
+                onContextMenu: onContextMenu,
+
+                animate: true,
+                collapsible: true,
                 rownumbers:true,
                 checkbox:true,
                 fitColumns:true,
                 fit:true,
-                pagination:true,
-                pageSize: pagesize1,
-                pageList: [pagesize1, pagesize1*2, pagesize1*3, pagesize1*4],
-                ctrlSelect:true,
-                onBeforeDrop:moveMonitorToUsers,
-                onDrop:saveHRLUser,
+                pagination:false,
 
-                autoSave:true,
+                //ctrlSelect:true,
+                //autoSave:true,
+                cascadeCheck:false,
 
-                //data:dataJson1,
-
-                url:url,
 
                 iconCls: 'icon-edit',
                 singleSelect: true,
-                toolbar: '#detailTabtb',
-                enableDnd:true,
                 onClickCell: onClickCell,
                 onEndEdit: onEndEdit,
                 onBeginEdit: onBeginEdit,
-                 onLoadSuccess:function(){
-                     $(this).datagrid('enableDnd');
-                }
+                loadFilter: function(rows){
+					return convert(rows);
+				}
+
                ">
+
+
+
+
+
+        ,
+        onBeforeDrop:moveMonitorToUsers,
+        onDrop:saveHRLUser,
+        onLoadSuccess:function(){
+        $(this).datagrid('enableDnd');
+        }
 
         <thead>
         <tr>
-            <th data-options="field:'username',width:80,
+            <th data-options="field:'name',width:250,
+                editor:{type:'validatebox',
+                    options:{required:true}}">机构名称</th>
+            <th data-options="field:'id',width:80,
                 editor:{type:'validatebox',
                     options:{required:true}}">UID编号</th>
-            <th data-options="field:'namecn',width:250,
-                editor:{type:'validatebox',
-                    options:{required:true}}">用户名称</th>
             <th data-options="field:'createDate',width:250,
                 editor:{type:'datetimebox',
                     options:{required:true}}">创建日期</th>
-            <th data-options="field:'org',width:250,
-                formatter:function(value,row){
-                            return row.orgname;
-                        },
-                editor:{type:'combotreegrid',
-                    options:{url:orgtree, multiple:false,required:true,
-                            idField: 'id',
-                            treeField: 'name',
-                            columns:[[
-                                {field:'name',title:'名称',width:200},
-                                {field:'remark',title:'备注',width:100}]]
-                            }}
-                    ">组织机构</th>
-            <th data-options="field:'roles',width:250,
-                formatter:function(value,row){
-                            return row.rolelist;
-                        },
-                editor:{type:'combobox',
-                    options:{url:rolelist, multiple:true,required:true,
-                            valueField: 'role_id',
-                            textField: 'name'
-                            //width:'100%',panelWidth:500,label:'Select Item:',labelPosition:'top',
-                            //idField:'id',textField:'text',
+            <!--<th data-options="field:'org',width:250,-->
+                <!--formatter:function(value,row){-->
+                            <!--return row.orgname;-->
+                        <!--},-->
+                <!--editor:{type:'combotreegrid',-->
+                    <!--options:{url:orgtree, multiple:false,required:false,-->
+                            <!--idField: 'group_id',-->
+                            <!--treeField: 'text',-->
+                            <!--columns:[[-->
+                                <!--{field:'text',title:'名称',width:200},-->
+                                <!--{field:'remark',title:'备注',width:100}]]-->
+                            <!--}}-->
+                    <!--">隶属用户</th>-->
+            <!--<th data-options="field:'roles',width:250,-->
+                <!--formatter:function(value,row){-->
+                            <!--return row.rolelist;-->
+                        <!--},-->
+                <!--editor:{type:'combobox',-->
+                    <!--options:{url:rolelist, multiple:true,required:false,-->
+                            <!--valueField: 'role_id',-->
+                            <!--textField: 'name'-->
+                            <!--//width:'100%',panelWidth:500,label:'Select Item:',labelPosition:'top',-->
+                            <!--//idField:'id',textField:'text',-->
 
-                            //columns:[[
-                            //    {field:'text',title:'名称',width:200},
-                            //    {field:'remark',title:'备注',width:100}                    ]]
-                            }}
-                    ">角色</th>
+                            <!--//columns:[[-->
+                            <!--//    {field:'text',title:'名称',width:200},-->
+                            <!--//    {field:'remark',title:'备注',width:100}                    ]]-->
+                            <!--}}-->
+                    <!--">角色</th>-->
         </tr>
         </thead>
     </table>
+
+
+    <div id="mm" class="easyui-menu" style="width:120px;">
+        <div onclick="append()" data-options="iconCls:'icon-add'">增加</div>
+        <div onclick="removeIt()" data-options="iconCls:'icon-remove'">删除</div>
+        <div class="menu-sep"></div>
+        <div onclick="collapse()">收起</div>
+        <div onclick="expand()">展开</div>
+    </div>
 
 </div>
 
@@ -193,8 +219,6 @@
 {-page_css-}
 
 {-page_js-}
-<script src="easyui/datagrid-dnd.js"  type="text/javascript"></script>
-
 <script src="easyui/json2.js"  type="text/javascript"></script>
 
 <script type="text/javascript">
@@ -208,46 +232,97 @@
 
     var pagesize1={*formvalue.params.rows *};
 
-    var url="http://127.0.0.1/formroutenew?html=route-neo4j-json&query=graphuserlist";
+    var url="http://127.0.0.1/formroutenew?html=route-neo4j-tree&query=graphorgtree";
+    var urllist="http://127.0.0.1/formroutenew?html=route-neo4j-json&query=graphorglist";
+
+
     var crudurlc="http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphuserc";
-    var crudurlu="http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphuseru";
+    var crudurlu="http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphorgu";
     var crudurld="http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphuserd";
-    var orgtree="http://127.0.0.1/formroutenew?html=route-neo4j-tree&query=graphorglist";
+
+    var orgtree="http://127.0.0.1/formroutenew?html=route-neo4j-tree&query=graphorgtree";
     var rolelist="http://127.0.0.1/formroutenew?html=route-neo4j-json&query=graphrolelist";
 
+    var editingId;
+//    function edit(){
+//        //如果处于编辑状态，返回到当前编辑行。
+//        if (editingId != undefined){
+//            $('#detailTab').treegrid('select', editingId);
+//            return;
+//        }
+//        var row = $('#detailTab').treegrid('getSelected');
+//        if (row){
+//            editingId = row.id
+//            $('#detailTab').treegrid('beginEdit', editingId);
+//        }
+//    }
+//    function save(){
+//        console.log(editingId)
+//        if (editingId != undefined){
+//            var t = $('#detailTab');
+//            t.treegrid('endEdit', editingId);
+//            editingId = undefined;
+//        }
+//    }
+//    function cancel(){
+//        if (editingId != undefined){
+//            $('#detailTab').treegrid('cancelEdit', editingId);
+//            editingId = undefined;
+//        }
+//    }
 
 
     var editIndex = undefined;
     function endEditing(){
+        if (editingId == undefined){return true}
         if (editIndex == undefined){return true}
+console.log('endEditing111111');
+
         if ($('#detailTab').datagrid('validateRow', editIndex)){
+            console.log('endEditing'+editingId);
+            $('#detailTab').datagrid('endEdit', editingId);
             $('#detailTab').datagrid('endEdit', editIndex);
+            console.log('endEditing22222');
+
+            editingId = undefined;
             editIndex = undefined;
+
             return true;
         } else {
             return false;
         }
     }
 
-    function onClickCell(index, field){
-        //同一行数据不处理
-        if (editIndex != index){
-            //结束正在编辑的行
-            if (endEditing()){
-                //
-                $('#detailTab').datagrid('selectRow', index)
-                        .datagrid('beginEdit', index);
+    function onClickCell(index, field) {
+        console.log(index);
+        console.log(editIndex);
+        console.log(field);
 
-                //定位到编辑的字段
-                var ed = $('#detailTab').datagrid('getEditor', {index:index,field:field});
-                if (ed){
+        //同一行并且同一单元格不做处理 editIndex != index &&
+        if (editingId!=field.id) {
+            console.log(0000000000);
+
+            //结束其他行的编辑状态
+            if (endEditing()) {
+//
+//                $('#detailTab').datagrid('selectRow', index)
+//                        .datagrid('beginEdit', index);
+
+
+                editingId = field.id;
+                $('#detailTab').treegrid('beginEdit', editingId);
+
+
+                var ed = $('#detailTab').datagrid('getEditor', {index: index, field: field});
+                if (ed) {
                     ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
                 }
+
                 editIndex = index;
             } else {
-                setTimeout(function(){
+                setTimeout(function () {
                     $('#detailTab').datagrid('selectRow', editIndex);
-                },0);
+                }, 0);
             }
         }
     }
@@ -260,11 +335,11 @@
 //        });
 //        row.productname = $(ed.target).combobox('getText');
 
-        var edorg = $(this).datagrid('getEditor',{index:index,field:'org'});
-        row.orgname = $(edorg.target).combotree('getText');
-
-        var edrole = $(this).datagrid('getEditor',{index:index,field:'roles'});
-        row.rolelist = $(edrole.target).combotree('getText');
+//        var edorg = $(this).datagrid('getEditor',{index:index,field:'org'});
+//        row.orgname = $(edorg.target).combotree('getText');
+//
+//        var edrole = $(this).datagrid('getEditor',{index:index,field:'roles'});
+//        row.rolelist = $(edrole.target).combotree('getText');
 
     }
 
@@ -295,7 +370,9 @@
     }
 
     function accept(ee){
-        console.log("用户编辑保存......");
+
+        console.log("机构编辑保存......"+JSON.stringify($('#detailTab').treegrid('showLines')));
+        console.log("机构编辑保存......"+JSON.stringify($('#detailTab').treegrid('getData')));
         var ed=false;
         if(endEditing()){
             ed = true;
@@ -332,7 +409,7 @@
                 console.log(effectRow["inserted"]);
 
                 if(effectRow["inserted"]!=undefined) {
-                    console.log("用户编辑 inserted......");
+                    console.log("机构编辑 inserted......");
 
                     $.post(crudurlc, effectRow, function (response) {
                         console.log(response)
@@ -350,7 +427,7 @@
                     }, "JSON");
                 }
                 if(effectRow["deleted"]!=undefined) {
-                    console.log("用户编辑 deleted......");
+                    console.log("机构编辑 deleted......");
 
                     $.post(crudurld, effectRow, function (response) {
                         console.log(response)
@@ -365,6 +442,7 @@
     function reject(){
         $('#detailTab').datagrid('rejectChanges');
         editIndex = undefined;
+        editingId = undefined;
     }
     function getChanges(){
         var rows = $('#detailTab').datagrid('getChanges');
@@ -380,6 +458,115 @@
         });
     }
 
+    function onContextMenu(e,row){
+        console.log(row);
+        if (row){
+            e.preventDefault();
+            $(this).treegrid('select', row.id);
+            $('#mm').menu('show',{
+                left: e.pageX,
+                top: e.pageY
+            });
+        }
+    }
+
+//    var idIndex = 100;
+//    function append(){
+//        idIndex++;
+//        var d1 = new Date();
+//        var d2 = new Date();
+//        d2.setMonth(d2.getMonth()+1);
+//        var node = $('#detailTab').treegrid('getSelected');
+//        $('#detailTab').treegrid('append',{
+//            parent: node.id,
+//            data: [{
+//                id: idIndex,
+//                name: 'New Task'+idIndex,
+//                persons: parseInt(Math.random()*10),
+//                begin: $.fn.datebox.defaults.formatter(d1),
+//                end: $.fn.datebox.defaults.formatter(d2),
+//                progress: parseInt(Math.random()*100)
+//            }]
+//        })
+//    }
+//
+    function removeIt(){
+        var node = $('#detailTab').treegrid('getSelected');
+        if (node){
+            $('#detailTab').treegrid('remove', node.id);
+        }
+    }
+
+    function collapse(){
+        var node = $('#detailTab').treegrid('getSelected');
+        if (node){
+            $('#detailTab').treegrid('collapse', node.id);
+        }
+    }
+    function expand(){
+        var node = $('#detailTab').treegrid('getSelected');
+        if (node){
+            $('#detailTab').treegrid('expand', node.id);
+        }
+    }
+
+</script>
+
+<script type="text/javascript">
+
+    //array to tree json
+    function convert(rows){
+
+        //父节点是否存在
+        function exists(rows, parentId){
+            for(var i=0; i<rows.length; i++){
+                if (rows[i].group_id == parentId) return true;
+            }
+            return false;
+        }
+
+        var nodes = [];
+        // get the top level nodes  得到顶级节点
+        for(var i=0; i<rows.length; i++){
+            var row = rows[i];
+            if (!exists(rows, row.pid)){
+                nodes.push({
+                    id:row.group_id,
+                    name:row.name,
+                    createDate:row.createDate
+                });
+            }
+        }
+
+        console.log("top nodes:");
+        console.log(nodes);
+
+        var toDo = [];
+        for(var i=0; i<nodes.length; i++){
+            toDo.push(nodes[i]);
+        }
+        //多父节点处理
+        while(toDo.length){
+            var node = toDo.shift();	// the parent node  shift() 方法用于把数组的第一个元素从其中删除，并返回第一个元素的值。
+            // get the children nodes
+            for(var i=0; i<rows.length; i++){
+                var row = rows[i];
+                if (row.pid == node.id){
+                    var child = {id:row.group_id,name:row.name,createDate:row.createDate};
+                    if (node.children){
+                        node.children.push(child);
+                    } else {
+                        node.children = [child];
+                    }
+                    toDo.push(child);
+                }
+            }
+        }
+        console.log("result nodes:");
+        console.log(nodes);
+        return nodes;
+    }
+
 </script>
 
 <script type="text/javascript">
@@ -391,40 +578,31 @@
     var crudhrlurld="http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphhrd";
 
     var dataJson2={"total":20,"rows":[
-        {"createDate":"2016-12-24 22:42:00","orgname":"前端-h5","org":"h5","avatar_id":"1","username":"alex9","namecn":"李四9","password":"$2a$10$04TVADrR6\/SPLBjsK0N30.Jf5fNjBugSACeGv1S69dZALR7lSov0y","id":"9","updateBy":"system2","updateDate":"2016-12-24 22:42","rolelist":"普通用户","enabled":"1","createBy":"system1","roles":"ROLE_USER"}
+        {"createDate":"2016-12-24 22:42:00","orgname":"前端-h5","org":"h5","avatar_id":"1","username":"alex9","namecn":"李四9","password":"$2a$10$04TVADrR6\/SPLBjsK0N30.Jf5fNjBugSACeGv1S69dZALR7lSov0y","id":"9","updateBy":"system2","updateDate":"2016-12-24 22:42","rolelist":"普通机构","enabled":"1","createBy":"system1","roles":"ROLE_USER"}
     ]};
 
 
 
     $(function(){
             //初始化到 data-options 中配置完成
-    })
+    });
 
 
     /*
-        从人才库到添加到人员列表
+        从机构备用库到添加到机构列表
      */
     function addcompany(){
         var data = $("#companylib").datagrid("getSelections");
         //appendhrl(data)
         accepthrl();
-        $.messager.alert('温馨提示','本标签新增加用户'+data.length+'人\r\n');
+        $.messager.alert('温馨提示','本标签新增加机构'+data.length+'人\r\n');
         console.debug(data);
 
     }
 
-//    function appendhrl(line){
-//        if (line){
-//            $('#detailTab').datagrid('appendRow',line);
-//            accepthrl();
-////			editIndex = $('#dg').datagrid('getRows').length-1;
-////			$('#detailTab').datagrid('selectRow', editIndex)
-////					.datagrid('beginEdit', editIndex);
-//        }
-//    }
 
     /*
-        从人才库删除数据
+        从机构备用库删除数据
      */
     function removeithrl(line){
         var editIndex = line;
@@ -441,10 +619,10 @@
     }
 
     /*
-        人才库的增删改查
+        机构备用库的增删改查
     */
     function accepthrl(){
-        console.log("人才编辑保存......");
+        console.log("机构备用编辑保存......");
 
         // if (endEditing()){
             var inserted = $('#companylib').datagrid('getChanges', "inserted");
@@ -474,7 +652,7 @@
                 console.log(effectRow["inserted"]);
 
                 if(effectRow["inserted"]!=undefined) {
-                    console.log("人才编辑 inserted......");
+                    console.log("机构备用编辑 inserted......");
 
                     $.post(crudhrlurlc, effectRow, function (response) {
                         console.log(response)
@@ -492,7 +670,7 @@
                     }, "JSON");
                 }
                 if(effectRow["deleted"]!=undefined) {
-                    console.log("人才编辑deleted......");
+                    console.log("机构备用编辑deleted......");
 
                     $.post(crudhrlurld, effectRow, function (response) {
                         console.log(response)
@@ -511,17 +689,17 @@
         accept(true);
     }
         /*
-            人员调动监控日志
+            机构调动监控日志
          */
     function moveMonitorToHRL(targetRow,sourceRow,point){
 //        accepthrl();
 //        accept(true);
         var myDate = new Date();
 //        if(targetRow.targettable=='lib' && sourceRow.targettable=='labers'){
-//            $('#log').prepend(myDate.toLocaleString()+': 新增了一个人到本标签库，用户名称：'+targetRow.name+'<br/>');
+//            $('#log').prepend(myDate.toLocaleString()+': 新增了一个人到本标签库，机构名称：'+targetRow.name+'<br/>');
 //        }
 //        if(targetRow.targettable=='labers' && sourceRow.targettable=='lib'){
-            $('#log').prepend(myDate.toLocaleString()+': 删除了一个人，用户名称：'+sourceRow.namecn+'<br/>');
+            $('#log').prepend(myDate.toLocaleString()+': 删除了一个人，机构名称：'+sourceRow.namecn+'<br/>');
 //        }
     }
     function moveMonitorToUsers(targetRow,sourceRow,point){
@@ -529,10 +707,10 @@
 //        accept(true);
         var myDate = new Date();
 //        if(targetRow.targettable=='lib' && sourceRow.targettable=='labers'){
-            $('#log').prepend(myDate.toLocaleString()+': 从本标签库新增了一个人，用户名称：'+sourceRow.namecn+'<br/>');
+            $('#log').prepend(myDate.toLocaleString()+': 从本标签库新增了一个人，机构名称：'+sourceRow.namecn+'<br/>');
 //        }
 //        if(targetRow.targettable=='labers' && sourceRow.targettable=='lib'){
-//            $('#log').prepend(myDate.toLocaleString()+': 删除了一个人，用户名称：'+targetRow.name+'<br/>');
+//            $('#log').prepend(myDate.toLocaleString()+': 删除了一个人，机构名称：'+targetRow.name+'<br/>');
 //        }
     }
 </script>
