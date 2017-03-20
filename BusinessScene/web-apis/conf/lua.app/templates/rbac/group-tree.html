@@ -136,13 +136,9 @@
                 singleSelect: true,
                 onClickCell: onClickCell,
                 onEndEdit: onEndEdit,
-                onBeginEdit: onBeginEdit,
-                loadFilter: function(rows){
-					return convert(rows);
-				}
+                onBeginEdit: onBeginEdit
 
                ">
-
 
 
 
@@ -233,7 +229,7 @@
     var pagesize1={*formvalue.params.rows *};
 
     var url="http://127.0.0.1/formroutenew?html=route-neo4j-tree&query=graphorgtree";
-    var urllist="http://127.0.0.1/formroutenew?html=route-neo4j-json&query=graphorglist";
+    var urllist="http://127.0.0.1/formroutenew?html=route-neo4j-tree&query=graphorglist";
 
 
     var crudurlc="http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphuserc";
@@ -512,62 +508,7 @@ console.log('endEditing111111');
 
 </script>
 
-<script type="text/javascript">
 
-    //array to tree json
-    function convert(rows){
-
-        //父节点是否存在
-        function exists(rows, parentId){
-            for(var i=0; i<rows.length; i++){
-                if (rows[i].group_id == parentId) return true;
-            }
-            return false;
-        }
-
-        var nodes = [];
-        // get the top level nodes  得到顶级节点
-        for(var i=0; i<rows.length; i++){
-            var row = rows[i];
-            if (!exists(rows, row.pid)){
-                nodes.push({
-                    id:row.group_id,
-                    name:row.name,
-                    createDate:row.createDate
-                });
-            }
-        }
-
-        console.log("top nodes:");
-        console.log(nodes);
-
-        var toDo = [];
-        for(var i=0; i<nodes.length; i++){
-            toDo.push(nodes[i]);
-        }
-        //多父节点处理
-        while(toDo.length){
-            var node = toDo.shift();	// the parent node  shift() 方法用于把数组的第一个元素从其中删除，并返回第一个元素的值。
-            // get the children nodes
-            for(var i=0; i<rows.length; i++){
-                var row = rows[i];
-                if (row.pid == node.id){
-                    var child = {id:row.group_id,name:row.name,createDate:row.createDate};
-                    if (node.children){
-                        node.children.push(child);
-                    } else {
-                        node.children = [child];
-                    }
-                    toDo.push(child);
-                }
-            }
-        }
-        console.log("result nodes:");
-        console.log(nodes);
-        return nodes;
-    }
-
-</script>
 
 <script type="text/javascript">
 

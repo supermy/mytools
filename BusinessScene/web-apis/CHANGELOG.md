@@ -1,3 +1,81 @@
+2017-03-20
+     luar array to tree 
+     调试 URI:   http://127.0.0.1/formroutenew?html=route-neo4j-json&query=graphorglist&page=1&rows=8
+     用末模板引擎替换apoc.convert.toTree(ps)进行数据结构的转换
+ 
+    
+     
+     --为了提升效率 用 lua - arraytotree 替换 js 进行数据结构转换 
+            
+      loadFilter: function(rows){
+          return convert(rows);
+      }
+      
+      <script type="text/javascript">
+      
+          //array to tree json
+          function convert(rows){
+      
+              //父节点是否存在
+              function exists(rows, parentId){
+                  for(var i=0; i<rows.length; i++){
+                      if (rows[i].group_id == parentId) return true;
+                  }
+                  return false;
+              }
+      
+              var nodes = [];
+              // get the top level nodes  得到顶级节点
+              for(var i=0; i<rows.length; i++){
+                  var row = rows[i];
+                  if (!exists(rows, row.pid)){
+                      nodes.push({
+                          id:row.group_id,
+                          name:row.name,
+                          createDate:row.createDate
+                      });
+                  }
+              }
+      
+              console.log("top nodes:");
+              console.log(nodes);
+      
+              var toDo = [];
+              for(var i=0; i<nodes.length; i++){
+                  toDo.push(nodes[i]);
+              }
+              //多父节点处理
+              while(toDo.length){
+                  var node = toDo.shift();	// the parent node  shift() 方法用于把数组的第一个元素从其中删除，并返回第一个元素的值。
+                  // get the children nodes
+                  for(var i=0; i<rows.length; i++){
+                      var row = rows[i];
+                      if (row.pid == node.id){
+                          var child = {id:row.group_id,name:row.name,createDate:row.createDate};
+                          if (node.children){
+                              node.children.push(child);
+                          } else {
+                              node.children = [child];
+                          }
+                          toDo.push(child);
+                      }
+                  }
+              }
+              console.log("result nodes:");
+              console.log(nodes);
+              return nodes;
+          }
+      
+      </script>
+            
+2017-03-15
+    用户管理完工
+    http://127.0.0.1/formroutenew?html=rbac/user-list&query=graphuserlist&page=1&rows=8
+    
+    
+    开始组织机构维护
+    http://127.0.0.1/formroutenew?html=rbac/group-tree&query=graphorgtree&page=1&rows=8
+    
 2017-03-10
     CRUD参数数据为空的兼容处理；
     难点在于模板是 Lua语法，查询是 neo4j 语法，配置文件是 Json 语法。
