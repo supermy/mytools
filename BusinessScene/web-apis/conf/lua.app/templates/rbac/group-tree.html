@@ -8,71 +8,12 @@
 {-content-}
 
 
-<div data-options="region:'west',split:true,title:'机构备用库',collapsed:true" style="width:46%;">
+<div data-options="region:'west',split:true,title:'机构隶属用户',collapsed:true" style="width:46%;">
 
-    <div id="companylibtb" style="padding:5px;height:auto">
-        <input class="easyui-searchbox" data-options="prompt:'请输入查询条件',menu:'#searcheTool',searcher:doSearch"
-               style="width:200px"></input>
-        <div id="searcheTool">
-            <div data-options="name:'机构名称'">机构名称</div>
-            <div data-options="name:'UID',iconCls:'icon-ok'">UID</div>
-            <div data-options="name:'标签名'">标签名</div>
-        </div>
-        <a href="javascript:;" onClick="addcompany();" class="easyui-linkbutton" iconCls="icon-add"
-           plain="true">新增选中机构</a>
-        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true"
-           onclick="getChangesHRL()">数据变更</a>
-
+    <div style="margin:10px 0;"></div>
+    <div id="tabs" class="easyui-tabs" style="width:100%;height:100%;">
     </div>
 
-    <table id="companylib" class="easyui-datagrid" style="width:700px;height:auto" idField="username"
-           singleSelect="true"
-           data-options="
-                idField:'username',
-                rownumbers:true,
-                checkbox:true,
-                fitColumns:true,
-                fit:true,
-                pagination:true,
-                pageSize: pagesize1,
-                pageList: [pagesize1, pagesize1*2, pagesize1*3, pagesize1*4],
-                ctrlSelect:true,
-
-                data:dataJson2,
-                url:urlhrl,
-
-                iconCls: 'icon-edit',
-                singleSelect: true,
-                toolbar: '#companylibtb'
-    ">
-        ,
-        onLoadSuccess:function(){
-        $(this).datagrid('enableDnd');
-        },
-        onBeforeDrop:moveMonitorToHRL,
-        onDrop:saveHRLUser
-        <thead>
-
-
-        <tr>
-            <th data-options="field:'group_id',width:80">UID编号</th>
-            <th data-options="field:'name',width:250">机构名称</th>
-            <th data-options="field:'createDate',width:250">创建日期</th>
-            <th data-options="field:'org',width:250,
-                formatter:function(value,row){
-                            return row.orgname;
-                        }"> 用户列表
-            </th>
-            <th data-options="field:'roles',width:250,
-                formatter:function(value,row){
-                            return row.rolelist;
-                        }
-                    ">角色
-            </th>
-        </tr>
-        </thead>
-
-    </table>
 
 </div>
 
@@ -86,27 +27,10 @@
 
     <div id="detailTabtb" style="padding:5px;height:auto">
 
-        <!--<input class="easyui-searchbox" data-options="prompt:'请输入查询条件',menu:'#searcheTool',searcher:doSearch" style="width:200px"></input>-->
-        <!--<div id="searcheTool">-->
-            <!--<div data-options="name:'searchvalue'">机构名称</div>-->
-            <!--<div data-options="name:'searchvalue',iconCls:'icon-ok'">UID</div>-->
-            <!--<div data-options="name:'searchvalue'">标签名</div>-->
-        <!--</div>-->
-
-        <a href="javascript:;" onClick="$('body').layout('expand','west');" class="easyui-linkbutton" iconCls="icon-add" plain="true">从机构备用库新增机构</a>
-
-
-        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="append()">增加</a>
-        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="removeit()">删除</a>
         <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="accept()">保存</a>
         <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:true" onclick="reject()">取消</a>
         <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true" onclick="getChanges()">数据变更</a>
 
-        <!--<div style="margin:20px 0;">-->
-            <!--<a href="javascript:void(0)" class="easyui-linkbutton" onclick="edit()">Edit</a>-->
-            <!--<a href="javascript:void(0)" class="easyui-linkbutton" onclick="save()">Save</a>-->
-            <!--<a href="javascript:void(0)" class="easyui-linkbutton" onclick="cancel()">Cancel</a>-->
-        <!--</div>-->
     </div>
 
 
@@ -116,13 +40,14 @@
                 idField:'id',
                 treeField: 'name',
                 url:urllist,
+
                 toolbar: '#detailTabtb',
                 onContextMenu: onContextMenu,
 
                 animate: true,
                 collapsible: true,
                 rownumbers:true,
-                checkbox:true,
+                checkbox:false,
                 fitColumns:true,
                 fit:true,
                 pagination:false,
@@ -136,20 +61,12 @@
                 singleSelect: true,
                 onClickCell: onClickCell,
                 onEndEdit: onEndEdit,
-                onBeginEdit: onBeginEdit
-
+                onBeginEdit: onBeginEdit,
+                onLoadSuccess: function(row){
+				    $(this).treegrid('enableDnd', row?row.id:null);
+			    },
+			    onDrop:onDropOrg
                ">
-
-
-
-
-        ,
-        onBeforeDrop:moveMonitorToUsers,
-        onDrop:saveHRLUser,
-        onLoadSuccess:function(){
-        $(this).datagrid('enableDnd');
-        }
-
         <thead>
         <tr>
             <th data-options="field:'name',width:250,
@@ -161,42 +78,23 @@
             <th data-options="field:'createDate',width:250,
                 editor:{type:'datetimebox',
                     options:{required:true}}">创建日期</th>
-            <!--<th data-options="field:'org',width:250,-->
-                <!--formatter:function(value,row){-->
-                            <!--return row.orgname;-->
-                        <!--},-->
-                <!--editor:{type:'combotreegrid',-->
-                    <!--options:{url:orgtree, multiple:false,required:false,-->
-                            <!--idField: 'group_id',-->
-                            <!--treeField: 'text',-->
-                            <!--columns:[[-->
-                                <!--{field:'text',title:'名称',width:200},-->
-                                <!--{field:'remark',title:'备注',width:100}]]-->
-                            <!--}}-->
-                    <!--">隶属用户</th>-->
-            <!--<th data-options="field:'roles',width:250,-->
-                <!--formatter:function(value,row){-->
-                            <!--return row.rolelist;-->
-                        <!--},-->
-                <!--editor:{type:'combobox',-->
-                    <!--options:{url:rolelist, multiple:true,required:false,-->
-                            <!--valueField: 'role_id',-->
-                            <!--textField: 'name'-->
-                            <!--//width:'100%',panelWidth:500,label:'Select Item:',labelPosition:'top',-->
-                            <!--//idField:'id',textField:'text',-->
 
-                            <!--//columns:[[-->
-                            <!--//    {field:'text',title:'名称',width:200},-->
-                            <!--//    {field:'remark',title:'备注',width:100}                    ]]-->
-                            <!--}}-->
-                    <!--">角色</th>-->
+            <th data-options="field:'roles',width:250,
+                formatter:function(value,row){return row.rolelist;},
+                editor:{type:'combobox',
+                    options:{url:rolelist, multiple:true,required:false,
+                            valueField: 'role_id',
+                            textField: 'name'}}
+                    ">角色</th>
         </tr>
         </thead>
     </table>
 
 
     <div id="mm" class="easyui-menu" style="width:120px;">
-        <div onclick="append()" data-options="iconCls:'icon-add'">增加</div>
+        <div onclick="$('body').layout('expand','west');addIframeTab(orguserlist);" data-options="iconCls:'icon-list'">隶属用户</div>
+        <div class="menu-sep"></div>
+        <div onclick="append()" data-options="iconCls:'icon-add'">克隆</div>
         <div onclick="removeIt()" data-options="iconCls:'icon-remove'">删除</div>
         <div class="menu-sep"></div>
         <div onclick="collapse()">收起</div>
@@ -214,71 +112,45 @@
 
 {-page_css-}
 
+
 {-page_js-}
+<script src="easyui/treegrid-dnd.js"  type="text/javascript"></script>
 <script src="easyui/json2.js"  type="text/javascript"></script>
 
+
+<script src="easyui/jquery.tabs.extend.js"  type="text/javascript"></script>
+
+
 <script type="text/javascript">
+    var url = "http://127.0.0.1/formroutenew?html=route-neo4j-tree&query=graphorgtree";
+    var urllist = "http://127.0.0.1/formroutenew?html=route-neo4j-tree&query=graphorglist";
 
-    {% if #(formvalue[formvalue.params.query].results[1].data) == 0 then %}
-        var dataJson1={};
-    {% end%}
-    {% if #(formvalue[formvalue.params.query].results[1].data) ~= 0 then %}
-        var dataJson1={*cjson.encode(formvalue[formvalue.params.query].results[1].data[1].row[1]) *};
-    {% end%}
+    var crudurlu = "http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphorgu";
+    var dndUrl = "http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphorgdnd";
+    var crudurlc = "http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphorgc";
+    var crudurld = "http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphorgd";
 
-    var pagesize1={*formvalue.params.rows *};
-
-    var url="http://127.0.0.1/formroutenew?html=route-neo4j-tree&query=graphorgtree";
-    var urllist="http://127.0.0.1/formroutenew?html=route-neo4j-tree&query=graphorglist";
+    var rolelist = "http://127.0.0.1/formroutenew?html=route-neo4j-json&query=graphrolelist";
 
 
-    var crudurlc="http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphuserc";
-    var crudurlu="http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphorgu";
-    var crudurld="http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphuserd";
 
-    var orgtree="http://127.0.0.1/formroutenew?html=route-neo4j-tree&query=graphorgtree";
-    var rolelist="http://127.0.0.1/formroutenew?html=route-neo4j-json&query=graphrolelist";
+    var orguserlist = "http://127.0.0.1/formroutenew?html=rbac/user-list&query=graphuserlist&page=1&rows=8";
 
     var editingId;
-//    function edit(){
-//        //如果处于编辑状态，返回到当前编辑行。
-//        if (editingId != undefined){
-//            $('#detailTab').treegrid('select', editingId);
-//            return;
-//        }
-//        var row = $('#detailTab').treegrid('getSelected');
-//        if (row){
-//            editingId = row.id
-//            $('#detailTab').treegrid('beginEdit', editingId);
-//        }
-//    }
-//    function save(){
-//        console.log(editingId)
-//        if (editingId != undefined){
-//            var t = $('#detailTab');
-//            t.treegrid('endEdit', editingId);
-//            editingId = undefined;
-//        }
-//    }
-//    function cancel(){
-//        if (editingId != undefined){
-//            $('#detailTab').treegrid('cancelEdit', editingId);
-//            editingId = undefined;
-//        }
-//    }
-
 
     var editIndex = undefined;
-    function endEditing(){
-        if (editingId == undefined){return true}
-        if (editIndex == undefined){return true}
-console.log('endEditing111111');
+    function endEditing() {
+        if (editingId == undefined) {
+            return true
+        }
+        if (editIndex == undefined) {
+            return true
+        }
 
-        if ($('#detailTab').datagrid('validateRow', editIndex)){
-            console.log('endEditing'+editingId);
+        if ($('#detailTab').datagrid('validateRow', editIndex)) {
+            console.log('endEditing' + editingId);
             $('#detailTab').datagrid('endEdit', editingId);
             $('#detailTab').datagrid('endEdit', editIndex);
-            console.log('endEditing22222');
 
             editingId = undefined;
             editIndex = undefined;
@@ -295,8 +167,7 @@ console.log('endEditing111111');
         console.log(field);
 
         //同一行并且同一单元格不做处理 editIndex != index &&
-        if (editingId!=field.id) {
-            console.log(0000000000);
+        if (editingId != field.id) {
 
             //结束其他行的编辑状态
             if (endEditing()) {
@@ -309,7 +180,12 @@ console.log('endEditing111111');
                 $('#detailTab').treegrid('beginEdit', editingId);
 
 
-                var ed = $('#detailTab').datagrid('getEditor', {index: index, field: field});
+                console.log(editingId);
+                console.log(index);
+
+                var ed = $('#detailTab').treegrid('getEditor', {index: editingId, field: index});
+                console.log(ed);
+
                 if (ed) {
                     ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
                 }
@@ -323,7 +199,7 @@ console.log('endEditing111111');
         }
     }
 
-    function onEndEdit(index, row){
+    function onEndEdit(index, row) {
         //对于下拉框进行处理
 //        var ed = $(this).datagrid('getEditor', {
 //            index: index,
@@ -334,12 +210,27 @@ console.log('endEditing111111');
 //        var edorg = $(this).datagrid('getEditor',{index:index,field:'org'});
 //        row.orgname = $(edorg.target).combotree('getText');
 //
-//        var edrole = $(this).datagrid('getEditor',{index:index,field:'roles'});
-//        row.rolelist = $(edrole.target).combotree('getText');
+        console.log('===========on end edit ');
+        console.log(index);
+        console.log(row);
+//
+        var edrole = $(this).treegrid('getEditor',{index:index.id,field:'roles'});
+        console.log(edrole);
+        console.log($(edrole.target).combotree('getText'));
 
+        index.rolelist=  $(edrole.target).combotree('getText');
+
+//        index.rolelist =
+
+//        var ed = $('#detailTab').treegrid('getEditor', {index: editingId, field: index});
+//        console.log(ed);
+//
+//        if (ed) {
+//            ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
+//        }
     }
 
-    function onBeginEdit(index,row){
+    function onBeginEdit(index, row) {
 //        var ed = $(this).datagrid('getEditor',{index:index,field:'org'});
 //        $(ed.target).combotree({
 //            url: orgtree,
@@ -348,312 +239,304 @@ console.log('endEditing111111');
     }
 
 
-    function append(){
-        console.log(endEditing)
-        if (endEditing()){
-            $('#detailTab').datagrid('appendRow',{status:'P'});
-            editIndex = $('#detailTab').datagrid('getRows').length-1;
-            $('#detailTab').datagrid('selectRow', editIndex)
-                    .datagrid('beginEdit', editIndex);
-        }
-    }
+    function accept(ee) {
 
-    function removeit(){
-        if (editIndex == undefined){return}
-        $('#detailTab').datagrid('cancelEdit', editIndex)
-                .datagrid('deleteRow', editIndex);
-        editIndex = undefined;
-    }
-
-    function accept(ee){
-
-        console.log("机构编辑保存......"+JSON.stringify($('#detailTab').treegrid('showLines')));
-        console.log("机构编辑保存......"+JSON.stringify($('#detailTab').treegrid('getData')));
-        var ed=false;
-        if(endEditing()){
+        console.log("机构编辑保存......" + JSON.stringify($('#detailTab').treegrid('showLines')));
+        console.log("机构编辑保存......" + JSON.stringify($('#detailTab').treegrid('getData')));
+        var ed = false;
+        if (endEditing()) {
             ed = true;
         }
-        if (ee){
+        if (ee) {
             ed = true;
         }
 
-        if (ed){
-            var inserted = $('#detailTab').datagrid('getChanges', "inserted");
-            var deleted = $('#detailTab').datagrid('getChanges', "deleted");
-            var updated = $('#detailTab').datagrid('getChanges', "updated");
+        if (ed) {
+            var inserted = $('#detailTab').treegrid('getChanges', "inserted");
+            var deleted = $('#detailTab').treegrid('getChanges', "deleted");
+            var updated = $('#detailTab').treegrid('getChanges', "updated");
 
             var effectRow = new Object();
             if (inserted.length) {
+                inserted.forEach(function (value) {
+                    delete value.children;
+//                    console.log(value);
+                });
                 effectRow["inserted"] = JSON.stringify(inserted);
             }
 
             if (deleted.length) {
+                deleted.forEach(function (value) {
+                    delete value.children;
+//                    console.log(value);
+                });
                 effectRow["deleted"] = JSON.stringify(deleted);
             }
             if (updated.length) {
+                updated.forEach(function (value) {
+                    delete value.children;
+//                    console.log(value);
+                });
+//                console.log(updated);
                 effectRow["updated"] = JSON.stringify(updated);
             }
 
             console.log(Object.keys(effectRow).length);
 
-            if(Object.keys(effectRow).length!=0){
-                console.log(effectRow["updated"]!=undefined);
-                console.log(effectRow["deleted"]!=undefined);
-                console.log(effectRow["inserted"]!=undefined);
+            if (Object.keys(effectRow).length != 0) {
+                console.log(effectRow["updated"] != undefined);
+                console.log(effectRow["deleted"] != undefined);
+                console.log(effectRow["inserted"] != undefined);
                 console.log(effectRow["updated"]);
                 console.log(effectRow["deleted"]);
                 console.log(effectRow["inserted"]);
 
-                if(effectRow["inserted"]!=undefined) {
+                if (effectRow["inserted"] != undefined) {
                     console.log("机构编辑 inserted......");
 
                     $.post(crudurlc, effectRow, function (response) {
                         console.log(response)
                         if (response.status) {
-                            $("#detailTab").datagrid('acceptChanges');
+                            $("#detailTab").treegrid('acceptChanges');
                         }
                     }, "JSON");
                 }
-                if(effectRow["updated"]!=undefined) {
+                if (effectRow["updated"] != undefined) {
                     $.post(crudurlu, effectRow, function (response) {
                         console.log(response)
                         if (response.status) {
-                            $("#detailTab").datagrid('acceptChanges');
+                            $("#detailTab").treegrid('acceptChanges');
                         }
                     }, "JSON");
                 }
-                if(effectRow["deleted"]!=undefined) {
+                if (effectRow["deleted"] != undefined) {
                     console.log("机构编辑 deleted......");
 
                     $.post(crudurld, effectRow, function (response) {
                         console.log(response)
                         if (response.status) {
-                            $("#detailTab").datagrid('acceptChanges');
+                            $("#detailTab").treegrid('acceptChanges');
                         }
                     }, "JSON");
                 }
             }
         }
     }
-    function reject(){
-        $('#detailTab').datagrid('rejectChanges');
+
+    function reject() {
+        if (editingId != undefined) {
+            $('#detailTab').treegrid('cancelEdit', editingId);
+        }
+        $('#detailTab').treegrid('rejectChanges');
         editIndex = undefined;
         editingId = undefined;
     }
-    function getChanges(){
-        var rows = $('#detailTab').datagrid('getChanges');
-        alert(rows.length+' rows are changed!');
+
+    function getChanges() {
+        var rows = $('#detailTab').treegrid('getChanges');
+
+
+        var inserted = $('#detailTab').treegrid('getChanges', "inserted");
+        var deleted = $('#detailTab').treegrid('getChanges', "deleted");
+        var updated = $('#detailTab').treegrid('getChanges', "updated");
+
+        $.messager.alert('提示信息!', '新建：' + JSON.stringify(inserted) + '<br/>删除：' + JSON.stringify(deleted) + "<br/>更新:" + JSON.stringify(updated), 'info');
+
+
+        console.log(inserted);
+        console.log(deleted);
+        console.log(updated);
+
     }
 
-    function doSearch(value,searchkey){
-        console.log(searchkey,value);
+    function doSearch(value, searchkey) {
+        console.log(searchkey, value);
         var detail = $('#detailTab');
         //alert('您查询的条件是: ' + value+'('+searchkey+')');
-        detail.datagrid('load',{
-            searchvalue:'.*'+value+'.*'
+        detail.treegrid('load', {
+            searchvalue: '.*' + value + '.*'
         });
     }
 
-    function onContextMenu(e,row){
+    function onContextMenu(e, row) {
         console.log(row);
-        if (row){
+        if (row) {
             e.preventDefault();
             $(this).treegrid('select', row.id);
-            $('#mm').menu('show',{
+            $('#mm').menu('show', {
                 left: e.pageX,
                 top: e.pageY
             });
         }
     }
-
-//    var idIndex = 100;
-//    function append(){
-//        idIndex++;
-//        var d1 = new Date();
-//        var d2 = new Date();
-//        d2.setMonth(d2.getMonth()+1);
-//        var node = $('#detailTab').treegrid('getSelected');
-//        $('#detailTab').treegrid('append',{
-//            parent: node.id,
-//            data: [{
-//                id: idIndex,
-//                name: 'New Task'+idIndex,
-//                persons: parseInt(Math.random()*10),
-//                begin: $.fn.datebox.defaults.formatter(d1),
-//                end: $.fn.datebox.defaults.formatter(d2),
-//                progress: parseInt(Math.random()*100)
-//            }]
-//        })
-//    }
-//
-    function removeIt(){
-        var node = $('#detailTab').treegrid('getSelected');
-        if (node){
-            $('#detailTab').treegrid('remove', node.id);
-        }
+    function copy(obj) {
+        // JSON解析之类的其实如果给定格式不对很容易出错滴，自己做好检验~
+        return JSON.parse(JSON.stringify(obj));
     }
 
-    function collapse(){
+
+    function append() {
+
+        console.log(endEditing)
+//        if (endEditing()) {
+
+//            $('#detailTab').treegrid('appendRow',{status:'P'});
+//            editIndex = $('#detailTab').datagrid('getRows').length-1;
+//            $('#detailTab').treegrid('selectRow', editIndex)
+//                    .datagrid('beginEdit', editIndex);
+
+
+        var nodeS = $('#detailTab').treegrid('getSelected');
+        var parentid = nodeS.id;
+
+        var node = copy(nodeS);
+
+        delete node.children;
+        delete node.isroot;
+        delete node._parentId;
+
+        node.id = node.id + new Date().getTime();
+        node.group_id = node.id;
+
+        node.pid = parentid;
+        node.parent_id = node.pid;
+
+
+        console.log(node);
+
+        $('#detailTab').treegrid('append', {
+            parent: parentid,
+            data: [node]
+        });
+
+
+//
+        //构造后台更新需要的数据格式
+        var trees = new Array();
+        trees[0] = node;
+        var dnd = new Object();
+        dnd["inserted"] = JSON.stringify(trees);
+
+        $.post(crudurlc, dnd, function (response) {
+            console.log(response);
+            if (response.status) {
+                $("#detailTab").treegrid('acceptChanges');
+            }
+        }, "JSON");
+
+        editIndex = undefined;
+
+
+    }
+
+    function removeIt() {
+
         var node = $('#detailTab').treegrid('getSelected');
-        if (node){
+        if (node) {
+            $('#detailTab').treegrid('remove', node.id);
+        }
+
+        //构造后台更新需要的数据格式
+        var trees = new Array();
+        trees[0] = node;
+        var dnd = new Object();
+        dnd["deleted"] = JSON.stringify(trees);
+        $.post(crudurld, dnd, function (response) {
+            console.log(response);
+            if (response.status) {
+                $("#detailTab").treegrid('acceptChanges');
+            }
+        }, "JSON");
+
+
+        editIndex = undefined;
+
+
+    }
+
+
+    function collapse() {
+        var node = $('#detailTab').treegrid('getSelected');
+        if (node) {
             $('#detailTab').treegrid('collapse', node.id);
         }
     }
-    function expand(){
+    function expand() {
         var node = $('#detailTab').treegrid('getSelected');
-        if (node){
+        if (node) {
             $('#detailTab').treegrid('expand', node.id);
         }
     }
 
-</script>
+    function onDropOrg(targetRow, sourceRow, point) {
+//        editIndex = undefined;
 
+        console.log(targetRow);
+        console.log(sourceRow);
+        console.log(point);
+        //构造后台更新需要的数据格式
+        var trees = new Array();
+
+
+        trees[0] = sourceRow;
+        var dnd = new Object();
+
+
+        dnd["updated"] = JSON.stringify(trees);
+        $.post(crudurlu, dnd, function (response) {
+            console.log(response)
+            if (response.status) {
+                $("#detailTab").treegrid('acceptChanges');
+            }
+        }, "JSON");
+
+        console.log(trees);
+//        editIndex = undefined;
+        $(this).treegrid('enableDnd');
+
+    }
+
+</script>
 
 
 <script type="text/javascript">
-
-
-    var urlhrl="http://127.0.0.1/formroutenew?html=route-neo4j-json&query=graphhrllist";
-    var crudhrlurlc="http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphhrc";
-    var crudhrlurlu="http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphhru";
-    var crudhrlurld="http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphhrd";
-
-    var dataJson2={"total":20,"rows":[
-        {"createDate":"2016-12-24 22:42:00","orgname":"前端-h5","org":"h5","avatar_id":"1","username":"alex9","namecn":"李四9","password":"$2a$10$04TVADrR6\/SPLBjsK0N30.Jf5fNjBugSACeGv1S69dZALR7lSov0y","id":"9","updateBy":"system2","updateDate":"2016-12-24 22:42","rolelist":"普通机构","enabled":"1","createBy":"system1","roles":"ROLE_USER"}
-    ]};
-
-
-
     $(function(){
-            //初始化到 data-options 中配置完成
+        //$('#tabs').tabs('addEventParam');
     });
+    var count = 0;
+    function addIframeTab(url){
+        var nodeS = $('#detailTab').treegrid('getSelected');
+        var title=nodeS.name;
 
+        url = url + "&org="+nodeS.group_id;
 
-    /*
-        从机构备用库到添加到机构列表
-     */
-    function addcompany(){
-        var data = $("#companylib").datagrid("getSelections");
-        //appendhrl(data)
-        accepthrl();
-        $.messager.alert('温馨提示','本标签新增加机构'+data.length+'人\r\n');
-        console.debug(data);
-
-    }
-
-
-    /*
-        从机构备用库删除数据
-     */
-    function removeithrl(line){
-        var editIndex = line;
-        if (editIndex == undefined){return}
-        $('#companylib').datagrid('cancelEdit', editIndex)
-                .datagrid('deleteRow', editIndex);
-        accepthrl();
-        editIndex = undefined;
-    }
-
-    function getChangesHRL(){
-        var rows = $('#companylib').datagrid('getChanges');
-        alert(rows.length+' rows are changed!');
-    }
-
-    /*
-        机构备用库的增删改查
-    */
-    function accepthrl(){
-        console.log("机构备用编辑保存......");
-
-        // if (endEditing()){
-            var inserted = $('#companylib').datagrid('getChanges', "inserted");
-            var deleted = $('#companylib').datagrid('getChanges', "deleted");
-            var updated = $('#companylib').datagrid('getChanges', "updated");
-
-            var effectRow = new Object();
-            if (inserted.length) {
-                effectRow["inserted"] = JSON.stringify(inserted);
-            }
-
-            if (deleted.length) {
-                effectRow["deleted"] = JSON.stringify(deleted);
-            }
-            if (updated.length) {
-                effectRow["updated"] = JSON.stringify(updated);
-            }
-
-            console.log(Object.keys(effectRow).length);
-
-            if(Object.keys(effectRow).length!=0){
-                console.log(effectRow["updated"]!=undefined);
-                console.log(effectRow["deleted"]!=undefined);
-                console.log(effectRow["inserted"]!=undefined);
-                console.log(effectRow["updated"]);
-                console.log(effectRow["deleted"]);
-                console.log(effectRow["inserted"]);
-
-                if(effectRow["inserted"]!=undefined) {
-                    console.log("机构备用编辑 inserted......");
-
-                    $.post(crudhrlurlc, effectRow, function (response) {
-                        console.log(response)
-                        if (response.status) {
-                            $("#companylib").datagrid('acceptChanges');
+        if ($('#tabs').tabs('exists', title)){
+            $('#tabs').tabs('select', title);
+        } else {
+            $('#tabs').tabs('addIframeTab',{
+                //tab参数为一对象，其属性同于原生add方法参数
+                tab:{
+                    title:title,
+                    closable:true,
+                    tools:[{
+                        iconCls:'icon-mini-refresh',
+                        handler:function(e){
+                            var title = $(e.target).parent().parent().text();
+                            $('#tabs').tabs('updateIframeTab',{'which':title});
                         }
-                    }, "JSON");
-                }
-                if(effectRow["updated"]!=undefined) {
-                    $.post(crudhrlurlu, effectRow, function (response) {
-                        console.log(response)
-                        if (response.status) {
-                            $("#companylib").datagrid('acceptChanges');
-                        }
-                    }, "JSON");
-                }
-                if(effectRow["deleted"]!=undefined) {
-                    console.log("机构备用编辑deleted......");
-
-                    $.post(crudhrlurld, effectRow, function (response) {
-                        console.log(response)
-                        if (response.status) {
-                            $("#companylib").datagrid('acceptChanges');
-                        }
-                    }, "JSON");
-                }
-            }
-        //}
-    }
+                    }]
+                },
+                //iframe参数用于设置iframe信息，包含：
+                //src[iframe地址],frameBorder[iframe边框,，默认值为0],delay[淡入淡出效果时间]
+                //height[iframe高度，默认值为100%],width[iframe宽度，默认值为100%]
+                iframe:{src:url}
+            });
+            $('#tabs').tabs('addEventParam');
+        }
 
 
-    function saveHRLUser() {
-        accepthrl();
-        accept(true);
-    }
-        /*
-            机构调动监控日志
-         */
-    function moveMonitorToHRL(targetRow,sourceRow,point){
-//        accepthrl();
-//        accept(true);
-        var myDate = new Date();
-//        if(targetRow.targettable=='lib' && sourceRow.targettable=='labers'){
-//            $('#log').prepend(myDate.toLocaleString()+': 新增了一个人到本标签库，机构名称：'+targetRow.name+'<br/>');
-//        }
-//        if(targetRow.targettable=='labers' && sourceRow.targettable=='lib'){
-            $('#log').prepend(myDate.toLocaleString()+': 删除了一个人，机构名称：'+sourceRow.namecn+'<br/>');
-//        }
-    }
-    function moveMonitorToUsers(targetRow,sourceRow,point){
-//        accepthrl();
-//        accept(true);
-        var myDate = new Date();
-//        if(targetRow.targettable=='lib' && sourceRow.targettable=='labers'){
-            $('#log').prepend(myDate.toLocaleString()+': 从本标签库新增了一个人，机构名称：'+sourceRow.namecn+'<br/>');
-//        }
-//        if(targetRow.targettable=='labers' && sourceRow.targettable=='lib'){
-//            $('#log').prepend(myDate.toLocaleString()+': 删除了一个人，机构名称：'+targetRow.name+'<br/>');
-//        }
     }
 </script>
+
 
 {-page_js-}

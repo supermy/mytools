@@ -3,7 +3,7 @@
 
 -- 用lua进行面向对象的编程,声明方法和调用方法统一用冒号,对于属性的调用全部用点号
 
-
+require "utils"
 require "print_r"
 local log = require "log"
 
@@ -245,15 +245,23 @@ function _M:genQueryRules()
             tempargs=string.gsub(tempargs, "}}\"", "*}")
 
 
-            log.debug(type(args["updated"]))
-            log.debug(args["updated"])
+--            log.debug(type(args["updated"]))
+--            log.debug(args["updated"])
+--            log.debug(cjson.encode(argsp))
+--            log.debug(cjson.encode(args))
 
 
+--           local func     = template.compile(cjson.encode(argsp))
             local func     = template.compile(tempargs)
             local realargs = func(args)
 --          local realargs = template.render(cjson.encode(argsp), args)
 
---            ngx.say(realargs);
+            --local updated = args.updated
+            --local data1=delCollectElement(cjson.decode(updated),'children');
+            --ngx.say(cjson.encode(delCollectElement(cjson.decode(updated),'children')));
+
+
+            --            ngx.say(realargs);
 --            ngx.exit(ngx.HTTP_OK);
 
             log.debug(realargs)

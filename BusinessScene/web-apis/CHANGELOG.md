@@ -1,3 +1,15 @@
+2017-03-22
+    用户增删改查；用户与角色，用户与组织机构关系处理；
+    组织结构增删改查；组织机构与角色，组织机构与用户关系处理；
+    
+
+    组织机构关联用户查询测试
+    http://127.0.0.1/formroutenew?html=rbac/user-list&query=graphuserlist&page=1&rows=8&org=sys
+    
+2017-03-21
+     前后端清除 children 双重保护机制；过多的数据会导致 lua 转换错误；
+     
+     
 2017-03-20
      luar array to tree 
      调试 URI:   http://127.0.0.1/formroutenew?html=route-neo4j-json&query=graphorglist&page=1&rows=8

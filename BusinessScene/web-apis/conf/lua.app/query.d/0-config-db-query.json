@@ -21,15 +21,70 @@
     "password": "123456"
   },
   "list": {
-    "graphorgu": {
-      "desc": "批量更新 -NEO4J  组织机构，需要处理组织机构的上下级关系。 CQL:更新组织机构信息；清除上级组织机构；查找上级组织机构；与上级组织机构建立关系",
+    "graphorgdnd": {
+      "desc": "编辑树结构 当拖放一个节点时，树将向服务器传递下列参数：id - 被拖拽的节点 id。 targetId - 被放置的节点。todo",
       "url": "http://172.16.63.88:7474/db/data/transaction/commit",
       "param": {
         "statements": [
           {
-            "statement": "UNWIND {updated} AS line  MERGE ( group:Group {group_id:line.group_id}) SET group=line   MERGE ()-[pcg:PCGROUP]->(group) delete pcg  MERGE (groupparent:Group{id:line._parentId})  MERGE (groupparent)-[ug:PCGROUP]->(group)",
+            "statement": "WITH {id},{targetId},{point} as result return result",
             "parameters": {
-              "updated":"{{updated}}",
+              "id":"{{id}}",
+              "targetId": "{{targetId}}",
+              "point": "{{point}}"
+            }
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+
+    "graphorgd": {
+      "desc": "批量删除 - 删除对象；清除掉所有关系",
+      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": " UNWIND {deleted}  AS line  MATCH (n:Group{group_id:line.group_id}) OPTIONAL MATCH ()-[r]-(n) DELETE n,r",
+            "parameters": {
+              "deleted":"{{deleted}}",
+              "page": "{{(page==nil or page=='') and 1 or page}}",
+              "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
+            }
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+    "graphorgc": {
+      "desc": "批量创建 -NEO4J  组织机构，需要处理组织机构的上下级关系。 CQL:创建组织机构；清除上级组织机构；查找上级组织机构；与上级组织机构建立关系 ;删除 EasyUI TreeGrid 产生的 children 的数据，方便数据处理，也可通过 Set 指定属性值 ;Foreach+Case = if 一次多条记录时候使用;单条数据使用 lua-if 模板语法处理",
+      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": "UNWIND {inserted} AS line CREATE  ( group:Group {group_id:line.group_id}) SET group=line ,group.pid=line._parentId        FOREACH(ignoreMe IN CASE line.isroot WHEN null THEN [1] ELSE [] END |   MERGE (groupparent:Group{group_id:line._parentId})  MERGE (groupparent)-[ug:PCGROUP]->(group)   )",
+            "parameters": {
+              "inserted":"{{ delCollectElement(inserted,'children') }}",
+              "page": "{{(page==nil or page=='') and 1 or page}}",
+              "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
+            }
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+    "graphorgu": {
+      "desc": "批量更新 -NEO4J  组织机构，需要处理组织机构的上下级关系。 CQL:更新组织机构信息；清除上级组织机构；查找上级组织机构；与上级组织机构建立关系 ;删除 EasyUI TreeGrid 产生的 children 的数据，方便数据处理，也可通过 Set 指定属性值 ;Foreach+Case = if 一次多条记录时候使用;单条数据使用 lua-if 模板语法处理；更新角色关系:清除原有的角色关系，重新建立角色关系",
+      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": "UNWIND {updated} AS line  MERGE  ( group:Group {group_id:line.group_id}) SET group=line ,group.pid=line._parentId    MERGE ()-[pcg:PCGROUP]->(group) delete pcg   FOREACH(ignoreMe IN CASE line.isroot WHEN null THEN [1] ELSE [] END |   MERGE (groupparent:Group{group_id:line._parentId})  MERGE (groupparent)-[ug:PCGROUP]->(group)   )             MERGE ( group)-[gr1:GR]->() delete gr1  FOREACH( roleline in  split(line.roles,\",\") |   MERGE(role:Role{role_id:roleline})  MERGE (group)-[gr:GR]->(role)  )  ",
+            "parameters": {
+              "updated":"{{ delCollectElement(updated,'children') }}",
               "page": "{{(page==nil or page=='') and 1 or page}}",
               "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
             }
@@ -160,14 +215,15 @@
 
 
     "graphuserlist": {
-      "desc": "NEO4J  使用 SKIP LIMIT 进行 分页查询 ；EasyUI分页参数是 page and rows ,三元表达式增加默认数据 ,计算开始记录 (toInt({page})-1)*toInt({rows}),每页记录数 ；支持 lua-template 模板引擎，灵活的组织查询语句，{% if not (searchvalue == nil or searchvalue == '') then %} WHERE n.username=~{searchvalue} AND n.namecn=~{searchvalue} {% end %};",
+      "desc": "EasyUI二次加载的参数传递;参数{* *}是字符串；{{ }} 是 json 数据;NEO4J  使用 SKIP LIMIT 进行 分页查询 ；EasyUI分页参数是 page and rows ,三元表达式增加默认数据 ,计算开始记录 (toInt({page})-1)*toInt({rows}),每页记录数 ；支持 lua-template 模板引擎，灵活的组织查询语句，{% if not (searchvalue == nil or searchvalue == '') then %} WHERE n.username=~{searchvalue} AND n.namecn=~{searchvalue} {% end %};",
       "url": "http://172.16.63.88:7474/db/data/transaction/commit",
       "param": {
         "statements": [
           {
-            "statement": "MATCH  (n:User) {% if not (searchvalue == nil or searchvalue == '') then %} WHERE n.username=~{searchvalue} OR n.namecn=~{searchvalue} {% end %}    WITH count(*) AS cnt  MATCH  (n:User)  {% if not (searchvalue == nil or searchvalue == '') then %} WHERE n.username=~{searchvalue} OR n.namecn=~{searchvalue} {% end %}   WITH   n, cnt SKIP (toInt({page})-1)*toInt({rows}) LIMIT toInt({rows})   RETURN   { total: cnt, rows:collect(n) } AS molecules",
+            "statement": "{% if not (org ~= nil and org ~= '') then %} 	MATCH (n:User) {% else %}   	MATCH (g:Group)-[r:GU]->(n:User) where g.group_id={org}	{% end %}   {% if not (searchvalue == nil or searchvalue == '') then %}  {% if not (org ~= nil and org ~= '') then %} WHERE   {% else %} and {% end %}   (n.username=~{searchvalue} OR n.namecn=~{searchvalue}) {% end %}  WITH count(*) AS cnt {% if not (org ~= nil and org ~= '') then %} 	MATCH (n:User) {% else %}   	MATCH (g:Group)-[r:GU]->(n:User) where g.group_id={org}	{% end %}   {% if not (searchvalue == nil or searchvalue == '') then %}  {% if not (org ~= nil and org ~= '') then %} WHERE   {% else %} and {% end %}   (n.username=~{searchvalue} OR n.namecn=~{searchvalue}) {% end %} WITH   n, cnt SKIP (toInt({page})-1)*toInt({rows}) LIMIT toInt({rows})   RETURN   { total: cnt, rows:collect(n) } AS molecules",
             "parameters": {
               "searchvalue":"{{(searchvalue==nil or searchvalue=='') and '\".*\"' or '\"'..searchvalue..'\"'}}",
+              "org":"{* org *}",
               "page": "{{(page==nil or page=='') and 1 or page}}",
               "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
             }
