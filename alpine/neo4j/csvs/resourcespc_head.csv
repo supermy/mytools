@@ -1,1 +1,1 @@
-id,pid:END_ID(Resource),name,url,type,module:START_ID(Resource),remark,enabled,createDate,updateDate,createBy,updateBy
+oid,pid:END_ID(Resource),name,url,type,id:START_ID(Resource),remark,enabled,createDate,updateDate,createBy,updateBy

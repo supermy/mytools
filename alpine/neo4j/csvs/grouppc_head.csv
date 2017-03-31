@@ -1,1 +1,1 @@
-id,group_id:END_ID(Group),name,pid:START_ID(Group),principal,remark,enabled,createDate,updateDate,createBy,updateBy
+oid,id:END_ID(Group),name,pid:START_ID(Group),principal,remark,enabled,createDate,updateDate,createBy,updateBy

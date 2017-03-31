@@ -1,1 +1,1 @@
-id,pid,name,url,type,module:ID(Resource),remark,enabled,createDate,updateDate,createBy,updateBy
+oid,pid,name,url,type,id:ID(Resource),remark,enabled,createDate,updateDate,createBy,updateBy

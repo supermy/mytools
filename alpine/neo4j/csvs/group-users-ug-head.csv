@@ -1,1 +1,1 @@
-id,:END_ID(Group),:START_ID(User),enabled,createDate,updateDate,createBy,updateBy
+oid,:END_ID(Group),:START_ID(User),enabled,createDate,updateDate,createBy,updateBy

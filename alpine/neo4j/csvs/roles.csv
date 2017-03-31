@@ -1,6 +1,11 @@
-id,role_id:ID(Role),name,remark,enabled,createDate,updateDate,createBy,updateBy
-1,ROLE_ADMIN,管理员,测试数据,1,2016-12-24 22:42,2016-12-24 22:42,system1,system2
-2,ROLE_USER,普通用户,测试数据,1,2016-12-24 22:42,2016-12-24 22:42,system1,system2
-3,ROLE_GUEST,游客,测试数据,1,2016-12-24 22:42,2016-12-24 22:42,system1,system2
-4,ROLE_WEBJS,WEBJS开发,测试数据,1,2016-12-24 22:42,2016-12-24 22:42,system1,system2
-5,ROLE_WEBCSS,WEBCSS开发,测试数据,1,2016-12-24 22:42,2016-12-24 22:42,system1,system2
+id:ID(Role),name,remark,enabled,createDate,updateDate,createBy,updateBy
+ROLE_ADMIN,管理员,测试数据,1,2016-12-24 22:42,2016-12-24 22:42,system1,system2
+ROLE_USER,普通用户,测试数据,1,2016-12-24 22:42,2016-12-24 22:42,system1,system2
+ROLE_GUEST,游客,测试数据,1,2016-12-24 22:42,2016-12-24 22:42,system1,system2
+ROLE_WEB,WEB开发,测试数据,1,2016-12-24 22:42,2016-12-24 22:42,system1,system2
+ROLE_WEBJS,WEBJS开发,测试数据,1,2016-12-24 22:42,2016-12-24 22:42,system1,system2
+ROLE_WEBCSS,WEBCSS开发,测试数据,1,2016-12-24 22:42,2016-12-24 22:42,system1,system2
+ROLE_WEBH5,WEBH5开发,测试数据,1,2016-12-24 22:42,2016-12-24 22:42,system1,system2
+ROLE_APP,WEB开发,测试数据,1,2016-12-24 22:42,2016-12-24 22:42,system1,system2
+ROLE_APPSB,WEBSB开发,测试数据,1,2016-12-24 22:42,2016-12-24 22:42,system1,system2
+ROLE_APPES,WEBES开发,测试数据,1,2016-12-24 22:42,2016-12-24 22:42,system1,system2

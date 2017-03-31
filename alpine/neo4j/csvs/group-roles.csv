@@ -1,4 +1,4 @@
-id,:START_ID(Group),:END_ID(Role),enabled,createDate,updateDate,createBy,updateBy
+oid,:START_ID(Group),:END_ID(Role),enabled,createDate,updateDate,createBy,updateBy
 1,web,ROLE_ADMIN,1,2016-12-24 22:44,2016-12-24 22:44,system1,system2
 2,app,ROLE_USER,1,2016-12-24 22:44,2016-12-24 22:44,system1,system2
 3,sys,ROLE_GUEST,1,2016-12-24 22:44,2016-12-24 22:44,system1,system2
