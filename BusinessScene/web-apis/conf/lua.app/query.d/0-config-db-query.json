@@ -1,8 +1,8 @@
 {
   "name": "表单查询路由列表",
   "desc": "query 传入查询语句的id,结果返回到key;参数全部收集到param;",
-  "url": "http://172.16.63.88/formroutequery",
-  "urlrest": "http://172.16.63.88:9006/form/rest/",
+  "url": "http://172.16.63.62/formroutequery",
+  "urlrest": "http://172.16.63.62:9006/form/rest/",
   "webbase": {
     "url": "http://127.0.0.1",
     "desc": "页面的base url,方便动态页面的静态资源统一定位。"
@@ -21,9 +21,242 @@
     "password": "123456"
   },
   "list": {
+    "graph-rabc-login": {
+      "desc": "登录",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": "  MATCH (user:User) where user.name={username}  and user.passwd=apoc.util.md5(split({passwd},\",\") ) return {login:user is not null} ",
+            "parameters": {
+              "username":"{*username*}",
+              "passwd":"{*passwd*}"
+            }
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+
+    "graph-rbac-userreslist": {
+      "desc": "批量删除 - 用户具备的资源;用户所在的组具备的权限：",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": "MATCH (u:User{id:{id}})-[:HASROLE]-(role:Role)-[:HASAUTH]-(auth:Auth)-[:HASRESOURCE]-(res:Resource)   RETURN  u.namecn,res.url,res.name   UNION   MATCH (u:User)-[:HASUSER]-(group:Group)-[:HASROLE]-(role:Role)-[:HASAUTH]-(auth:Auth)-[:HASRESOURCE]-(res:Resource) RETURN  u.namecn,res.url,res.name   ",
+            "parameters": {
+              "deleted":"{{username}}"
+            }
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+
+    "graph-rabc-authd": {
+      "desc": "批量删除 - 删除对象；清除掉所有关系",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": " UNWIND {deleted}  AS line  MATCH (n:Auth{id:line.id}) OPTIONAL MATCH ()-[r]-(n) DELETE n,r",
+            "parameters": {
+              "deleted":"{{deleted}}",
+              "page": "{{(page==nil or page=='') and 1 or page}}",
+              "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
+            }
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+
+    "graph-rbac-roled": {
+      "desc": "批量删除 - 删除对象；清除掉所有关系",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": " UNWIND {deleted}  AS line  MATCH (n:Role{id:line.id}) OPTIONAL MATCH ()-[r]-(n) DELETE n,r",
+            "parameters": {
+              "deleted":"{{deleted}}",
+              "page": "{{(page==nil or page=='') and 1 or page}}",
+              "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
+            }
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+
+    "graph-rbac-authc": {
+      "desc": "批量更新 -NEO4J  进行 角色crud 数量处理，支持 EasyUI 的acceptChanges特性，增加删除修改都支持批量数据;{{ updated }} 自动由字符串处理成为 JSON 对象！; [{{updated}}]数组格式兼容数据为空的场景！关系处理有不同的入口，展示的时候需要通过关系提取数据，避免覆盖其他入口的数据；处理角色与组织机构，角色与权限，创建之前先清除;角色与用户的关联关系。",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": "UNWIND {inserted} AS line  MERGE (auth:Auth {id:line.id}) SET auth=line    MERGE (auth)-[ar1:HASRES]->() delete ar1    FOREACH( resline in  line.resources |   MERGE(res:Resource{id:resline})  MERGE (auth)-[ar:HASRES]->(res)  )    MERGE ()-[ra1:HASAUTH]->(auth) delete ra1    FOREACH( roleline in  line.roles |   MERGE(role:Role{id:roleline})  MERGE (role)-[ra:HASAUTH]->(auth)  )",
+            "parameters": {
+              "updated":"{{inserted}}",
+              "page": "{{(page==nil or page=='') and 1 or page}}",
+              "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
+            }
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+    "graph-rbac-authu": {
+      "desc": "批量更新 -NEO4J  进行 角色crud 数量处理，支持 EasyUI 的acceptChanges特性，增加删除修改都支持批量数据;{{ updated }} 自动由字符串处理成为 JSON 对象！; [{{updated}}]数组格式兼容数据为空的场景！关系处理有不同的入口，展示的时候需要通过关系提取数据，避免覆盖其他入口的数据；处理角色与组织机构，角色与权限，创建之前先清除;角色与用户的关联关系。",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": "UNWIND {updated} AS line  MERGE (auth:Auth {id:line.id}) SET auth=line    MERGE (auth)-[ar1:HASRES]->() delete ar1    FOREACH( resline in  line.resources |   MERGE(res:Resource{id:resline})  MERGE (auth)-[ar:HASRES]->(res)  )    MERGE ()-[ra1:HASAUTH]->(auth) delete ra1    FOREACH( roleline in  line.roles |   MERGE(role:Role{id:roleline})  MERGE (role)-[ra:HASAUTH]->(auth)  )",
+            "parameters": {
+              "updated":"{{updated}}",
+              "page": "{{(page==nil or page=='') and 1 or page}}",
+              "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
+            }
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+
+    "graph-rabc-resourced": {
+      "desc": "批量删除 - 删除对象；清除掉所有关系",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": "UNWIND {deleted}  AS line  	MATCH (n:Resource{id:line.id}) 	OPTIONAL MATCH ()-[r]-(n) DELETE n,r",
+            "parameters": {
+              "deleted":"{{deleted}}",
+              "page": "{{(page==nil or page=='') and 1 or page}}",
+              "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
+            }
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+
+    "graph-rbac-resourcec": {
+      "desc": "批量创建 -NEO4J   资源，需要处理资源的上下级关系。 CQL:创建资源；清除上级资源；查找上级资源；与上级资源建立关系 ;删除 EasyUI TreeGrid 产生的 children 的数据，方便数据处理，也可通过 Set 指定属性值 ;Foreach+Case = if 一次多条记录时候使用;单条数据使用 lua-if 模板语法处理",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": "UNWIND {inserted} AS line	 CREATE  (resource:Resource) SET resource=line ,resource.pid=line._parentId 			MERGE (resource)-[pcr:PARENTRES]->() delete pcr			FOREACH(ignoreMe IN CASE line.isroot WHEN null THEN [1] ELSE [] END |   MERGE (resourceparent:Resource{id:line._parentId})    MERGE (resource)-[:PARENTRES]->(resourceparent))    MERGE ()-[ar:HASRES]->(resource) delete ar   FOREACH( authline in  line.auths |   MERGE(auth:Auth{id:authline})  MERGE (auth)-[ar1:HASRES]->(resource)  )  ",
+            "parameters": {
+              "inserted":"{{ delCollectElement(inserted,'children') }}",
+              "page": "{{(page==nil or page=='') and 1 or page}}",
+              "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
+            }
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+    "graph-rbac-resourceu": {
+      "desc": "批量更新 -NEO4J  资源，需要处理资源的上下级关系。 CQL:更新资源信息；清除上级资源；查找上级资源；与上级资源建立关系 ;Foreach+Case = if 一次多条记录时候使用;单条数据使用 lua-if 模板语法处理；更新角色关系:清除原有的角色关系，重新建立角色关系;todo 拖动时候关系数据是数组，不是字符串，不能证券处理。",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": "UNWIND {updated} AS line			MERGE  ( resource:Resource {id:line.id}) SET resource=line ,resource.pid=line._parentId 			MERGE (resource)-[pcr:PARENTRES]->() delete pcr			FOREACH(ignoreMe IN CASE line.isroot WHEN null THEN [1] ELSE [] END |   MERGE (resourceparent:Resource{id:line._parentId})    MERGE (resource)-[:PARENTRES]->(resourceparent))    MERGE ()-[ar:HASRES]->(resource) delete ar   FOREACH( authline in  line.auths |   MERGE(auth:Auth{id:authline})  MERGE (auth)-[ar1:HASRES]->(resource)  ) ",
+            "parameters": {
+              "updated":"{{ delCollectElement(updated,'children') }}",
+              "page": "{{(page==nil or page=='') and 1 or page}}",
+              "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
+            }
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+
+    "graph-rbac-resourcelist": {
+      "desc": "NEO4J  返回组织结构树",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": "MATCH (res:Resource) 		OPTIONAL MATCH (res)<-[ar:HASRES]-(auth:Auth)   WITH res, collect(DISTINCT auth.id) as auths ,collect(DISTINCT auth.name) as authlist   RETURN  collect({id:res.id,pid:res.pid,name:res.name,createDate:res.createDate,url:res.url,type:res.type,auths:auths,authlist:authlist})",
+            "parameters": {}
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+
+    "graph-rbac-authlist": {
+      "desc": "NEO4J  返回权限列表",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": "       MATCH (auth:Auth)    OPTIONAL MATCH (role:Role)-[:HASAUTH]->(auth)   OPTIONAL MATCH (auth)-[:HASRES]->(resource:Resource)    WITH auth, collect(DISTINCT role.id) as roles ,collect(DISTINCT role.name) as rolelist ,collect(DISTINCT resource.id) as resources ,collect(DISTINCT resource.name) as resourcelist   return collect({id:auth.id,name:auth.name,createDate:auth.createDate,roles:roles,rolelist:rolelist,resources:resources,resourcelist:resourcelist})",
+            "parameters": {}
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+
+    "graph-rbac-rolec": {
+      "desc": "批量更新 -NEO4J  进行 角色crud 数量处理，支持 EasyUI 的acceptChanges特性，增加删除修改都支持批量数据;{{ updated }} 自动由字符串处理成为 JSON 对象！; [{{updated}}]数组格式兼容数据为空的场景！关系处理有不同的入口，展示的时候需要通过关系提取数据，避免覆盖其他入口的数据；处理角色与组织机构，角色与权限，创建之前先清除;角色与用户的关联关系。",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": "UNWIND {inserted} AS line  MERGE (role:Role {id:line.id}) SET role=line    MERGE ()-[gr1:HASROLE]->(role) delete gr1  FOREACH( orgline in  line.orgs |   MERGE(org:Group{id:orgline})  MERGE (org)-[gr:HASROLE]->(role)  )        MERGE (role)-[ra1:HASAUTH]->() delete ra1  FOREACH( authline in  line.auths|   MERGE(auth:Auth{id:authline})  MERGE (role)-[ra:HASAUTH]->(auth)  )",
+            "parameters": {
+              "updated":"{{inserted}}",
+              "page": "{{(page==nil or page=='') and 1 or page}}",
+              "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
+            }
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+    "graph-rbac-roleu": {
+      "desc": "批量更新 -NEO4J  进行 角色crud 数量处理，支持 EasyUI 的acceptChanges特性，增加删除修改都支持批量数据;{{ updated }} 自动由字符串处理成为 JSON 对象！; [{{updated}}]数组格式兼容数据为空的场景！关系处理有不同的入口，展示的时候需要通过关系提取数据，避免覆盖其他入口的数据；处理角色与组织机构，角色与权限，创建之前先清除;角色与用户的关联关系。",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
+      "param": {
+        "statements": [
+          {
+            "statement": "UNWIND {updated} AS line  MERGE (role:Role {id:line.id}) SET role=line    MERGE ()-[gr1:HASROLE]->(role) delete gr1  FOREACH( orgline in  line.orgs |   MERGE(org:Group{id:orgline})  MERGE (org)-[gr:HASROLE]->(role)  )        MERGE (role)-[ra1:HASAUTH]->() delete ra1  FOREACH( authline in  line.auths |   MERGE(auth:Auth{id:authline})  MERGE (role)-[ra:HASAUTH]->(auth)  )",
+            "parameters": {
+              "updated":"{{updated}}",
+              "page": "{{(page==nil or page=='') and 1 or page}}",
+              "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
+            }
+          }
+        ]
+      },
+      "servertype": "NEO4J",
+      "method": "POST"
+    },
+
     "graphorgdnd": {
-      "desc": "编辑树结构 当拖放一个节点时，树将向服务器传递下列参数：id - 被拖拽的节点 id。 targetId - 被放置的节点。todo",
-      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "desc": "废弃 fixme 编辑树结构 当拖放一个节点时，树将向服务器传递下列参数：id - 被拖拽的节点 id。 targetId - 被放置的节点。todo",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
       "param": {
         "statements": [
           {
@@ -40,13 +273,13 @@
       "method": "POST"
     },
 
-    "graphorgd": {
+    "graph-rbac-groupd": {
       "desc": "批量删除 - 删除对象；清除掉所有关系",
-      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
       "param": {
         "statements": [
           {
-            "statement": " UNWIND {deleted}  AS line  MATCH (n:Group{group_id:line.group_id}) OPTIONAL MATCH ()-[r]-(n) DELETE n,r",
+            "statement": "UNWIND {deleted}  AS line  MATCH (n:Group{id:line.id}) OPTIONAL MATCH ()-[r]-(n) DELETE n,r",
             "parameters": {
               "deleted":"{{deleted}}",
               "page": "{{(page==nil or page=='') and 1 or page}}",
@@ -58,13 +291,13 @@
       "servertype": "NEO4J",
       "method": "POST"
     },
-    "graphorgc": {
+    "graph-rbac-groupc": {
       "desc": "批量创建 -NEO4J  组织机构，需要处理组织机构的上下级关系。 CQL:创建组织机构；清除上级组织机构；查找上级组织机构；与上级组织机构建立关系 ;删除 EasyUI TreeGrid 产生的 children 的数据，方便数据处理，也可通过 Set 指定属性值 ;Foreach+Case = if 一次多条记录时候使用;单条数据使用 lua-if 模板语法处理",
-      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
       "param": {
         "statements": [
           {
-            "statement": "UNWIND {inserted} AS line CREATE  ( group:Group {group_id:line.group_id}) SET group=line ,group.pid=line._parentId        FOREACH(ignoreMe IN CASE line.isroot WHEN null THEN [1] ELSE [] END |   MERGE (groupparent:Group{group_id:line._parentId})  MERGE (groupparent)-[ug:PCGROUP]->(group)   )",
+            "statement": "UNWIND {inserted} AS line  CREATE  (group:Group) SET group=line ,group.pid=line._parentId    MERGE ()-[pcg:CHILDRENGROUP]->(group) delete pcg   FOREACH(ignoreMe IN CASE line.isroot WHEN null THEN [1] ELSE [] END |   MERGE (groupparent:Group{id:line._parentId})  MERGE (groupparent)-[ug:CHILDRENGROUP]->(group)   )             MERGE ( group)-[gr1:HASROLE]->() delete gr1  FOREACH( roleline in  line.roles |   MERGE(role:Role{id:roleline})  MERGE (group)-[gr:HASROLE]->(role)  ) ",
             "parameters": {
               "inserted":"{{ delCollectElement(inserted,'children') }}",
               "page": "{{(page==nil or page=='') and 1 or page}}",
@@ -76,13 +309,13 @@
       "servertype": "NEO4J",
       "method": "POST"
     },
-    "graphorgu": {
+    "graph-rbac-groupu": {
       "desc": "批量更新 -NEO4J  组织机构，需要处理组织机构的上下级关系。 CQL:更新组织机构信息；清除上级组织机构；查找上级组织机构；与上级组织机构建立关系 ;删除 EasyUI TreeGrid 产生的 children 的数据，方便数据处理，也可通过 Set 指定属性值 ;Foreach+Case = if 一次多条记录时候使用;单条数据使用 lua-if 模板语法处理；更新角色关系:清除原有的角色关系，重新建立角色关系",
-      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
       "param": {
         "statements": [
           {
-            "statement": "UNWIND {updated} AS line  MERGE  ( group:Group {group_id:line.group_id}) SET group=line ,group.pid=line._parentId    MERGE ()-[pcg:PCGROUP]->(group) delete pcg   FOREACH(ignoreMe IN CASE line.isroot WHEN null THEN [1] ELSE [] END |   MERGE (groupparent:Group{group_id:line._parentId})  MERGE (groupparent)-[ug:PCGROUP]->(group)   )             MERGE ( group)-[gr1:GR]->() delete gr1  FOREACH( roleline in  split(line.roles,\",\") |   MERGE(role:Role{role_id:roleline})  MERGE (group)-[gr:GR]->(role)  )  ",
+            "statement": "UNWIND {updated} AS line  MERGE  ( group:Group {id:line.id}) SET group=line ,group.pid=line._parentId    MERGE ()-[pcg:CHILDRENGROUP]->(group) delete pcg   FOREACH(ignoreMe IN CASE line.isroot WHEN null THEN [1] ELSE [] END |   MERGE (groupparent:Group{id:line._parentId})  MERGE (groupparent)-[ug:CHILDRENGROUP]->(group)   )             MERGE ( group)-[gr1:HASROLE]->() delete gr1  FOREACH( roleline in  line.roles |   MERGE(role:Role{id:roleline})  MERGE (group)-[gr:HASROLE]->(role)  ) ",
             "parameters": {
               "updated":"{{ delCollectElement(updated,'children') }}",
               "page": "{{(page==nil or page=='') and 1 or page}}",
@@ -95,13 +328,15 @@
       "method": "POST"
     },
 
-    "graphrolelist": {
-      "desc": "NEO4J  返回角色列表",
-      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+
+
+    "graph-rbac-rolelist": {
+      "desc": "NEO4J  返回角色列表;",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
       "param": {
         "statements": [
           {
-            "statement": "MATCH (n:Role) return COLLECT(n)",
+            "statement": " MATCH (role:Role)  OPTIONAL MATCH (group:Group)-[:HASROLE]->(role) OPTIONAL MATCH (role)-[:HASAUTH]->(auth:Auth) OPTIONAL MATCH (role)<-[:HASROLE]-(user:User) with  role,count(DISTINCT user) as usercnt ,collect(DISTINCT group.id) as orgs ,collect(DISTINCT group.name) as orglist ,collect(DISTINCT auth.id) as auths ,collect(DISTINCT auth.id) as authlist  return collect({id:role.id,name:role.name,createDate:role.createDate,orgs:orgs,orglist:orglist,auths:auths,authlist:authlist,usercnt:usercnt})",
             "parameters": {}
           }
         ]
@@ -111,7 +346,7 @@
     },
     "graphorgtree": {
       "desc": "NEO4J  返回组织结构树",
-      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
       "param": {
         "statements": [
           {
@@ -123,13 +358,13 @@
       "servertype": "NEO4J",
       "method": "POST"
     },
-    "graphorglist": {
-      "desc": "NEO4J  返回组织结构树",
-      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+    "graph-rbac-grouplist": {
+      "desc": "NEO4J  返回组织结构array object(id,pid,name) 转换为树结构 children",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
       "param": {
         "statements": [
           {
-            "statement": "MATCH (n:Group) WITH COLLECT(n) AS ps  RETURN ps;",
+            "statement": "MATCH (group:Group)     OPTIONAL MATCH (group)-[:HASROLE]->(role:Role)      OPTIONAL MATCH (group)-[:HASUSER]->(user:User)      WITH group, collect(DISTINCT role.id) as roles ,collect(DISTINCT role.name) as rolelist ,count(DISTINCT user) as usercnt      RETURN  collect({id:group.id,pid:group.pid,name:group.name,createDate:group.createDate,roles:roles,rolelist:rolelist,usercnt:usercnt})",
             "parameters": {}
           }
         ]
@@ -140,7 +375,7 @@
 
     "graphhrllist": {
       "desc": "HRL 人才资源库 使用 SKIP LIMIT 进行 分页查询 ；EasyUI分页参数是 page and rows ,三元表达式增加默认数据 ,计算开始记录 (toInt({page})-1)*toInt({rows}),每页记录数 ；支持 lua-template 模板引擎，灵活的组织查询语句，{% if not (searchvalue == nil or searchvalue == '') then %} WHERE n.username=~{searchvalue} AND n.namecn=~{searchvalue} {% end %};",
-      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
       "param": {
         "statements": [
           {
@@ -158,7 +393,7 @@
     },
     "graphhrc": {
       "desc": "批量创建与更新 -NEO4J。清除掉所有的与组织机构和角色的关系",
-      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
       "param": {
         "statements": [
           {
@@ -176,7 +411,7 @@
     },
     "graphhru": {
       "desc": "批量创建与更新 -NEO4J。清除掉所有的与组织机构和角色的关系",
-      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
       "param": {
         "statements": [
           {
@@ -195,7 +430,7 @@
 
     "graphhrd": {
       "desc": "批量删除 - 清除掉所有关系",
-      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
       "param": {
         "statements": [
           {
@@ -214,16 +449,18 @@
 
 
 
-    "graphuserlist": {
-      "desc": "EasyUI二次加载的参数传递;参数{* *}是字符串；{{ }} 是 json 数据;NEO4J  使用 SKIP LIMIT 进行 分页查询 ；EasyUI分页参数是 page and rows ,三元表达式增加默认数据 ,计算开始记录 (toInt({page})-1)*toInt({rows}),每页记录数 ；支持 lua-template 模板引擎，灵活的组织查询语句，{% if not (searchvalue == nil or searchvalue == '') then %} WHERE n.username=~{searchvalue} AND n.namecn=~{searchvalue} {% end %};",
-      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+    "graph-rbac-userlist": {
+      "desc": "20170401-EasyUI二次加载的参数传递;参数{* *}是字符串；{{ }} 是 json 数据;NEO4J  使用 SKIP LIMIT 进行 分页查询 ；EasyUI分页参数是 page and rows ,三元表达式增加默认数据 ,计算开始记录 (toInt({page})-1)*toInt({rows}),每页记录数 ；支持 lua-template 模板引擎，灵活的组织查询语句，{% if not (searchvalue == nil or searchvalue == '') then %} WHERE n.username=~{searchvalue} AND n.namecn=~{searchvalue} {% end %};",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
       "param": {
         "statements": [
           {
-            "statement": "{% if not (org ~= nil and org ~= '') then %} 	MATCH (n:User) {% else %}   	MATCH (g:Group)-[r:GU]->(n:User) where g.group_id={org}	{% end %}   {% if not (searchvalue == nil or searchvalue == '') then %}  {% if not (org ~= nil and org ~= '') then %} WHERE   {% else %} and {% end %}   (n.username=~{searchvalue} OR n.namecn=~{searchvalue}) {% end %}  WITH count(*) AS cnt {% if not (org ~= nil and org ~= '') then %} 	MATCH (n:User) {% else %}   	MATCH (g:Group)-[r:GU]->(n:User) where g.group_id={org}	{% end %}   {% if not (searchvalue == nil or searchvalue == '') then %}  {% if not (org ~= nil and org ~= '') then %} WHERE   {% else %} and {% end %}   (n.username=~{searchvalue} OR n.namecn=~{searchvalue}) {% end %} WITH   n, cnt SKIP (toInt({page})-1)*toInt({rows}) LIMIT toInt({rows})   RETURN   { total: cnt, rows:collect(n) } AS molecules",
+            "statement": "{% if isempty(org) and isempty(role) then %} 	MATCH (n:User) {% else %}  {% if not isempty(org) then %} 	MATCH (g:Group)-[r:HASUSER]->(n:User) where g.id={org}  {% end %}	{% if not isempty(role) then %}  MATCH (r:Role)<-[ur:HASROLE]-(n:User) where r.id={role}  {% end %}{% end %}  \n {% if not isempty(searchvalue) then %}	{% if  isempty(org) and isempty(role) then %} WHERE   {% else %} and {% end %}   (n.name=~{searchvalue} OR n.id=~{searchvalue}) {% end %} \n WITH count(*) AS cnt	{% if isempty(org) and isempty(role) then %} 	MATCH (n:User) {% else %}		{% if not isempty(org) then %} 	MATCH (g:Group)-[r:HASUSER]->(n:User) where g.id={org}  {% end %}		{% if not isempty(role) then %}  MATCH (r:Role)<-[ur:HASROLE]-(n:User) where r.id={role}  {% end %}	{% end %}{% if not isempty(searchvalue) then %}	{% if isempty(org) and  isempty(role)  then %} WHERE   {% else %} and {% end %}   (n.name=~{searchvalue} OR n.id=~{searchvalue}) {% end %}  \n OPTIONAL MATCH (n)-[:HASROLE]->(role:Role) \n OPTIONAL MATCH (group)-[:HASUSER]->(n) \n WITH  collect(DISTINCT role.id) as roles,collect(DISTINCT group.id) as groups,collect(DISTINCT role.name) as rolelist,collect(DISTINCT group.name) as grouplist, n, cnt SKIP (toInt({page})-1)*toInt({rows}) LIMIT toInt({rows})   \n RETURN   { total: cnt, rows:collect({id:n.id,name:n.name,createDate:n.createDate,roles:roles,org:groups,rolelist:rolelist,orgname:grouplist}) } AS molecules",
             "parameters": {
               "searchvalue":"{{(searchvalue==nil or searchvalue=='') and '\".*\"' or '\"'..searchvalue..'\"'}}",
               "org":"{* org *}",
+              "role":"{* role *}",
+
               "page": "{{(page==nil or page=='') and 1 or page}}",
               "rows": "{{(rows==nil or rows=='') and 10 or rows}}"
             }
@@ -233,13 +470,14 @@
       "servertype": "NEO4J",
       "method": "POST"
     },
-    "graphuserc": {
-      "desc": "批量创建 -NEO4J  进行 crud 数量处理，支持 EasyUI 的acceptChanges特性，增加删除修改都支持批量数据;{{ inserted }} 自动由字符串处理成为 JSON 对象！; [{{inserted}}]数组格式兼容数据为空的场景！",
-      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+
+    "graph-rbac-userc": {
+      "desc": "批量创建 - 见graph-rbac-useru！",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
       "param": {
         "statements": [
           {
-            "statement": "UNWIND {inserted} AS line  CREATE (user:User {username:line.username}) SET user=line   MERGE (user)-[ur1:UR]->() delete ur1  FOREACH( roleline in  split(line.roles,\",\") |   MERGE(role:Role{role_id:roleline})  MERGE (user)-[ur:UR]->(role)  )  MERGE(group:Group{group_id:line.org})  MERGE (user)-[ug1:UG]->() delete ug1  MERGE (user)-[ug:UG]->(group)",
+            "statement": "UNWIND {inserted} AS line  CREATE (user:User {id:line.id}) SET user=line   MERGE (user)-[ur1:HASROLE]->() delete ur1  FOREACH( roleline in  line.roles |   MERGE(role:Role{id:roleline})  MERGE (user)-[ur:HASROLE]->(role)  )  MERGE(group:Group{id:line.org})  MERGE (user)<-[ug1:HASUSER]-() delete ug1  MERGE (user)<-[ug:HASUSER]-(group)",
             "parameters": {
               "inserted":"{{inserted}}",
               "page": "{{(page==nil or page=='') and 1 or page}}",
@@ -251,13 +489,13 @@
       "servertype": "NEO4J",
       "method": "POST"
     },
-    "graphuseru": {
+    "graph-rbac-useru": {
       "desc": "批量更新 -NEO4J  进行 crud 数量处理，支持 EasyUI 的acceptChanges特性，增加删除修改都支持批量数据;{{ updated }} 自动由字符串处理成为 JSON 对象！; [{{updated}}]数组格式兼容数据为空的场景！处理用户与组织机构，用户与角色的关联关系，要清除原有的关系。",
-      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
       "param": {
         "statements": [
           {
-            "statement": "UNWIND {updated} AS line  MERGE (user:User {username:line.username}) SET user=line   MERGE (user)-[ur1:UR]->() delete ur1  FOREACH( roleline in  split(line.roles,\",\") |   MERGE(role:Role{role_id:roleline})  MERGE (user)-[ur:UR]->(role)  )  MERGE(group:Group{group_id:line.org})  MERGE (user)-[ug1:UG]->() delete ug1  MERGE (user)-[ug:UG]->(group)",
+            "statement": "UNWIND {updated} AS line  MERGE (user:User {id:line.id}) SET user=line   MERGE (user)-[ur1:HASROLE]->() delete ur1  FOREACH( roleline in  line.roles |   MERGE(role:Role{id:roleline})  MERGE (user)-[ur:HASROLE]->(role)  )  MERGE(group:Group{id:line.org})  MERGE (user)<-[ug1:HASUSER]-() delete ug1  MERGE (user)<-[ug:HASUSER]-(group)",
             "parameters": {
               "updated":"{{updated}}",
               "page": "{{(page==nil or page=='') and 1 or page}}",
@@ -269,13 +507,13 @@
       "servertype": "NEO4J",
       "method": "POST"
     },
-    "graphuserd": {
+    "graph-rbac-userd": {
       "desc": "批量删除 -NEO4J  进行 crud 数量处理，支持 EasyUI 的acceptChanges特性，增加删除修改都支持批量数据;{{ deleted }} 自动由字符串处理成为 JSON 对象！; [{{inserted}}]数组格式兼容数据为空的场景！",
-      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
       "param": {
         "statements": [
           {
-            "statement": " UNWIND {deleted}  AS u3  MATCH (n:User{username:u3.username}) OPTIONAL MATCH (n)-[r]-() DELETE n,r",
+            "statement": " UNWIND {deleted}  AS u3  MATCH (n:User{id:u3.id}) OPTIONAL MATCH (n)-[r]-() DELETE n,r",
             "parameters": {
               "deleted":"{{deleted}}",
               "page": "{{(page==nil or page=='') and 1 or page}}",
@@ -290,7 +528,7 @@
 
     "neo4jres": {
       "desc": "NEO4J 查询，参数传递到namevalue ,要求唯一且与url 的参数名称一致",
-      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
       "param": {
         "statements": [
           {
@@ -306,7 +544,7 @@
     },
     "neo4jsimple": {
       "desc": "NEO4J 查询，参数传递到namevalue ,要求唯一且与url 的参数名称一致",
-      "url": "http://172.16.63.88:7474/db/data/transaction/commit",
+      "url": "http://172.16.63.62:7474/db/data/transaction/commit",
       "param": {
         "statements": [
           {
@@ -321,7 +559,7 @@
     },
     "menures": {
       "desc": "管理左侧菜单",
-      "url": "http://172.16.63.88:9006/form/rest/resource/search/findAllByPidOrderByModuleAsc",
+      "url": "http://172.16.63.62:9006/form/rest/resource/search/findAllByPidOrderByModuleAsc",
       "param": {
         "pid": "pid"
       },
@@ -329,14 +567,14 @@
     },
     "avatar": {
       "desc": "图片信息查询",
-      "url": "http://172.16.63.88:9006/form/rest/avatar",
+      "url": "http://172.16.63.62:9006/form/rest/avatar",
       "param": {
       },
       "method": "GET"
     },
     "users": {
       "desc": "用户信息查询",
-      "url": "http://172.16.63.88:9006/form/rest/user",
+      "url": "http://172.16.63.62:9006/form/rest/user",
       "param": {
         "page": "page",
         "size": "size"
@@ -345,7 +583,7 @@
     },
     "q0": {
       "desc": "也适用于没有参数的查询语句",
-      "url": "http://127.0.0.1/data/test.json",
+      "url": "http://172.16.63.62/data/test.json",
       "param": {},
       "method": "GET"
     },
@@ -396,7 +634,7 @@
     },
     "q5": {
       "desc": "es-query dsl 查询语句 ",
-      "url": "http://172.16.63.88:9200/channel/_search",
+      "url": "http://172.16.63.62:9200/channel/_search",
       "param": {
         "query": {
           "bool": {
@@ -430,7 +668,7 @@
     },
     "q6": {
       "desc": "extjs 生成的查询通用语句for es-query，q6与q7查询语句一起使用......",
-      "url": "http://172.16.63.88:9200/channel/_search",
+      "url": "http://172.16.63.62:9200/channel/_search",
       "param": {
         "query": {
           "bool": {
@@ -446,7 +684,7 @@
     },
     "q7": {
       "desc": "extjs filter 查询，es 完成实际的查询返回实体id,spring-data 再根据实体id 查询返回数据",
-      "url": "http://172.16.63.88:9006/form/rest/channel_auth/search/findByIdList",
+      "url": "http://172.16.63.62:9006/form/rest/channel_auth/search/findByIdList",
       "param": {
         "pkId": "pkId"
       },

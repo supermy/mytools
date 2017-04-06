@@ -1,0 +1,98 @@
+{% layout = "/layouts/mylayout.html" %}
+
+
+{-title-}
+<title>组织机构管理-RBAC</title>
+{-title-}
+
+
+
+{-sidebar-}
+<!-- 侧面导航，所有管理页面一致 -->
+{-sidebar-}
+
+
+
+
+{-content-}
+    <!-- START BREADCRUMB -->
+    <ul class="breadcrumb">
+        <li><a href="#">首页</a></li>
+        <li><a href="#">RBAC</a></li>
+        <li class="active">组织机构管理</li>
+    </ul>
+    <!-- END BREADCRUMB -->
+
+    <div class="page-content-wrap">
+
+        <iframe id="J_iframe" name="iframe0" width="100%" height="100%"
+                src="http://127.0.0.1/formroutenew?html=rbac/group-tree&query=graph-rbac-grouplist"
+                frameborder="0" data-id="index_v1.html"
+                seamless></iframe>
+
+
+    </div>
+
+{-content-}
+
+
+
+{-page_css-}
+
+
+{-page_css-}
+
+
+
+
+
+{-page_js-}
+
+    <script>
+        $("#J_iframe").load(function () {
+            var mainheight = $(this).contents().find("body").height() + 500;
+            $(this).height(mainheight);
+        });
+
+    </script>
+
+
+
+
+<!-- START THIS PAGE PLUGINS-->
+
+<!--<script type="text/javascript" src="js/plugins/jquery/jquery-ui.min.js"></script>-->
+
+<!--&lt;!&ndash;返回页顶的链接导航&ndash;&gt;-->
+<!--<script type="text/javascript" src="js/plugins/scrolltotop/scrolltopcontrol.js"></script>-->
+
+<!--&lt;!&ndash;HTML5普及前，如果需要在客户端实现向量化的图形&ndash;&gt;-->
+<!--<script type="text/javascript" src="js/plugins/morris/raphael-min.js"></script>-->
+<!--&lt;!&ndash;Morris.js 是一个轻量级的 JS 库，使用 jQuery 和 Rapha&euml;l 来生成各种时序图&ndash;&gt;-->
+<!--<script type="text/javascript" src="js/plugins/morris/morris.min.js"></script>-->
+
+<!--&lt;!&ndash;时序图表&ndash;&gt;-->
+<!--<script type="text/javascript" src="js/plugins/rickshaw/d3.v3.js"></script>-->
+<!--<script type="text/javascript" src="js/plugins/rickshaw/rickshaw.min.js"></script>-->
+
+<!--&lt;!&ndash;jVectorMap库及基础样式表，编写Html文件，引入jQuery框架及地图数据&ndash;&gt;-->
+<!--<script type='text/javascript' src='js/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js'></script>-->
+<!--<script type='text/javascript' src='js/plugins/jvectormap/jquery-jvectormap-world-mill-en.js'></script>-->
+
+<!--&lt;!&ndash;日历&ndash;&gt;-->
+<!--<script type='text/javascript' src='js/plugins/bootstrap/bootstrap-datepicker.js'></script>-->
+<!--&lt;!&ndash;强大实用的jQuery幻灯片插件Owl Carousel&ndash;&gt;-->
+<!--<script type="text/javascript" src="js/plugins/owl/owl.carousel.min.js"></script>-->
+<!--&lt;!&ndash;JavaScript 日期处理类库&ndash;&gt;-->
+<!--<script type="text/javascript" src="js/plugins/moment.min.js"></script>-->
+<!--&lt;!&ndash;日历时间选择器&ndash;&gt;-->
+<!--<script type="text/javascript" src="js/plugins/daterangepicker/daterangepicker.js"></script>-->
+
+{-page_js-}
+
+
+
+
+{-page_demo_js-}
+    <!--<script type="text/javascript" src="/manage/js/demo_dashboard.js"></script>-->
+{-page_demo_js-}

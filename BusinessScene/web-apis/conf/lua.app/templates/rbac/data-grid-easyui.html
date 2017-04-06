@@ -1,0 +1,98 @@
+<!--定义展现字段-->
+
+<!--定义数据源-->
+
+
+<div id="detailTabtb" style="padding:5px;height:auto">
+
+    <input class="easyui-searchbox" data-options="prompt:'请输入查询条件',menu:'#searcheTool',searcher:doSearch" style="width:200px"></input>
+    <div id="searcheTool">
+        <div data-options="name:'searchvalue'">名称</div>
+        <div data-options="name:'searchvalue',iconCls:'icon-ok'">UID</div>
+        <div data-options="name:'searchvalue'">标签名</div>
+    </div>
+
+    <a href="javascript:;" onClick="$('body').layout('expand','west');" class="easyui-linkbutton" iconCls="icon-add" plain="true">从人才库新增人员</a>
+
+
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="append()">增加</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="removeit()">删除</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="accept()">保存</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:true" onclick="reject()">取消</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true" onclick="getChanges()">数据变更</a>
+
+</div>
+
+<table id="detailTab" class="easyui-datagrid" style="width:700px;height:auto" singleSelect="true"
+
+       data-options="
+            idField:'name',
+            rownumbers:true,
+            checkbox:true,
+            fitColumns:true,
+            fit:true,
+            pagination:true,
+            pageSize: pagesize1,
+            pageList: [pagesize1, pagesize1*2, pagesize1*3, pagesize1*4],
+            ctrlSelect:true,
+            onBeforeDrop:moveMonitorToUsers,
+            onDrop:saveHRLUser,
+
+            autoSave:true,
+            url:url,
+
+            iconCls: 'icon-edit',
+            singleSelect: true,
+            toolbar: '#detailTabtb',
+            enableDnd:true,
+            onClickCell: onClickCell,
+            onEndEdit: onEndEdit,
+            onBeginEdit: onBeginEdit,
+             onLoadSuccess:function(){
+                 $(this).datagrid('enableDnd');
+            }
+           ">
+
+    <thead>
+    <tr>
+        <th data-options="field:'id',width:80,
+            editor:{type:'validatebox',
+                options:{required:true}}">UID编号</th>
+        <th data-options="field:'name',width:250,
+            editor:{type:'validatebox',
+                options:{required:true}}">用户名称</th>
+        <th data-options="field:'createDate',width:250,
+            editor:{type:'datetimebox',
+                options:{required:true}}">创建日期</th>
+        <th data-options="field:'org',width:250,required:true,
+            formatter:function(value,row){
+                        return row.orgname;
+                    },
+            editor:{type:'combotreegrid',
+                options:{url:orgtree, multiple:false,required:true,
+                        idField: 'id',
+                        treeField: 'name',
+                        columns:[[
+                            {field:'name',title:'名称',width:200},
+                            {field:'remark',title:'备注',width:100}]]
+                        }}
+                ">组织机构</th>
+        <th data-options="field:'roles',width:250,
+            formatter:function(value,row){
+                        return row.rolelist;
+                    },
+            editor:{type:'combobox',
+                options:{url:rolelist, multiple:true,required:true,
+                        valueField: 'id',
+                        textField: 'name'
+                        //width:'100%',panelWidth:500,label:'Select Item:',labelPosition:'top',
+                        //idField:'id',textField:'text',
+
+                        //columns:[[
+                        //    {field:'text',title:'名称',width:200},
+                        //    {field:'remark',title:'备注',width:100}                    ]]
+                        }}
+                ">角色</th>
+    </tr>
+    </thead>
+</table>

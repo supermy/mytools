@@ -338,7 +338,9 @@ function _M:doQuery()
 
         --每个查询谁请求头进行处理
         if (self.mtds[keyq] == 'GET') then
-            headers["Content-Type"] = "application/json"
+--            headers["Content-Type"] = "application/json"   q0访问出现错误；
+            headers["Content-Type"] = "application/x-www-form-urlencoded"
+
         end
         if (self.mtds[keyq] == 'POST') then
             headers["Content-Type"] = "application/json; charset=UTF-8;"
@@ -369,18 +371,23 @@ function _M:doQuery()
         --TODO 定制查询 请求头进行处理
 
         log.debug(cjson.encode(headers));
-
         log.debug(valq);
         log.debug(cjson.encode(self.params[keyq]));
 
         local res, err
         if (self.mtds[keyq] == 'GET') then
+            log.debug('get');
+
             res, err = httpc:request_uri(valq, {
                 method = "GET",
                 headers = headers
             })
+
         else
+            log.debug('post');
+
             res, err = httpc:request_uri(valq, {
+
                 method = "POST",
                 body = cjson.encode(self.params[keyq]),
                 headers = headers
@@ -393,6 +400,9 @@ function _M:doQuery()
         end
 
         --返回查询结果List-json
+        log.debug(res.body);
+        --将空table编码成数组
+        cjson.encode_empty_table_as_object(false);
         local jsonvalue = cjson.decode(res.body);
         result[keyq] = jsonvalue
 

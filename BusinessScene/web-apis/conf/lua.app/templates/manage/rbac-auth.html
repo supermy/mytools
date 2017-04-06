@@ -1,0 +1,87 @@
+{% layout = "/layouts/mylayout.html" %}
+
+
+{-title-}
+<title>权限管理-RBAC</title>
+{-title-}
+
+
+
+{-sidebar-}
+<!-- 侧面导航，所有管理页面一致 -->
+{-sidebar-}
+
+
+
+
+{-content-}
+    <!-- START BREADCRUMB -->
+    <ul class="breadcrumb">
+        <li><a href="#">首页</a></li>
+        <li><a href="#">RBAC</a></li>
+        <li class="active">权限管理</li>
+    </ul>
+    <!-- END BREADCRUMB -->
+
+    <div class="page-content-wrap">
+
+        <iframe id="J_iframe" name="iframe0" width="100%" height="100%"
+                src="/formroutenew?html=rbac/auth-list&query=graph-rbac-authlist&page=1&rows=8&org=sys"
+                frameborder="0" data-id="index_v1.html"
+                seamless></iframe>
+
+
+    </div>
+
+{-content-}
+
+
+
+{-page_css-}
+
+
+{-page_css-}
+
+
+
+
+
+{-page_js-}
+
+    <script>
+        $("#J_iframe").load(function () {
+            var mainheight = $(this).contents().find("body").height() + 500;
+            $(this).height(mainheight);
+        });
+
+    </script>
+
+
+
+
+<!-- START THIS PAGE PLUGINS-->
+
+<!--<script type="text/javascript" src="js/plugins/jquery/jquery-ui.min.js"></script>-->
+
+<!--<script type="text/javascript" src="js/plugins/scrolltotop/scrolltopcontrol.js"></script>-->
+
+<!--<script type="text/javascript" src="js/plugins/morris/raphael-min.js"></script>-->
+<!--<script type="text/javascript" src="js/plugins/morris/morris.min.js"></script>-->
+<!--<script type="text/javascript" src="js/plugins/rickshaw/d3.v3.js"></script>-->
+<!--<script type="text/javascript" src="js/plugins/rickshaw/rickshaw.min.js"></script>-->
+<!--<script type='text/javascript' src='js/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js'></script>-->
+<!--<script type='text/javascript' src='js/plugins/jvectormap/jquery-jvectormap-world-mill-en.js'></script>-->
+<!--<script type='text/javascript' src='js/plugins/bootstrap/bootstrap-datepicker.js'></script>-->
+<!--<script type="text/javascript" src="js/plugins/owl/owl.carousel.min.js"></script>-->
+
+<!--<script type="text/javascript" src="js/plugins/moment.min.js"></script>-->
+<!--<script type="text/javascript" src="js/plugins/daterangepicker/daterangepicker.js"></script>-->
+
+{-page_js-}
+
+
+
+
+{-page_demo_js-}
+    <script type="text/javascript" src="/manage/js/demo_dashboard.js"></script>
+{-page_demo_js-}

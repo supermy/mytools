@@ -1,6 +1,6 @@
 /**
  * jQuery EasyUI 1.5.1
- * 
+ *
  * Copyright (c) 2009-2016 www.jeasyui.com. All rights reserved.
  *
  * Licensed under the freeware license: http://www.jeasyui.com/license_freeware.php

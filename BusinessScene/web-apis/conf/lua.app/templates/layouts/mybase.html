@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
+    {% respath='/manage' %}
 
     <!-- META SECTION -->
     {* blocks.head_base *}
@@ -19,6 +20,7 @@
     <!-- EOF CSS INCLUDE -->
 
     {* blocks.page_css *}
+
 
 
     <style>
@@ -46,7 +48,7 @@
     </style>
 
 </head>
-<body>
+<body data-spy="scroll">
 
 <!-- START PAGE CONTAINER -->
 <div class="page-container">
@@ -86,9 +88,15 @@
 <!-- START PLUGINS -->
 <script type="text/javascript" src="js/plugins/jquery/jquery.min.js"></script>
 <!--<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>-->
-
 <script type="text/javascript" src="js/plugins/jquery/jquery-ui.min.js"></script>
+
 <script type="text/javascript" src="js/plugins/bootstrap/bootstrap.min.js"></script>
+
+<!--顶部邮箱与短信提示-->
+<script type='text/javascript' src='js/plugins/icheck/icheck.min.js'></script>
+<!--右侧配置按钮-->
+<script type="text/javascript" src="js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.min.js"></script>
+
 <!-- END PLUGINS -->
 
 <!-- START THIS PAGE PLUGINS-->

@@ -1,3 +1,141 @@
+2017-04-06
+    登录 todo
+    http://127.0.0.1/formroutenew?html=route-neo4j-debug&query=graph-rabc-login
+    
+    return apoc.util.md5(split('123456',','))   //e10adc3949ba59abbe56e057f20f883e
+    return apoc.util.md5(['123456'])              e10adc3949ba59abbe56e057f20f883e
+
+    更改口令为123456
+    MATCH (u:User)
+    WITH COLLECT(u) AS us
+    FOREACH (i IN us |
+         SET i.passwd="e10adc3949ba59abbe56e057f20f883e" )
+     
+    
+    -------------------------------------------------------------------------------------------------------------------- 
+    展示关联关系的处理，通过其它入口对关系进行了修改，要在页面进行展现。
+    
+    组织管理 list
+        MATCH (group:Group) 		
+        OPTIONAL MATCH (group)-[:HASROLE]->(role:Role)  
+        OPTIONAL MATCH (group)-[:HASUSER]->(user:User)
+        WITH group, collect(DISTINCT role.id) as roles ,collect(DISTINCT role.name) as rolelist ,count(DISTINCT user) as usercnt   
+        RETURN  collect({id:group.id,pid:group.pid,name:group.name,createDate:group.createDate,roles:roles,rolelist:rolelist,usercnt:usercnt})
+    用户管理 list
+        {% if isempty(org) and isempty(role) then %} 	MATCH (n:User) {% else %}  {% if not isempty(org) then %} 	MATCH (g:Group)-[r:HASUSER]->(n:User) where g.id={org}  {% end %}	{% if not isempty(role) then %}  MATCH (r:Role)<-[ur:HASROLE]-(n:User) where r.id={role}  {% end %}{% end %}  
+        \n {% if not isempty(searchvalue) then %}	{% if  isempty(org) and isempty(role) then %} WHERE   {% else %} and {% end %}   (n.name=~{searchvalue} OR n.id=~{searchvalue}) {% end %} \n WITH count(*) AS cnt	{% if isempty(org) and isempty(role) then %} 	MATCH (n:User) {% else %}		{% if not isempty(org) then %} 	MATCH (g:Group)-[r:HASUSER]->(n:User) where g.id={org}  {% end %}		{% if not isempty(role) then %}  MATCH (r:Role)<-[ur:HASROLE]-(n:User) where r.id={role}  {% end %}	{% end %}{% if not isempty(searchvalue) then %}	{% if isempty(org) and  isempty(role)  then %} WHERE   {% else %} and {% end %}   (n.name=~{searchvalue} OR n.id=~{searchvalue}) {% end %}  
+        \n OPTIONAL MATCH (n)-[:HASROLE]->(role:Role) 
+        \n OPTIONAL MATCH (group)-[:HASUSER]->(n) 
+        \n WITH  collect(DISTINCT role.id) as roles,collect(DISTINCT group.id) as groups,collect(DISTINCT role.name) as rolelist,collect(DISTINCT group.name) as grouplist, n, cnt SKIP (toInt({page})-1)*toInt({rows}) LIMIT toInt({rows})   
+        \n RETURN   { total: cnt, rows:collect({id:n.id,name:n.name,createDate:n.createDate,roles:roles,org:groups,rolelist:rolelist,orgname:grouplist}) } AS molecules
+    角色管理
+        MATCH (role:Role)   
+        OPTIONAL MATCH (group:Group)-[:HASROLE]->(role)   
+        OPTIONAL MATCH (role)-[:HASAUTH]->(auth:Auth)
+        OPTIONAL MATCH (role)<-[:HASROLE]-(user:User)         
+        with  role,count(DISTINCT user) as usercnt ,collect(DISTINCT group.id) as orgs ,collect(DISTINCT group.name) as orglist ,collect(DISTINCT auth.id) as auths ,collect(DISTINCT auth.id) as authlist 
+        return collect({id:role.id,name:role.name,createDate:role.createDate,orgs:orgs,orglist:orglist,auths:auths,authlist:authlist,usercnt:usercnt})
+    权限列表
+        MATCH (auth:Auth) 
+        OPTIONAL MATCH (role:Role)-[:HASAUTH]->(auth)
+        OPTIONAL MATCH (auth)-[:HASRES]->(resource:Resource)         
+        WITH auth, collect(DISTINCT role.id) as roles ,collect(DISTINCT role.name) as rolelist ,collect(DISTINCT resource.id) as resources ,collect(DISTINCT resource.name) as resourcelist  
+        return collect({id:auth.id,name:auth.name,createDate:auth.createDate,roles:roles,rolelist:rolelist,resources:resources,resourcelist:resourcelist})
+        
+
+MATCH (n:User)   
+ 
+WITH count(*) AS cnt MATCH (n:User)  
+OPTIONAL MATCH (user)-[:HASROLE]->(role:Role)   
+OPTIONAL MATCH (group)-[:HASUSER]->(user:User) 
+WITH   n, cnt SKIP 0 LIMIT 8 , collect(DISTINCT role.id) as roles ,collect(DISTINCT role.name) as rolelist  ,  collect(DISTINCT group.id) as groups ,collect(DISTINCT group.name) as grouplist 
+RETURN   { total: cnt, rows:collect(n) } AS molecules
+
+    组件化 datagrid  treegrid  增删改查；***无必要进行再次封装
+        数据源；
+        页面描述；
+        单页面多个同一组件；
+        
+
+    前端将数据直接转换为数组；
+    FOREACH( authline in  split(line.auths,\",\") |
+    FOREACH( authline in  line.auths) |
+    组织机构管理/用户管理/角色管理/权限管理/资源管理 ok ;
+    
+    
+2017-04-05
+    重构：
+        用户增删改查ok;
+        组织机构增删改查；关系处理 ok;
+        
+    fixme CQL 数组数据的处理；
+    
+2017-04-01
+    左侧选中状态需要增加 class;
+    <li class="active">
+    
+2017-03-31
+    EasyUI 作为默认前端，废弃 Datatables ;
+    
+    管理平台集成 RBAC 页面；
+    http://127.0.0.1/formroutenew?html=manage/my-index&query=q0&page=0&size=3
+    
+    组织机构
+    http://127.0.0.1/formroutenew?html=rbac/group-tree&query=graph-rbac-grouplist
+    
+    
+    
+    原有页面测试恢复
+    
+    WEB 前端页面：http://127.0.0.1/formroutequery?html=web/web-index&query=q0&page=0&size=3
+    
+    MNG 管理页面：http://127.0.0.1/formroutequery?html=manage/my-index&query=q0&page=0&size=3
+    
+
+2017-03-29
+    todo:组件化
+    todo:数据规范化；
+
+    RBAC+鉴权；
+    csv 数据重构，Neo4jImport 专有格式；
+    EasyUI 页面组件重构，lua-template;
+    Neo4j 查询语句重构，查询，增加，删除，修改，lua-template;
+    Json 重构，返回数据格式重构，TreeJson;
+
+
+    业务场景：快查
+        用户的资源列表；
+        角色资源列表；
+        资源下面的用户；
+        资源下面的角色；
+        
+    
+    权限列表 增删改查完成
+        http://127.0.0.1/formroutenew?html=rbac/role-list&query=graphuserlist&page=1&rows=8&org=sys
+
+    
+
+    资源列表
+    http://127.0.0.1/formroutenew?html=route-neo4j-resource-tree&query=graphresourcelist&page=1&rows=8
+    http://127.0.0.1/formroutenew?html=rbac/resource-tree&query=graphorglist&page=1&rows=8
+    增删改查 ok
+    与权限关联 ok
+    
+2017-03-28
+    角色列表 配置用户列表
+    http://127.0.0.1/formroutenew?html=rbac/role-list&query=graphuserlist&page=1&rows=8&org=sys
+    
+    资源维护
+    http://127.0.0.1/formroutenew?html=rbac/resource-tree&query=graphorglist&page=1&rows=8
+    
+2017-03-23
+角色列表
+
+组织机构
+http://127.0.0.1/formroutenew?html=rbac/group-tree&query=graphuserlist&page=1&rows=8
+用户列表
+http://127.0.0.1/formroutenew?html=rbac/user-list&query=graphuserlist&page=1&rows=8&org=sys
+
 2017-03-22
     用户增删改查；用户与角色，用户与组织机构关系处理；
     组织结构增删改查；组织机构与角色，组织机构与用户关系处理；
@@ -5,6 +143,8 @@
 
     组织机构关联用户查询测试
     http://127.0.0.1/formroutenew?html=rbac/user-list&query=graphuserlist&page=1&rows=8&org=sys
+    
+    todo: 首页预加载，后续页面 JS 渲染；
     
 2017-03-21
      前后端清除 children 双重保护机制；过多的数据会导致 lua 转换错误；

@@ -1,3 +1,5 @@
+local log = require "log"
+
 --rails 风格的路由引擎
 
 -- 打印错误信息
@@ -161,6 +163,7 @@ local sortjson = sorttojson(sortKey)
 --ngx.exit(ngx.HTTP_OK);
 
 --filter
+log.debug('filter......');
 local filtervalue = ngx.req.get_uri_args()["filter"]
 local filterjson = ""
 if (not (isempty(filtervalue))) then
@@ -274,8 +277,9 @@ result["methods"] = mtds;
 result["querylist"] = queryList
 result["queryParam"] = params;
 
+log.debug('--- 查询设置查询变量');
 
---- 查询设置查询变量
+
 local http = require "resty.http"
 local httpc = http.new()
 
@@ -285,6 +289,9 @@ local authorization = 'Basic ' .. ngx.encode_base64(user .. ':' .. pass)
 
 for keyq, valq in pairs(queryList) do
 
+    log.debug(valq);
+    log.debug(mtds[keyq]);
+    log.debug(params[keyq]);
 
 
     local res, err
@@ -309,22 +316,32 @@ for keyq, valq in pairs(queryList) do
     end
 
 
---        ngx.say(valq);
+    log.debug('查询结果.....');
+    log.debug(res.body);
+    log.debug(err);
+
+
+    --        ngx.say(valq);
 --        ngx.say(mtds[keyq]);
 --        ngx.say(params[keyq]);
 --        ngx.say(err);
 --        ngx.say(res.body);
 --
-        ngx.exit(ngx.HTTP_OK);
+--        ngx.exit(ngx.HTTP_OK);
 
     local jsonvalue = cjson.decode(res.body);
     result[keyq] = jsonvalue
+
+
 end
 
---
---- -模板引擎渲染,设置模板,设置变量
+log.debug('--模板引擎渲染,设置模板,设置变量');
+
+
 local template = require "resty.template"
 
+log.debug('--模板名称');
+log.debug(htmlname);
 
 template.render("/" .. htmlname .. ".html", {
     formvalue = result

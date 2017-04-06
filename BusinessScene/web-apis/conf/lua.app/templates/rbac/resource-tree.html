@@ -2,18 +2,17 @@
 
 
 {-title-}
-<title>RBAC可视化-组织机构维护</title>
+<title>RBAC可视化-资源维护</title>
 {-title-}
 
 {-content-}
 
 
-<div data-options="region:'west',split:true,title:'机构隶属用户',collapsed:true" style="width:46%;">
-
+<div data-options="region:'west',split:true,title:'权限隶属用户',collapsed:true" style="width:46%;">
+    哪些用户是否有此权限;前端过滤;
     <div style="margin:10px 0;"></div>
     <div id="tabs" class="easyui-tabs" style="width:100%;height:100%;">
     </div>
-
 
 </div>
 
@@ -23,7 +22,7 @@
 
 
 
-<div data-options="region:'center',title:'当前标签所包含的机构'">
+<div data-options="region:'center',title:'当前标签所包含的资源'">
 
     <div id="detailTabtb" style="padding:5px;height:auto">
 
@@ -52,7 +51,8 @@
                 fit:true,
                 pagination:false,
 
-
+                //ctrlSelect:true,
+                //autoSave:true,
                 cascadeCheck:false,
 
 
@@ -70,22 +70,31 @@
         <tr>
             <th data-options="field:'name',width:250,
                 editor:{type:'validatebox',
-                    options:{required:true}}">机构名称</th>
+                    options:{required:true}}">资源名称</th>
             <th data-options="field:'id',width:80,
                 editor:{type:'validatebox',
                     options:{required:true}}">UID编号</th>
-            <th data-options="field:'usercnt',width:50">用户数</th>
+            <th data-options="field:'pid',width:80,
+                editor:{type:'validatebox',
+                    options:{required:true}}">父节点</th>
+            <th data-options="field:'url',width:80,
+                editor:{type:'validatebox',
+                    options:{required:true}}">资源 URL</th>
+            <th data-options="field:'type',width:80,
+                editor:{type:'validatebox',
+                    options:{required:true}}">资源类型</th>
+
             <th data-options="field:'createDate',width:250,
                 editor:{type:'datetimebox',
                     options:{required:true}}">创建日期</th>
 
-            <th data-options="field:'roles',width:250,
-                formatter:function(value,row){return row.rolelist;},
+            <th data-options="field:'auths',width:250,
+                formatter:function(value,row){return row.authlist;},
                 editor:{type:'combobox',
-                    options:{url:rolelist, multiple:true,required:false,
+                    options:{url:authlist, multiple:true,required:false,
                             valueField: 'id',
                             textField: 'name'}}
-                    ">角色</th>
+                    ">权限</th>
         </tr>
         </thead>
     </table>
@@ -122,14 +131,21 @@
 
 
 <script type="text/javascript">
-    var urllist = "http://127.0.0.1/formroutenew?html=route-neo4j-tree&query=graph-rbac-grouplist";
+    //var url = "http://127.0.0.1/formroutenew?html=route-neo4j-tree&query=graphorgtree";
 
-    var crudurlu = "http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graph-rbac-groupu";
-    var crudurlc = "http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graph-rbac-groupc";
-    var crudurld = "http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graph-rbac-groupd";
+    var urllist = "http://127.0.0.1/formroutenew?html=route-neo4j-tree&query=graph-rbac-resourcelist";
 
-    var rolelist = "http://127.0.0.1/formroutenew?html=route-neo4j-json&query=graph-rbac-rolelist";
-    var orguserlist = "http://127.0.0.1/formroutenew?html=rbac/user-list&query=graph-rbac-userlist&page=1&rows=8";
+    var crudurlu = "http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graph-rbac-resourceu";
+    var crudurlc = "http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graph-rbac-resourcec";
+    var crudurld = "http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graph-rabc-resourced";
+    var authlist="http://127.0.0.1/formroutenew?html=route-neo4j-json&query=graph-rbac-authlist";
+
+
+
+
+    //var dndUrl = "http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphorgdnd";
+
+
 
     var editingId;
 
@@ -196,13 +212,42 @@
 
     function onEndEdit(index, row) {
         //对于下拉框进行处理
-        var edrole = $(this).treegrid('getEditor',{index:index.id,field:'roles'});
-        index.rolelist=  $(edrole.target).combotree('getText');
-        index.roles=index.roles.split(",");
+//        var ed = $(this).datagrid('getEditor', {
+//            index: index,
+//            field: 'productid'
+//        });
+//        row.productname = $(ed.target).combobox('getText');
 
+//        var edorg = $(this).datagrid('getEditor',{index:index,field:'org'});
+//        row.orgname = $(edorg.target).combotree('getText');
+//
+        console.log('===========on end edit ');
+        console.log(index);
+        console.log(row);
+//
+        var edauth = $(this).treegrid('getEditor',{index:index.id,field:'auths'});
+        index.authlist=  $(edauth.target).combotree('getText');
+        //数据变更为数组，便于CQL 进行数据处理
+        index.auths=index.auths.split(",");
+
+
+
+//        index.rolelist =
+
+//        var ed = $('#detailTab').treegrid('getEditor', {index: editingId, field: index});
+//        console.log(ed);
+//
+//        if (ed) {
+//            ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
+//        }
     }
 
     function onBeginEdit(index, row) {
+//        var ed = $(this).datagrid('getEditor',{index:index,field:'org'});
+//        $(ed.target).combotree({
+//            url: orgtree,
+//            value: row.org
+//        });
     }
 
 
@@ -227,6 +272,7 @@
             if (inserted.length) {
                 inserted.forEach(function (value) {
                     delete value.children;
+//                    console.log(value);
                 });
                 effectRow["inserted"] = JSON.stringify(inserted);
             }
@@ -234,19 +280,28 @@
             if (deleted.length) {
                 deleted.forEach(function (value) {
                     delete value.children;
+//                    console.log(value);
                 });
                 effectRow["deleted"] = JSON.stringify(deleted);
             }
             if (updated.length) {
                 updated.forEach(function (value) {
                     delete value.children;
+//                    console.log(value);
                 });
+//                console.log(updated);
                 effectRow["updated"] = JSON.stringify(updated);
             }
 
             console.log(Object.keys(effectRow).length);
 
             if (Object.keys(effectRow).length != 0) {
+                console.log(effectRow["updated"] != undefined);
+                console.log(effectRow["deleted"] != undefined);
+                console.log(effectRow["inserted"] != undefined);
+                console.log(effectRow["updated"]);
+                console.log(effectRow["deleted"]);
+                console.log(effectRow["inserted"]);
 
                 if (effectRow["inserted"] != undefined) {
                     console.log("机构编辑 inserted......");
@@ -335,6 +390,12 @@
     function append() {
 
         console.log(endEditing)
+//        if (endEditing()) {
+
+//            $('#detailTab').treegrid('appendRow',{status:'P'});
+//            editIndex = $('#detailTab').datagrid('getRows').length-1;
+//            $('#detailTab').treegrid('selectRow', editIndex)
+//                    .datagrid('beginEdit', editIndex);
 
 
         var nodeS = $('#detailTab').treegrid('getSelected');
@@ -347,6 +408,7 @@
         delete node._parentId;
 
         node.id = node.id + new Date().getTime();
+        //node.module = node.id;
 
         node.pid = parentid;
         node.parent_id = node.pid;

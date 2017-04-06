@@ -1,0 +1,67 @@
+{% layout = "/layouts/mylayout.html" %}
+
+
+{-title-}
+<title>用户管理-RBAC</title>
+{-title-}
+
+
+
+{-sidebar-}
+<!-- 侧面导航，所有管理页面一致 -->
+{-sidebar-}
+
+
+
+
+{-content-}
+    <!-- START BREADCRUMB -->
+    <ul class="breadcrumb">
+        <li><a href="#">首页</a></li>
+        <li><a href="#">RBAC</a></li>
+        <li class="active">用户管理</li>
+    </ul>
+    <!-- END BREADCRUMB -->
+
+    <div class="page-content-wrap">
+
+        <iframe id="J_iframe" name="iframe0" width="100%" height="100%"
+                src="/formroutenew?html=rbac/user-list&query=graph-rbac-userlist&page=1&rows=8&org="
+                frameborder="0" data-id="index_v1.html"
+                seamless></iframe>
+
+
+    </div>
+
+{-content-}
+
+
+
+{-page_css-}
+
+
+{-page_css-}
+
+
+
+
+
+{-page_js-}
+
+    <script>
+        $("#J_iframe").load(function () {
+            var mainheight = $(this).contents().find("body").height() + 460;
+            $(this).height(mainheight);
+        });
+
+    </script>
+
+
+{-page_js-}
+
+
+
+
+{-page_demo_js-}
+    <!--<script type="text/javascript" src="/manage/js/demo_dashboard.js"></script>-->
+{-page_demo_js-}

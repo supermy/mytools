@@ -17,7 +17,7 @@
         local data=formvalue[formvalue.params.query].results[1].data[1].row[1]
     %}
 
-        {* cjson.encode(arraytotree(data,'group_id','pid','children'))*}
+        {* cjson.encode(arraytotree(data,'id','pid','children'))*}
 
     {% end %}
 

@@ -2,6 +2,7 @@
 <li class="active">
     <a href="index.html"><span class="fa fa-desktop"></span> <span class="xn-text">仪表板</span></a>
 </li>
+
 <li class="xn-openable">
     <a href="#"><span class="fa fa-files-o"></span> <span class="xn-text">页面</span></a>
     <ul>
@@ -55,6 +56,8 @@
         </li>
     </ul>
 </li>
+
+
 <li class="xn-openable">
     <a href="#"><span class="fa fa-file-text-o"></span> <span class="xn-text">布局</span></a>
     <ul>
@@ -71,4 +74,30 @@
     </ul>
 </li>
 
+
+
+<li class="xn-openable {% if string.find(formvalue.params.html, 'rbac') then %} active{% end %}">
+
+
+    <a href="#"><span class="fa fa-file-text-o"></span> <span class="xn-text">RBAC 管理</span></a>
+    <ul>
+
+        <li  {% if string.find(formvalue.params.html, 'group') then %} class='active'{% end %} ><a href="/formroutenew?html=manage/rbac-group&query=q0">机构管理</a></li>
+        <li  {% if string.find(formvalue.params.html, 'user') then %} class='active'{% end %} ><a href="/formroutenew?html=manage/rbac-user&query=q0">用户管理</a></li>
+        <li  {% if string.find(formvalue.params.html, 'role') then %} class='active'{% end %} ><a href="/formroutenew?html=manage/rbac-role&query=q0">角色管理</a></li>
+        <li  {% if string.find(formvalue.params.html, 'auth') then %} class='active'{% end %} ><a href="/formroutenew?html=manage/rbac-auth&query=q0">权限管理</a></li>
+        <li  {% if string.find(formvalue.params.html, 'resource') then %} class='active'{% end %} ><a href="/formroutenew?html=manage/rbac-resource&query=q0">资源管理</a></li>
+
+    </ul>
+</li>
+
+<li class="xn-openable">
+    <a href="#"><span class="fa fa-file-text-o"></span> <span class="xn-text">参数配置管理</span></a>
+    <ul>
+        <li><a href="layout-boxed.html">查询路由配置</a></li>
+        <li><a href="layout-nav-toggled.html">ACL 配置</a></li>
+        <li><a href="layout-nav-top.html">安全管控配置</a></li>
+        <li><a href="layout-nav-right.html">防攻击配置</a></li>
+    </ul>
+</li>
 

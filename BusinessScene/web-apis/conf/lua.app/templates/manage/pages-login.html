@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="zh" class="body-full-height">
-    <head>        
+    <head>
+        {%
+        local myconfig = ngx.shared.myconfig;
+        local cfgDbQuery = cjson.decode(myconfig:get("cfgDbQuery"));
+        local baseurl = cfgDbQuery.webbase.url;
+        %}
+        <base href="{* baseurl *}/manage/" />
+
         <!-- META SECTION -->
         <title>登录</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -22,15 +29,16 @@
                 <div class="login-logo"></div>
                 <div class="login-body">
                     <div class="login-title"><strong>欢迎</strong>, 请登录</div>
-                    <form action="index.html" class="form-horizontal" method="post">
+
+                    <form action="/formroutenew?html=route-neo4j-json&query=graph-rabc-login" class="form-horizontal" method="post">
                     <div class="form-group">
                         <div class="col-md-12">
-                            <input type="text" class="form-control" placeholder="用户名称"/>
+                            <input type="text" name="username" class="form-control" placeholder="用户名称"/>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col-md-12">
-                            <input type="password" class="form-control" placeholder="密码"/>
+                            <input type="password" name="passwd" class="form-control" placeholder="密码"/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -42,6 +50,7 @@
                         </div>
                     </div>
                     </form>
+
                 </div>
                 <div class="login-footer">
                     <div class="pull-left">
@@ -56,7 +65,8 @@
             </div>
             
         </div>
-        
+        <script type="text/javascript" src="js/plugins/jquery/jquery.min.js"></script>
+
     </body>
 </html>
 
