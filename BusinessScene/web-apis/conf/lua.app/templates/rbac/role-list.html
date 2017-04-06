@@ -1,0 +1,643 @@
+{% layout = "layouts/rbaclayout.html" %}
+
+{-title-}
+<title>RBAC可视化-角色列表</title>
+{-title-}
+
+
+{-content-}
+
+<div data-options="region:'east',split:true,title:'角色隶属用户',collapsed:true" style="width:46%;">
+
+    <div style="margin:10px 0;"></div>
+    <div id="tabs" class="easyui-tabs" style="width:100%;height:100%;">
+    </div>
+
+
+</div>
+
+<div data-options="region:'west',split:true,title:'角色库',collapsed:true" style="width:46%;">
+
+    <div id="companylibtb" style="padding:5px;height:auto">
+        <input class="easyui-searchbox" data-options="prompt:'请输入查询条件',menu:'#searcheTool',searcher:doSearch"
+               style="width:200px"></input>
+        <div id="searcheTool">
+            <div data-options="name:'角色名称'">角色名称</div>
+            <div data-options="name:'UID',iconCls:'icon-ok'">UID</div>
+            <div data-options="name:'标签名'">标签名</div>
+        </div>
+        <a href="javascript:;" onClick="addcompany();" class="easyui-linkbutton" iconCls="icon-add"
+           plain="true">新增选中人员</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true"
+           onclick="getChangesHRL()">数据变更</a>
+
+    </div>
+
+    <table id="companylib" class="easyui-datagrid" style="width:700px;height:auto"
+           singleSelect="true"
+           data-options="
+                idField:'id',
+                rownumbers:true,
+                checkbox:true,
+                fitColumns:true,
+                fit:true,
+                pagination:true,
+                pageSize: pagesize1,
+                pageList: [pagesize1, pagesize1*2, pagesize1*3, pagesize1*4],
+                ctrlSelect:true,
+
+                data:dataJson2,
+                url:urlhrl,
+
+                iconCls: 'icon-edit',
+                singleSelect: true,
+                toolbar: '#companylibtb',
+                onLoadSuccess:function(){
+                     $(this).datagrid('enableDnd');
+                },
+                onBeforeDrop:moveMonitorToHRL,
+                onDrop:saveHRLUser
+    ">
+
+        <thead>
+
+
+        <tr>
+            <th data-options="field:'id',width:180">UID编号</th>
+            <th data-options="field:'name',width:250">用户名称</th>
+            <th data-options="field:'createDate',width:250">创建日期</th>
+            <th data-options="field:'org',width:250,
+                formatter:function(value,row){
+                            return row.orgname;
+                        }">组织机构
+            </th>
+            <th data-options="field:'auths',width:250,
+                formatter:function(value,row){
+                            return row.authlist;
+                        }
+                    ">权限
+            </th>
+        </tr>
+        </thead>
+
+    </table>
+
+</div>
+
+
+
+<div id="log" data-options="region:'south',title:'操作日志',collapsed:true" style="height:80px;">1</div>
+
+
+
+<div data-options="region:'center',title:'当前标签所包含的角色'">
+
+    <div id="detailTabtb" style="padding:5px;height:auto">
+
+        <input class="easyui-searchbox" data-options="prompt:'请输入查询条件',menu:'#searcheTool',searcher:doSearch" style="width:200px"></input>
+        <div id="searcheTool">
+            <div data-options="name:'searchvalue'">角色名称</div>
+            <div data-options="name:'searchvalue',iconCls:'icon-ok'">UID</div>
+            <div data-options="name:'searchvalue'">标签名</div>
+        </div>
+
+        <a href="javascript:;" onClick="$('body').layout('expand','west');" class="easyui-linkbutton" iconCls="icon-add" plain="true">从角色库新增人员</a>
+
+
+        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="append()">增加</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="removeit()">删除</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="accept()">保存</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:true" onclick="reject()">取消</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true" onclick="getChanges()">数据变更</a>
+
+    </div>
+
+    <table id="detailTab" class="easyui-datagrid" style="width:700px;height:auto"  singleSelect="true"
+
+           data-options="
+                idField:'id',
+                rownumbers:true,
+                checkbox:true,
+                fitColumns:true,
+                fit:true,
+                pagination:true,
+                pageSize: pagesize1,
+                pageList: [pagesize1, pagesize1*2, pagesize1*3, pagesize1*4],
+                ctrlSelect:true,
+                onBeforeDrop:moveMonitorToUsers,
+                onDrop:saveHRLUser,
+
+                autoSave:true,
+                onRowContextMenu: onContextMenu,
+
+
+                //data:dataJson1,
+
+                url:url,
+
+                iconCls: 'icon-edit',
+                singleSelect: true,
+                toolbar: '#detailTabtb',
+                enableDnd:true,
+                onClickRow: onClickRow,
+                onEndEdit: onEndEdit,
+                onBeginEdit: onBeginEdit,
+                onClickCell: onClickCell,
+                 onLoadSuccess:function(){
+                     $(this).datagrid('enableDnd');
+                }
+               ">
+
+        <thead>
+        <tr>
+            <th data-options="field:'id',width:200,
+                editor:{type:'validatebox',
+                    options:{required:true}}">UID编号</th>
+            <th data-options="field:'name',width:200,
+                editor:{type:'validatebox',
+                    options:{required:true}}">角色名称</th>
+            <th data-options="field:'createDate',width:180,
+                editor:{type:'datetimebox',
+                    options:{required:true}}">创建日期</th>
+            <th data-options="field:'usercnt',width:60">用户数
+            </th>
+            <th data-options="field:'orgs',width:300,
+                formatter:function(value,row){
+                            return row.orglist;
+                        },
+                editor:{type:'combotreegrid',
+                    options:{url:orgtree, multiple:true,required:true,
+                            idField: 'id',
+                            treeField: 'name',
+                            cascadeCheck: false,//
+                            columns:[[
+                                {field:'name',title:'名称',width:200},
+                                {field:'id',title:'备注',width:100}]]
+                            }}
+                    ">组织机构</th>
+            <th data-options="field:'auths',width:250,
+                formatter:function(value,row){
+                            return row.authlist;
+                        },
+                editor:{type:'combobox',
+                    options:{url:authlist, multiple:true,required:true,
+                            valueField: 'id',
+                            textField: 'name'
+                            }}
+                    ">权限</th>
+        </tr>
+        </thead>
+    </table>
+
+
+
+    <div id="mm" class="easyui-menu" style="width:120px;">
+        <div onclick="$('body').layout('expand','east');addIframeTab(roleuserlist);" data-options="iconCls:'icon-list'">隶属用户</div>
+        <div class="menu-sep"></div>
+    </div>
+
+</div>
+
+
+{-content-}
+
+
+
+{-page_css-}
+
+{-page_css-}
+
+{-page_js-}
+<script src="easyui/datagrid-dnd.js"  type="text/javascript"></script>
+
+<script src="easyui/json2.js"  type="text/javascript"></script>
+
+<script src="easyui/jquery.tabs.extend.js"  type="text/javascript"></script>
+
+
+<script type="text/javascript">
+
+    {% if #(formvalue[formvalue.params.query].results[1].data) == 0 then %}
+        var dataJson1={};
+    {% end%}
+    {% if #(formvalue[formvalue.params.query].results[1].data) ~= 0 then %}
+        var dataJson1={*cjson.encode(formvalue[formvalue.params.query].results[1].data[1].row[1]) *};
+    {% end%}
+
+    var pagesize1={*formvalue.params.rows *};
+
+    var url="http://127.0.0.1/formroutenew?html=route-neo4j-json&query=graph-rbac-rolelist";
+
+    var authlist="http://127.0.0.1/formroutenew?html=route-neo4j-json&query=graph-rbac-authlist";
+    var crudurlu="http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graph-rbac-roleu";
+
+    var roleuserlist = "http://127.0.0.1/formroutenew?html=rbac/user-list&query=graph-rbac-userlist&page=1&rows=8";
+
+
+    var urlold="http://127.0.0.1/formroutenew?html=route-neo4j-json&query=graph-rbac-userlist&org={{formvalue.params.org}}";
+
+    var crudurlc="http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graph-rbac-rolec";
+    var crudurld="http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graph-rbac-roled";
+
+    var orgtree="http://127.0.0.1/formroutenew?html=route-neo4j-tree&query=graph-rbac-grouplist";
+
+
+
+    var editIndex = undefined;
+    function endEditing(){
+        if (editIndex == undefined){return true}
+        if ($('#detailTab').datagrid('validateRow', editIndex)){
+            $('#detailTab').datagrid('endEdit', editIndex);
+            editIndex = undefined;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function onClickCell(index, field){
+        //同一行数据不处理
+        if (editIndex != index){
+            //结束正在编辑的行
+            if (endEditing()){
+                //
+                $('#detailTab').datagrid('selectRow', index)
+                        .datagrid('beginEdit', index);
+
+                //定位到编辑的字段
+                var ed = $('#detailTab').datagrid('getEditor', {index:index,field:field});
+                if (ed){
+                    ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
+                }
+                editIndex = index;
+            } else {
+                setTimeout(function(){
+                    $('#detailTab').datagrid('selectRow', editIndex);
+                },0);
+            }
+        }
+    }
+
+    function onClickRow(index){
+        if (editIndex != index){
+            if (endEditing()){
+                $('#detailTab').datagrid('selectRow', index)
+                        .datagrid('beginEdit', index);
+                editIndex = index;
+            } else {
+                $('#dg').datagrid('selectRow', editIndex);
+            }
+        }
+    }
+
+    function onEndEdit(index, row){
+        //对于下拉框进行处理
+//        var ed = $(this).datagrid('getEditor', {
+//            index: index,
+//            field: 'productid'
+//        });
+//        row.productname = $(ed.target).combobox('getText');
+
+        var edorg = $(this).datagrid('getEditor',{index:index,field:'orgs'});
+        row.orglist = $(edorg.target).combotree('getText');
+        row.orgs=row.orgs.split(",");
+
+        var edauth = $(this).datagrid('getEditor',{index:index,field:'auths'});
+        row.authlist = $(edauth.target).combotree('getText');
+        row.auths=row.auths.split(",");
+
+    }
+
+    function onBeginEdit(index,row){
+        console.log("==========on begin edit");
+        console.log(row);
+//        var ed = $(this).datagrid('getEditor',{index:index,field:'orgs'});
+//        $(ed.target).combotree({
+//            url: orgtree,
+//            value: row.orgs
+//        });
+    }
+
+
+    function append(){
+        console.log(endEditing)
+        if (endEditing()){
+            $('#detailTab').datagrid('appendRow',{status:'P'});
+            editIndex = $('#detailTab').datagrid('getRows').length-1;
+            $('#detailTab').datagrid('selectRow', editIndex)
+                    .datagrid('beginEdit', editIndex);
+        }
+    }
+
+    function removeit(){
+        if (editIndex == undefined){return}
+        $('#detailTab').datagrid('cancelEdit', editIndex)
+                .datagrid('deleteRow', editIndex);
+        editIndex = undefined;
+    }
+
+    function accept(ee){
+        console.log("角色编辑保存......");
+        var ed=false;
+        if(endEditing()){
+            ed = true;
+        }
+        if (ee){
+            ed = true;
+        }
+
+        if (ed){
+            var inserted = $('#detailTab').datagrid('getChanges', "inserted");
+            var deleted = $('#detailTab').datagrid('getChanges', "deleted");
+            var updated = $('#detailTab').datagrid('getChanges', "updated");
+
+            var effectRow = new Object();
+            if (inserted.length) {
+                effectRow["inserted"] = JSON.stringify(inserted);
+            }
+
+            if (deleted.length) {
+                effectRow["deleted"] = JSON.stringify(deleted);
+            }
+            if (updated.length) {
+                effectRow["updated"] = JSON.stringify(updated);
+            }
+
+            console.log(Object.keys(effectRow).length);
+
+            if(Object.keys(effectRow).length!=0){
+                console.log(effectRow["updated"]!=undefined);
+                console.log(effectRow["deleted"]!=undefined);
+                console.log(effectRow["inserted"]!=undefined);
+                console.log(effectRow["updated"]);
+                console.log(effectRow["deleted"]);
+                console.log(effectRow["inserted"]);
+
+                if(effectRow["inserted"]!=undefined) {
+                    console.log("角色编辑 inserted......");
+
+                    $.post(crudurlc, effectRow, function (response) {
+                        console.log(response)
+                        if (response.status) {
+                            $("#detailTab").datagrid('acceptChanges');
+                        }
+                    }, "JSON");
+                }
+                if(effectRow["updated"]!=undefined) {
+                    $.post(crudurlu, effectRow, function (response) {
+                        console.log(response)
+                        if (response.status) {
+                            $("#detailTab").datagrid('acceptChanges');
+                        }
+                    }, "JSON");
+                }
+                if(effectRow["deleted"]!=undefined) {
+                    console.log("角色编辑 deleted......");
+
+                    $.post(crudurld, effectRow, function (response) {
+                        console.log(response)
+                        if (response.status) {
+                            $("#detailTab").datagrid('acceptChanges');
+                        }
+                    }, "JSON");
+                }
+            }
+        }
+    }
+    function reject(){
+        $('#detailTab').datagrid('rejectChanges');
+        editIndex = undefined;
+    }
+    function getChanges(){
+        var rows = $('#detailTab').datagrid('getChanges');
+        alert(rows.length+' rows are changed!');
+    }
+
+    function doSearch(value,searchkey){
+        console.log(searchkey,value);
+        var detail = $('#detailTab');
+        //alert('您查询的条件是: ' + value+'('+searchkey+')');
+        detail.datagrid('load',{
+            searchvalue:'.*'+value+'.*'
+        });
+    }
+
+    function onContextMenu(e,index,row) {
+        console.log(row);
+        if (row) {
+            e.preventDefault();
+            $(this).datagrid('selectRow', index);
+            $('#mm').menu('show', {
+                left: e.pageX,
+                top: e.pageY
+            });
+        }
+    }
+
+</script>
+
+
+
+<script type="text/javascript">
+
+
+    var urlhrl="http://127.0.0.1/formroutenew?html=route-neo4j-json&query=graphhrllist";
+    var crudhrlurlc="http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphhrc";
+    var crudhrlurlu="http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphhru";
+    var crudhrlurld="http://127.0.0.1/formroutenew?html=route-neo4j-crud&query=graphhrd";
+
+    var dataJson2={"total":20,"rows":[
+        {"createDate":"2016-12-24 22:42:00","orgname":"前端-h5","org":"h5","avatar_id":"1","username":"alex9","namecn":"李四9","password":"$2a$10$04TVADrR6\/SPLBjsK0N30.Jf5fNjBugSACeGv1S69dZALR7lSov0y","id":"9","updateBy":"system2","updateDate":"2016-12-24 22:42","rolelist":"普通角色","enabled":"1","createBy":"system1","roles":"ROLE_USER"}
+    ]};
+
+
+
+    $(function(){
+            //初始化到 data-options 中配置完成
+    })
+
+
+    /*
+        从角色库到添加到人员列表
+     */
+    function addcompany(){
+        var data = $("#companylib").datagrid("getSelections");
+        //appendhrl(data)
+        accepthrl();
+        $.messager.alert('温馨提示','本标签新增加角色'+data.length+'人\r\n');
+        console.debug(data);
+
+    }
+
+//    function appendhrl(line){
+//        if (line){
+//            $('#detailTab').datagrid('appendRow',line);
+//            accepthrl();
+////			editIndex = $('#dg').datagrid('getRows').length-1;
+////			$('#detailTab').datagrid('selectRow', editIndex)
+////					.datagrid('beginEdit', editIndex);
+//        }
+//    }
+
+    /*
+        从角色库删除数据
+     */
+    function removeithrl(line){
+        var editIndex = line;
+        if (editIndex == undefined){return}
+        $('#companylib').datagrid('cancelEdit', editIndex)
+                .datagrid('deleteRow', editIndex);
+        accepthrl();
+        editIndex = undefined;
+    }
+
+    function getChangesHRL(){
+        var rows = $('#companylib').datagrid('getChanges');
+        alert(rows.length+' rows are changed!');
+    }
+
+    /*
+        角色库的增删改查
+    */
+    function accepthrl(){
+        console.log("角色编辑保存......");
+
+        // if (endEditing()){
+            var inserted = $('#companylib').datagrid('getChanges', "inserted");
+            var deleted = $('#companylib').datagrid('getChanges', "deleted");
+            var updated = $('#companylib').datagrid('getChanges', "updated");
+
+            var effectRow = new Object();
+            if (inserted.length) {
+                effectRow["inserted"] = JSON.stringify(inserted);
+            }
+
+            if (deleted.length) {
+                effectRow["deleted"] = JSON.stringify(deleted);
+            }
+            if (updated.length) {
+                effectRow["updated"] = JSON.stringify(updated);
+            }
+
+            console.log(Object.keys(effectRow).length);
+
+            if(Object.keys(effectRow).length!=0){
+                console.log(effectRow["updated"]!=undefined);
+                console.log(effectRow["deleted"]!=undefined);
+                console.log(effectRow["inserted"]!=undefined);
+                console.log(effectRow["updated"]);
+                console.log(effectRow["deleted"]);
+                console.log(effectRow["inserted"]);
+
+                if(effectRow["inserted"]!=undefined) {
+                    console.log("角色编辑 inserted......");
+
+                    $.post(crudhrlurlc, effectRow, function (response) {
+                        console.log(response)
+                        if (response.status) {
+                            $("#companylib").datagrid('acceptChanges');
+                        }
+                    }, "JSON");
+                }
+                if(effectRow["updated"]!=undefined) {
+                    $.post(crudhrlurlu, effectRow, function (response) {
+                        console.log(response)
+                        if (response.status) {
+                            $("#companylib").datagrid('acceptChanges');
+                        }
+                    }, "JSON");
+                }
+                if(effectRow["deleted"]!=undefined) {
+                    console.log("角色编辑deleted......");
+
+                    $.post(crudhrlurld, effectRow, function (response) {
+                        console.log(response)
+                        if (response.status) {
+                            $("#companylib").datagrid('acceptChanges');
+                        }
+                    }, "JSON");
+                }
+            }
+        //}
+    }
+
+
+    function saveHRLUser() {
+        accepthrl();
+        accept(true);
+    }
+        /*
+            人员调动监控日志
+         */
+    function moveMonitorToHRL(targetRow,sourceRow,point){
+//        accepthrl();
+//        accept(true);
+        var myDate = new Date();
+//        if(targetRow.targettable=='lib' && sourceRow.targettable=='labers'){
+//            $('#log').prepend(myDate.toLocaleString()+': 新增了一个人到本标签库，角色名称：'+targetRow.name+'<br/>');
+//        }
+//        if(targetRow.targettable=='labers' && sourceRow.targettable=='lib'){
+            $('#log').prepend(myDate.toLocaleString()+': 删除了一个人，角色名称：'+sourceRow.namecn+'<br/>');
+//        }
+    }
+    function moveMonitorToUsers(targetRow,sourceRow,point){
+//        accepthrl();
+//        accept(true);
+        var myDate = new Date();
+//        if(targetRow.targettable=='lib' && sourceRow.targettable=='labers'){
+            $('#log').prepend(myDate.toLocaleString()+': 从本标签库新增了一个人，角色名称：'+sourceRow.namecn+'<br/>');
+//        }
+//        if(targetRow.targettable=='labers' && sourceRow.targettable=='lib'){
+//            $('#log').prepend(myDate.toLocaleString()+': 删除了一个人，角色名称：'+targetRow.name+'<br/>');
+//        }
+    }
+</script>
+
+
+
+
+<script type="text/javascript">
+    $(function(){
+        //$('#tabs').tabs('addEventParam');
+    });
+    var count = 0;
+    function addIframeTab(url){
+
+        var nodeS = $('#detailTab').datagrid('getSelected');
+        console.log(nodeS);
+
+        var title=nodeS.name;
+
+        url = url + "&role="+nodeS.id;
+//        url = 'http://www.baidu.com/';
+        console.log(url);
+        console.log(title);
+
+        if ($('#tabs').tabs('exists', title)){
+            $('#tabs').tabs('select', title);
+        } else {
+            $('#tabs').tabs('addIframeTab',{
+                //tab参数为一对象，其属性同于原生add方法参数
+                tab:{
+                    title:title,
+                    closable:true,
+                    tools:[{
+                        iconCls:'icon-mini-refresh',
+                        handler:function(e){
+                            var title = $(e.target).parent().parent().text();
+                            $('#tabs').tabs('updateIframeTab',{'which':title});
+                        }
+                    }]
+                },
+                //iframe参数用于设置iframe信息，包含：
+                //src[iframe地址],frameBorder[iframe边框,，默认值为0],delay[淡入淡出效果时间]
+                //height[iframe高度，默认值为100%],width[iframe宽度，默认值为100%]
+                iframe:{src:url}
+            });
+            $('#tabs').tabs('addEventParam');
+        }
+
+
+    }
+</script>
+{-page_js-}
