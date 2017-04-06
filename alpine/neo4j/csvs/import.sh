@@ -1,26 +1,14 @@
 #!/usr/bin/env bash
-#csv 要删除分隔符之间的空格否则影响关系建立，第一行字段之前的空格也要删除
-https://neo4j.com/developer/guide-import-csv/
-$NEO4J_HOME/bin/neo4j-import --into $NEO4J_HOME/data/databases/graph.db --nodes:Person csv/person_node.csv \
-    --nodes:Movie csv/movie_node.csv --nodes:Genre csv/genre_node.csv --nodes:Keyword csv/keyword_node.csv \
-    --relationships:ACTED_IN csv/acted_in_rels.csv --relationships:DIRECTED csv/directed_rels.csv \
-    --relationships:HAS_GENRE csv/has_genre_rels.csv --relationships:HAS_KEYWORD csv/has_keyword_rels.csv \
-    --relationships:PRODUCED csv/produced_rels.csv --relationships:WRITER_OF csv/writer_of_rels.csv --delimiter ";" \
-    --array-delimiter "|" \
-    --id-type INTEGER
 
+#数据初始化，使用专有的 Neo4j CSV 格式导入实体数据以及实体之间的关系；效率非常高效；以下导入的是 RBAC 的测试数据。
+#其他参数 gzip groups.csv|  groups.csv.gz 支持压缩文件格式
+#    --delimiter ";" \
+#    --array-delimiter "|" \
+#    --id-type INTEGER
+# 参考
+#       https://neo4j.com/developer/guide-import-csv/
+#       http://neo4j.com/docs/operations-manual/current/tutorial/import-tool/
 
-$NEO/bin/neo4j-import --into $DB --id-type $IDTYPE --delimiter TAB --quote Ö \
- --nodes:PROFILES profiles_header.txt,soc-pokec-profiles_no_null_sorted.txt.gz \
- --relationships:RELATION relationships_header.txt,soc-pokec-relationships.txt.gz
-
-
-https://neo4j.com/developer/guide-import-csv/
-http://neo4j.com/docs/operations-manual/current/tutorial/import-tool/
-
-docker exec -it neo4j_db_1 bash -c "more /var/lib/neo4j/import.report"
-docker exec -it neo4j_db_1 bash -c "/var/lib/neo4j/bin/neo4j-admin import"
------------------***************
 docker exec -it neo4j_db_1 bash -c "/var/lib/neo4j/bin/neo4j-admin import \
              --mode=csv --database=rabc.db --id-type=STRING \
              --nodes:User=/csvs/users.csv \
@@ -37,6 +25,9 @@ docker exec -it neo4j_db_1 bash -c "/var/lib/neo4j/bin/neo4j-admin import \
              --relationships:HASRES=/csvs/auth-resources.csv \
              --relationships:PARENTRES=/csvs/resourcespc_head.csv,/csvs/resources.csv \
              --relationships:CHILDRENGROUP=/csvs/grouppc_head.csv,/csvs/groups.csv"
+
+#查看完成信息
+docker exec -it neo4j_db_1 bash -c "more /var/lib/neo4j/import.report"
 
 
 

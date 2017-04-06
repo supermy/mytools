@@ -1,3 +1,22 @@
+2017-03-15
+    用户与角色 用户与组织机构的关系处理；首先清除原有的关系
+    2017-03-13
+
+    
+2017-03-13
+    返回组织结构树
+        MATCH p=(n:Group {name:'系统-sys'})-[:PCGROUP*]-(m)
+                WITH COLLECT(p) AS ps
+                CALL apoc.convert.toTree(ps) yield value
+                RETURN value;
+                
+    
+        MATCH p=(n:Resource {name:'根节点'})-[:PCRES*]-(m)
+        WITH COLLECT(p) AS ps
+        CALL apoc.convert.toTree(ps) yield value
+        RETURN value;
+        
+        
 2017-02-13
     增加插件
     https://github.com/neo4j-contrib/neo4j-apoc-procedures
