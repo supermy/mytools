@@ -1,3 +1,45 @@
+##2017-04-08
+-   waf 日志采集图表展示
+    nc -l -p 9001
+    nc localhost 9001
+    
+    udp 监听
+    nc -luv -p 9001
+    nc -vu 127.0.0.1 9001
+    
+    location / {
+        access_by_lua_block {
+            -- send event logs to the server's error_log location (default)
+            waf:set_option("event_log_target", "error")
+    
+          waf:set_option("event_log_target", "file")
+          waf:set_option("event_log_target_path", "/usr/local/openresty/nginx/logs/waf-event.log")
+
+    
+            -- send event logs to a remote server
+            waf:set_option("event_log_target", "socket")
+        }
+    }
+-   配置 openstry ssl and waf ,curl http://127.0.0.1/?/etc/passwd  禁止访问，测试 ok
+
+        acccess_by_lua_block {
+            waf:set_option("storage_redis_host", "10.10.10.10")
+            waf:set_option("storage_redis_port", 6397)
+        }
+        
+        11000_whitelist: Local policy whitelisting
+        20000_http_violation: HTTP protocol violation
+        21000_http_anomaly: HTTP protocol anomalies
+        35000_user_agent: Malicious/suspect user agents
+        40000_generic_attack: Generic attacks
+        41000_sqli: SQLi
+        42000_xss: XSS
+        90000_custom: Custom rules/virtual patching
+        99000_scoring: Anomaly score handling
+        
+        
+
+
 ##2016-09-14
 -   升级到ap-openresty 1.11.2.1
 -   同步升级ap-waf,测试ok http://127.0.0.1/myweb/token.jsp

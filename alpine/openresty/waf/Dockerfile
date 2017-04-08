@@ -1,40 +1,42 @@
 #增加WAF 防火墙
 
-FROM supermy/ap-openresty
+FROM supermy/ap-ssl
 
 MAINTAINER JamesMo <springclick@gmail.com>
 
-ARG RESTY_WAF_VERSION="0.8"
-ARG RESTY_NAME_VERSION="lua-resty-waf"
 
-ARG RESTY_SESSION_VERSION="master"
-ARG RESTY_SESSIONNAME_VERSION="lua-resty-session"
+RUN opm get bungle/lua-resty-session
+#安装后缺规则文件
+#RUN opm get p0pr0ck5/lua-resty-waf
+
+# 最新版本 luarocks install lua-resty-waf
+RUN apk add --no-cache  lua-dev python pcre pcre-dev && \
+     luarocks install lrexlib-pcre  && \
+     luarocks install lua-resty-waf
+
+#RUN luarocks install luacrypto
+#RUN luarocks install resty-mongol
 
 
-ARG LUA_LIB_DIR="/usr/local/openresty/lualib"
+RUN opm get bungle/lua-resty-template &&    opm get bungle/lua-resty-prettycjson && \
+    opm get openresty/lua-resty-upstream-healthcheck    && opm get openresty/lua-resty-redis
+#opm get bungle/lua-resty-uuid && &&  \ opm get openresty/lua-resty-mysql
 
-#waf-lua调用需要
-#RUN apk add --no-cache --virtual .build-deps         build-base
-RUN apk add --no-cache libstdc++
 
-#https://github.com/bungle/lua-resty-session/archive/master.zip
-#https://github.com/p0pr0ck5/lua-resty-waf/archive/v0.8.tar.gz
 
-RUN curl --insecure -fSL https://github.com/p0pr0ck5/lua-resty-waf/archive/v${RESTY_WAF_VERSION}.tar.gz -o ${RESTY_NAME_VERSION}.tar.gz \
-    && tar xzf ${RESTY_NAME_VERSION}.tar.gz \
-    && cp -r ${RESTY_NAME_VERSION}-${RESTY_WAF_VERSION}/lib/resty/* ${LUA_LIB_DIR}/resty/  \
-    && cp -r ${RESTY_NAME_VERSION}-${RESTY_WAF_VERSION}/lib/*.so ${LUA_LIB_DIR} \
-    && cp -r ${RESTY_NAME_VERSION}-${RESTY_WAF_VERSION}/rules/ ${LUA_LIB_DIR} \
-    && curl --insecure -fSL https://github.com/bungle/lua-resty-session/archive/${RESTY_SESSION_VERSION}.tar.gz -o ${RESTY_SESSIONNAME_VERSION}.tar.gz \
-    && tar xzf ${RESTY_SESSIONNAME_VERSION}.tar.gz \
-    && ls lua-resty-session-master \
-    && cp -r ${RESTY_SESSIONNAME_VERSION}-${RESTY_SESSION_VERSION}/lib/resty/* ${LUA_LIB_DIR}/resty/  \
-    && mkdir /usr/local/openresty/nginx/conf/http.d/ \
-    && mkdir /usr/local/openresty/nginx/conf/server.d/
-
-COPY conf/http-waf.conf /usr/local/openresty/nginx/conf/http.d/
+#重构 todo
+COPY conf/http.d/lua-init.conf /usr/local/openresty/nginx/conf/http.d/
 COPY conf/location-waf.conf /usr/local/openresty/nginx/conf/
 COPY conf/nginx.conf /usr/local/openresty/nginx/conf/
+COPY conf/server.conf /usr/local/openresty/nginx/conf/
 #EXPOSE 80 443
 
 #ENTRYPOINT ["/usr/local/openresty/nginx/sbin/nginx", "-g", "daemon off;"]
+
+#docker run -it -p 80:80 -p 443:443 supermy/ap-waf
+
+#部署完毕可以尝试如下命令：
+#
+#    curl http://xxxx/test.php?id=../etc/passwd
+#    返回警报信息字样，说明规则生效。
+#

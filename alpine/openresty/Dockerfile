@@ -7,9 +7,9 @@ FROM supermy/alpine:build
 MAINTAINER JamesMo <springclick@gmail.com>
 
 # Docker Build Arguments
-ARG RESTY_VERSION="1.11.2.1"
-ARG RESTY_OPENSSL_VERSION="1.0.2h"
-ARG RESTY_PCRE_VERSION="8.38"
+ARG RESTY_VERSION="1.11.2.2"
+ARG RESTY_OPENSSL_VERSION="1.0.2j"
+ARG RESTY_PCRE_VERSION="8.39"
 ARG RESTY_NAXSI_VERSION="master"
 ARG RESTY_J="1"
 ARG RESTY_CONFIG_OPTIONS="\
@@ -98,6 +98,21 @@ RUN \
     && apk del .build-deps \
     && ln -sf /dev/stdout /usr/local/openresty/nginx/logs/access.log \
     && ln -sf /dev/stderr /usr/local/openresty/nginx/logs/error.log
+
+ENV PATH="/usr/local/openresty/bin:${PATH}"
+
+#使用自带的 opm 安装工具
+#RUN apk add --no-cache git && \
+#    cd /tmp && \
+#    git clone https://github.com/keplerproject/luarocks.git && \
+#    cd luarocks && \
+#    sh  ./configure --prefix=/usr/local/openresty/luajit \
+#                   --with-lua=/usr/local/openresty/luajit/ \
+#                   --lua-suffix=jit \
+#                   --with-lua-include=/usr/local/openresty/luajit/include/luajit-2.1 && \
+#    make build install && \
+#    cd && \
+#    rm -rf /tmp/luarocks
 
 EXPOSE 80 443
 
