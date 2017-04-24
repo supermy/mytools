@@ -1,0 +1,21 @@
+pbx:
+  image: digitaldaz/fusionpbx-docker
+  ports:
+    - "80:80"
+    - "443:443"
+    - "5060:5060"
+    - "5080:5080"
+  environment:
+    ulimit: nofile=20480:40960
+#  volumes:
+#    - fusionpbx/:/var/www/fusionpbx/
+
+#/var/www/fusionpbx/app/contacts/app_languages.php:
+#/var/www/fusionpbx/core/menu/app_menu.php:
+
+#docker run --rm --name fusionpbx \
+#    -p 80:80 -p 443:443 \
+#    -p 5060:5060/udp -p 5060:5060 -p 5080:5080/udp -p 5080:5080 \
+#    digitaldaz/fusionpbx-docker
+#docker exec -it fusionpbx  bash
+#sudo -u postgres psql -c "ALTER USER fusionpbx WITH PASSWORD '123456’;”

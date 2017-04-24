@@ -329,25 +329,12 @@ WITH role,collect(group.group_id) as orgs ,collect(group.name) as orglist ,colle
  orgs:orgs,orglist:orglist,
  auths:auths,authlist:authlist})
 
+ "node": "element",
+	  "tag": "ul",
+	  "attr": {
+		"class": "x-navigation"
+	  },
 
-
-WITH {json} as data
-UNWIND data.items as q
-MERGE (question:Question {id:q.question_id}) ON CREATE
-      SET question.title = q.title,
-          question.share_link = q.share_link,
-          question.favorite_count = q.favorite_count
-
-MERGE (owner:User {id:q.owner.user_id}) ON CREATE
-      SET owner.display_name = q.owner.display_name
-MERGE (owner)-[:ASKED]->(question)
-
-FOREACH (tagName IN q.tags | MERGE (tag:Tag {name:tagName}) MERGE (question)-[:TAGGED]->(tag))
-FOREACH (a IN q.answers |
-   MERGE (question)<-[:ANSWERS]-(answer:Answer {id:a.answer_id})
-   MERGE (answerer:User {id:a.owner.user_id}) ON CREATE SET answerer.display_name = a.owner.display_name
-   MERGE (answer)<-[:PROVIDED]-(answerer)
-)
 
 
 
@@ -563,3 +550,40 @@ Overall Response Structure
 
 jsmind-json
 {"meta":{"name":"jsMind remote","author":"hizzgdev@163.com","version":"0.2"},"format":"node_tree","data":{"id":"root","topic":"jsMind","expanded":true,"children":[{"id":"easy","topic":"Easy","expanded":true,"direction":"left","children":[{"id":"easy1","topic":"Easy to show","expanded":true},{"id":"easy2","topic":"Easy to edit","expanded":true},{"id":"easy3","topic":"Easy to store","expanded":true},{"id":"easy4","topic":"Easy to embed","expanded":true},{"id":"other3","expanded":true,"background-image":"ant.png","width":"100","height":"100"}]},{"id":"open","topic":"Open Source","expanded":true,"direction":"right","children":[{"id":"open1","topic":"on GitHub","expanded":true,"background-color":"#eee","foreground-color":"blue"},{"id":"open2","topic":"BSD License","expanded":true}]},{"id":"powerful","topic":"Powerful","expanded":true,"direction":"right","children":[{"id":"powerful1","topic":"Base on Javascript","expanded":true},{"id":"powerful2","topic":"Base on HTML5","expanded":true},{"id":"powerful3","topic":"Depends on you","expanded":true}]},{"id":"other","topic":"test node","expanded":true,"direction":"left","children":[{"id":"other1","topic":"I'm from local variable","expanded":true},{"id":"other2","topic":"I can do everything","expanded":true}]}]}}
+
+------------------------------------------------------------------------------------
+curl -H accept:application/json -H content-type:application/json \
+  -u neo4j:123456  http://localhost:7474/db/data/transaction/commit \
+  -d '{"statements":[{
+        "statement":"UNWIND {eljson} as line  CREATE (el:Element )  SET el.tag=line.tag,el.node=line.node,  el.id=line.id, el.pid=line.pid,el.attr=apoc.convert.toJson(line.attr) return count(line)",
+         "parameters":
+           {"eljson":[
+            { "attr": {
+                "class": "x-navigation"
+            },
+            "node": "element",
+            "tag": "ul",
+            "id": "cbb297c0-14a9-46bc-ad91-1d0ef9b42df9",
+            "pid": "root"
+            },
+            {"attr": {
+                "class": "xn-logo"
+            },
+            "node": "element",
+            "tag": "li",
+            "id": "465a78ad-93cc-432e-a836-9824d49506d6",
+            "pid": "cbb297c0-14a9-46bc-ad91-1d0ef9b42df9"
+        },
+        {
+            "attr": {
+                "href": "#",
+                "class": "profile-mini"
+            },
+            "node": "element",
+            "tag": "a",
+            "id": "efce62cb-11ae-47cc-9283-b28c18a61233",
+            "pid": "2d0d3825-6d9a-45d3-8933-26c40dcdb025"
+        }]}
+    }]}'
+
+
