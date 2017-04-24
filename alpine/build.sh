@@ -3,6 +3,8 @@
 docker build -t supermy/alpine base --20170406 build
 docker build -t supermy/alpine:build base/build --20170406 build
 docker build --build-arg RESTY_J=4  -t supermy/ap-openresty openresty   --20170406 build  增加 luarocks install
+        --20170424 升级到.1.11.2.3
+docker build --build-arg RESTY_J=4  -t supermy/ap-openresty-fat openresty/alpine-fat  --插件版本  废弃
 
 docker build -t supermy/ap-redis redis
 docker build -t supermy/ap-mysql mysql

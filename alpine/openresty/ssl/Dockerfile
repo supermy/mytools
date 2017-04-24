@@ -3,7 +3,10 @@ FROM supermy/ap-openresty
 MAINTAINER JamesMo <springclick@gmail.com>
 
 #安装 luarocks
-RUN apk add --no-cache git && \
+RUN \
+    apk add --no-cache --virtual .build-deps \
+        build-base \
+        git &&\
     cd /tmp && \
     git clone https://github.com/keplerproject/luarocks.git && \
     cd luarocks && \
@@ -16,10 +19,12 @@ RUN apk add --no-cache git && \
     rm -rf /tmp/luarocks
 ENV PATH="/usr/local/openresty/bin:/usr/local/openresty/luajit/bin:${PATH}"
 
+#apk del .build-deps && \
+
 
 #安装 ssl
 #libc-dev=g++   grep  sed
-RUN apk add --no-cache  openssl gcc g++ && \
+RUN apk add --no-cache  openssl gcc g++ perl&& \
      opm get pintsized/lua-resty-http  && \
     luarocks install lua-resty-auto-ssl && \
     mkdir /etc/resty-auto-ssl  && \
@@ -27,8 +32,10 @@ RUN apk add --no-cache  openssl gcc g++ && \
        -subj '/CN=sni-support-required-for-valid-ssl' \
        -keyout /etc/ssl/resty-auto-ssl-fallback.key \
        -out /etc/ssl/resty-auto-ssl-fallback.crt    &&\
-    chmod +x /usr/local/openresty/luajit/share/lua/5.1/resty/auto-ssl/shell/* &&\
-    chmod +x /usr/local/openresty/luajit/share/lua/5.1/resty/auto-ssl/vendor/*
+    apk del .build-deps
+    #&& \
+#RUN    chmod +x /usr/local/openresty/luajit/share/lua/5.1/resty/auto-ssl/shell/* &&\
+RUN    chmod +x /usr/local/openresty/luajit/share/lua/5.1/resty/auto-ssl/vendor/*
 
 #准备配置的启动文件
 COPY conf/* /usr/local/openresty/nginx/conf/

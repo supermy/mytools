@@ -1,3 +1,15 @@
+##2017-04-24
+    移除：naxsi-src 采用 waf
+    https://www.zhihu.com/question/27852451/answer/51894189
+    
+    
+##2017-04-09
+-   curl -v -b "code=test;key=2fb4f6d2ec30fc45da6d5e81cfdf5d1d"  -XPOST "http://127.0.0.1/?key=a3" -d '{  
+        "user": "kimchy",
+        "post_date": "2009-11-15T14:12:12",
+        "message": "You know, for Search"
+    }'
+    
 ##2017-04-08
 -   waf 日志采集图表展示
     nc -l -p 9001
