@@ -32,7 +32,7 @@ RUN echo "deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/$MONGO_MAJOR
 
 RUN set -x \
 	&& apt-get update \
-	&& apt-get install -y mongodb-org=$MONGO_VERSION \
+	&& apt-get install --force-yes mongodb-org=$MONGO_VERSION \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& rm -rf /var/lib/mongodb \
 	&& mv /etc/mongod.conf /etc/mongod.conf.orig
