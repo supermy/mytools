@@ -1,3 +1,215 @@
+2017-07-05
+
+数据同步
+
+    oracle2rabbitmq 并且将数据格式转换为 json
+    rabbitmq2mongodb 数据存储到 mongodb
+
+2017-07-04
+    
+netcat 捕获数据，存储到 mongo ,支持 json 格式
+
+    The sink supports some headers in dynamic model:
+    'db': db name
+    'collection' : collection name
+    
+    默认数据库名 events ;db 可以根据 head 指定 db 名称
+    默认集合名称 events ;collection 可以根据 head 指定集合名称；
+    数据格式 json;
+    
+    telnet >{"a":1}
+    > db.events.find()
+    { "_id" : ObjectId("595b0030e4b074bb69ee49b2"), "a" : 1 }
+
+    
+    
+
+2017-07-03
+
+增加数据日期过滤
+        
+    用户数据增加保留3天谴数据；
+    日志数据增加
+    
+
+2017-07-01
+
+集群Redis Sink 测试
+
+    3A RedisClusterZSetSink 测试完成   上到生产机；
+    Log RedisClusterZrangeByScoreSink 测试完成  依赖3A 跑完数据；
+    Source RedisClusterSource 测试 filue-redis2log.conf 完成
+    
+
+2017-06-28
+
+性能调优
+    
+    slowlog get 日志 发现 二次结果置入 redis 占用了大量时间；直接在脚本执行呢？
+    更换为脚本直接在 redis 执行；去掉返回数据与写入数据的 IO，查看效率；
+
+2017-06-27
+
+更改 Redis 的存储路径,动态修改；
+
+    127.0.0.1:6379> config set dir /disk01/redisdata/
+    127.0.0.1:6379> save
+    
+
+2017-06-26
+    
+升级最新版引擎；效果 verygood
+
+            停止码表引擎；
+            更新 jar 包；
+            升级 flume-taildir2redis.conf ；更新配置到服务器； 
+                    com.supermy.redis.flume.redis.sink.RedisZSetSink
+            升级 groovy 脚本文件 filter ;convert;  脚本核查完成
+                    /etc/flume/conf/g-netuser-filter.groovy
+                    /etc/flume/conf/g-netuser-zset-search-replace.groovy
+            测试；
+            检查日志
+            检查 redis
+            *** 新版强劲，动力十足 ；原生的 pipeline 2w line 比原有的 eval 快太多了***
+            
+开始部署日志加工版本；改用文件通道；丢失数据可找回
+
+            本地测试验证；flume config 配置文件是动态加载的；每次刷新重新加载；
+                 检查配置文件；flume-taildir2netlog2redis.conf
+                 性能参数调整到2W;
+                 清理 redis 数据；
+                 开启 redis 监控；
+                 运行测试；
+                 测试完成；
+                 
+            升级到服务器：
+                更新 jar 包
+                更新配置文件
+                    flume-taildir2netlog2redis.conf
+                    g-netlog-filter.groovy
+                    g-netlog-search-replace.groovy
+                检查配置文件，更改服务器配置
+                开启 redis 监控
+                启动服务，并且观察日志
+                运行正常 6-26 10：48
+                
+将队列采集到 HDFS
+            
+            本地服务测试  redis 的消费
+                检测配置文件 flume-redis2log.conf
+                修改指定队列；
+                检查 redis 队列指定长度；
+                启动服务；
+                观察日志；有日志输出；
+                检查 redis 队列长度，所有队列数据已经被消费
+                增加 timestamp 脚本二次进行测试
+                flume_1 | 2017-06-26 15:18:18,323 (SinkRunner-PollingRunner-DefaultSinkProcessor) [INFO - org.apache.flume.sink.LoggerSink.process(LoggerSink.java:95)] Event: { headers:{timestamp=1498301603000} body: 34 32 2E 35 38 2E 32 31 32 2E 33 34 7C 32 30 31 42.58.212.34|201 }
+
+             
+            本地服务测试  hdfs 的生产  测试 ok  
+                 a1.sinks.k1.type = hdfs
+                 a1.sinks.k1.channel = c1
+                 a1.sinks.k1.hdfs.path = /user/hadoop/my/%y-%m-%d/%H%M/%S
+                 a1.sinks.k1.hdfs.filePrefix = netlogact-
+                 a1.sinks.k1.hdfs.round = true
+                 a1.sinks.k1.hdfs.roundValue = 10
+                 a1.sinks.k1.hdfs.roundUnit = minute
+                    
+                 a1.sinks.k1.hdfs.useLocalTimeStamp = true //使用本地时间戳
+                
+             生产系统测试
+                 内存通道被占满，使用文件通道；
+                 
+                 
+                
+                
+                -- 备用
+                
+                a1.channels = c1
+                a1.channels.c1.type = memory
+                a1.sinks = k1
+                a1.sinks.k1.type = hive
+                a1.sinks.k1.channel = c1
+                a1.sinks.k1.hive.metastore = thrift://127.0.0.1:9083
+                a1.sinks.k1.hive.database = logsdb
+                a1.sinks.k1.hive.table = weblogs
+                a1.sinks.k1.hive.partition = asia,%{country},%y-%m-%d-%H-%M
+                a1.sinks.k1.useLocalTimeStamp = false
+                a1.sinks.k1.round = true
+                a1.sinks.k1.roundValue = 10
+                a1.sinks.k1.roundUnit = minute
+                a1.sinks.k1.serializer = DELIMITED
+                a1.sinks.k1.serializer.delimiter = "\t"
+                a1.sinks.k1.serializer.serdeSeparator = '\t'
+                a1.sinks.k1.serializer.fieldnames =id,,msg
+                
+                
+                a1.channels = c1
+                a1.sinks = k1
+                a1.sinks.k1.type = hbase
+                a1.sinks.k1.table = foo_table
+                a1.sinks.k1.columnFamily = bar_cf
+                a1.sinks.k1.serializer = org.apache.flume.sink.hbase.RegexHbaseEventSerializer
+                a1.sinks.k1.channel = c1
+                
+                
+                a1.sinks.k1.channel = c1
+                a1.sinks.k1.type = org.apache.flume.sink.kafka.KafkaSink
+                a1.sinks.k1.kafka.topic = mytopic
+                a1.sinks.k1.kafka.bootstrap.servers = localhost:9092
+                a1.sinks.k1.kafka.flumeBatchSize = 20
+                a1.sinks.k1.kafka.producer.acks = 1
+                a1.sinks.k1.kafka.producer.linger.ms = 1
+                a1.sinks.ki.kafka.producer.compression.type = snappy
+                
+
+优化 todo  增加批次数量到100w,测试看效果。                    
+                
+
+            
+    
+
+2017-06-24
+    主要是完成了日志加工脚本；
+
+测试脚本
+    flume-taildir2netlog.conf
+    bin/flume-ng agent --conf conf --conf-file conf/flume-taildir2netlog.conf --name a1 -Dflume.root.logger=INFO,console
+
+测试脚本,单个记录手动测试，正确入库 redis
+    bin/flume-ng agent --conf conf --conf-file conf/flume-netcat2netlog2redis.conf --name a1 -Dflume.root.logger=INFO,console
+
+测试入到 redis 
+    flume-taildir2netlog2redis.conf
+    bin/flume-ng agent --conf conf --conf-file conf/flume-taildir2netlog2redis.conf --name a1 -Dflume.root.logger=INFO,console
+    
+    监控产生的数据队列
+    LLEN netlogactlist
+
+测试原生插入 Redis，解决 EVAL 独占问题。
+    flume-taildir2redis.conf  g-netuser-zset-search-replace.groovy  g-netuser-filter.groovy
+        
+脚本
+    增加非法 IP 地址过滤；
+    
+    
+     
+2017-06-23
+    
+    
+
+优化 redis-lua 脚本，参数传入数据避免 redis 端的 lua缓存；
+    ok  netcat2log.conf 测试拦截器  
+    ok  netcat2redis.conf 测试 redis 入库
+        配置生成删除语句，在特定的时间，进行数据清理；
+        
+2017-06-20
+    Flume-netcat2redis.conf 调试完成；
+    
+2017-06-20
+    调试 groovy + redis ;
+    对信息在加密前与解密后，进行编码与解码
+    
 2017-01-17
     export JAVA_OPTS="-Xms100m -Xmx2000m -Dcom.sun.management.jmxremote -Dflume.monitoring.type=ganglia -Dflume.monitoring.hosts=192.168.150.140:8650"
     

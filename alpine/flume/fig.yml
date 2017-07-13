@@ -6,7 +6,7 @@ flume:
     #端口采集数据，输出到控制台,走docker 的内网地址可通
     FLUME_MONITORING_HOSTS: 172.17.0.2:8649
     FLUME_MONITORING_TYPE: ganglia
-    FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2log.conf
+    #FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2log.conf
     #采集mysql 的数据输出到控制台
     #FLUME_CONF_FILE: /etc/flume/conf/flume-mysql2log.conf
     #采集netcat 的数据输出到mq 拦截器 groovy
@@ -14,7 +14,7 @@ flume:
     #采集mysql 的数据输出到mq
     #FLUME_CONF_FILE: /etc/flume/conf/flume-mysql2rabbitmq.conf
     #采集oracle 的数据输出到mq
-    #FLUME_CONF_FILE: /etc/flume/conf/flume-oracle2rabbitmq.conf
+    #FLUME_CONF_FILE: /etc/flume/conf/flume-market-dx-oracle2rabbitmq.conf
     #morphline etl 拦截器
     #FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2morphline2log.conf
     #morphline-json- etl 拦截器
@@ -23,22 +23,37 @@ flume:
     #FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2morphline-syslog2log.conf
     #同步数据压力测试
     #FLUME_CONF_FILE: /etc/flume/conf/flume-tasktable.conf
+
+    #redis 数据生产
+    #FLUME_CONF_FILE: /etc/flume/conf/flume-mongodb.conf
+
     #redis 数据生产
     #FLUME_CONF_FILE: /etc/flume/conf/flume-netcat2redis.conf
     #redis 数据消费
     #FLUME_CONF_FILE: /etc/flume/conf/flume-redis2log.conf
+
     #redis 数据生产与消费
     #FLUME_CONF_FILE: /etc/flume/conf/flume-redis2redis.conf
+    #redis 数据消费 netuser
+    #FLUME_CONF_FILE: /etc/flume/conf/flume-taildir2redis.conf
+
+    #redis 数据消费 netlog
+    #FLUME_CONF_FILE: /etc/flume/conf/flume-taildir2netlog2redis.conf
+    #FLUME_CONF_FILE: /etc/flume/conf/flume-taildir2netlog2ZrangebyscoreRedis.conf
+
+    #source 端的数据采集能力测试
+    FLUME_CONF_FILE: /etc/flume/conf/flume-exec2log.conf
+
 
   ports:
     - "44444:44444"
     - "54321:54321"
   volumes_from:
     - data
-  links:
-    - mq
-    - db:mysql
-    - dbinit
+#  links:
+#    - mq
+#    - db:mysql
+#    - dbinit
 #    - mqinit
 
 
@@ -52,35 +67,35 @@ data:
       - ./plugins.d:/opt/flume/plugins.d/
       #- ./plugins.d/rabbitmq-flume-plugin/rabbitmq-flume-plugin-standalone-1.1.0.jar:/opt/flume/lib/rabbitmq-flume-plugin-standalone-1.1.0.jar
 
-db:
-  image: supermy/docker-mysql:latest
-  environment:
-    MYSQL_USER: java
-    MYSQL_PASSWORD: java
-    MYSQL_DATABASE: javatest
-    MYSQL_ROOT_PASSWORD: mysql
-  ports:
-    - "3306"
-
-
-#数据初始化
-dbinit:
-  image: supermy/docker-mysql:latest
-  volumes:
-    - .:/host
-  command: /bin/bash -c "sleep 18; mysql -u java --password=java -h mysql javatest < /host/conf/init.sql; exit 0"
-  links:
-    - db:mysql
-
-mq:
-  image: supermy/ap-rabbitmq
-  ports:
-    - "5672:5672"
-    - "15672:15672"
+#db:
+#  image: supermy/docker-mysql:latest
+#  environment:
+#    MYSQL_USER: java
+#    MYSQL_PASSWORD: java
+#    MYSQL_DATABASE: javatest
+#    MYSQL_ROOT_PASSWORD: mysql
+#  ports:
+#    - "3306"
+#
+#
+##数据初始化
+#dbinit:
+#  image: supermy/docker-mysql:latest
 #  volumes:
 #    - .:/host
-#  command: /bin/bash -c "sleep 18; sh /host/conf/docker-sync-flume.sh; exit 0"
-
+#  command: /bin/bash -c "sleep 18; mysql -u java --password=java -h mysql javatest < /host/conf/init.sql; exit 0"
+#  links:
+#    - db:mysql
+#
+#mq:
+#  image: supermy/ap-rabbitmq
+#  ports:
+#    - "5672:5672"
+#    - "15672:15672"
+##  volumes:
+##    - .:/host
+##  command: /bin/bash -c "sleep 18; sh /host/conf/docker-sync-flume.sh; exit 0"
+#
 #
 #mqinit:
 #  image: supermy/ap-rabbitmq

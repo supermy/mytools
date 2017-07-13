@@ -6,11 +6,11 @@ MAINTAINER James Mo
 #http://archive.apache.org/dist/flume/1.6.0/apache-flume-1.6.0-bin.tar.gz
 
 WORKDIR /tmp
-RUN wget http://www-us.apache.org/dist/flume/1.6.0/apache-flume-1.6.0-bin.tar.gz  \
-    && tar zxvf apache-flume-1.6.0-bin.tar.gz  \
+RUN wget http://www-us.apache.org/dist/flume/1.7.0/apache-flume-1.7.0-bin.tar.gz  \
+    && tar zxvf apache-flume-1.7.0-bin.tar.gz  \
     && mkdir -p /opt/flume  \
-    && cp -rf apache-flume-1.6.0-bin/*  /opt/flume/ \
-    && rm  apache-flume-1.6.0-bin.tar.gz
+    && cp -rf apache-flume-1.7.0-bin/*  /opt/flume/ \
+    && rm  apache-flume-1.7.0-bin.tar.gz
 
 
 #COPY conf /var/tmp/
