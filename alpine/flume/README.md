@@ -1,3 +1,11 @@
+2017-07-14
+
+压力测试 flume-redis
+
+    JAVA_OPTS="-Xms2048m -Xmx2048m -Xss256k -Xmn2g -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:-UseGCOverheadLimit"
+    export JAVA_OPTS=”-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=5445 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false”  
+    -Dflume.monitoring.type=http -Dflume.monitoring.port=34545  
+
 2017-07-05
 
 数据同步

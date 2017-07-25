@@ -39,10 +39,10 @@ flume:
 
     #redis 数据消费 netlog
     #FLUME_CONF_FILE: /etc/flume/conf/flume-taildir2netlog2redis.conf
-    #FLUME_CONF_FILE: /etc/flume/conf/flume-taildir2netlog2ZrangebyscoreRedis.conf
+    FLUME_CONF_FILE: /etc/flume/conf/flume-taildir2netlog2ZrangebyscoreRedis.conf
 
     #source 端的数据采集能力测试
-    FLUME_CONF_FILE: /etc/flume/conf/flume-exec2log.conf
+    #FLUME_CONF_FILE: /etc/flume/conf/flume-exec2log.conf
 
 
   ports:
